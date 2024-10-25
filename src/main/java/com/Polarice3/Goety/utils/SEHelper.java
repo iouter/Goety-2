@@ -868,6 +868,8 @@ public class SEHelper {
         }
         if (tag.contains("dimension")) {
             soulEnergy.setArcaBlockDimension(Level.RESOURCE_KEY_CODEC.parse(NbtOps.INSTANCE, tag.get("dimension")).resultOrPartial(Goety.LOGGER::error).orElse(Level.OVERWORLD));
+        } else {
+            soulEnergy.setArcaBlockDimension(Level.OVERWORLD);
         }
         if (tag.contains("grudgeList", 9)) {
             ListTag listtag = tag.getList("grudgeList", 11);

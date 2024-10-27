@@ -270,7 +270,7 @@
   "item.goety.dark_scroll": "闇のスクロール",
   "item.goety.undeath_potion": "変身のポーション",
   "item.goety.soul_ruby": "魂のルビー",
-  "item.goety.unholy_blood": "不浄の血",
+  "item.goety.unholy_blood": "反神聖な血",
   "item.goety.cursed_ingot": "呪われた鉄インゴット",
   "item.goety.dark_ingot": "ダークメタルインゴット",
   "item.goety.savage_tooth": "サベージトゥース",
@@ -2353,5 +2353,18 @@
   "commands.goety.misc.repair.held.failure": "保持しているアイテムは修理できません",
   "commands.goety.misc.repair.inventory.failure": "対象のインベントリに修理可能なアイテムはありません",
   "commands.goety.misc.heal.success.single": "%s の体力と満腹度を回復しました",
-  "commands.goety.misc.heal.success.multiple": "%s プレイヤーの体力と満腹度を回復しました"
+  "commands.goety.misc.heal.success.multiple": "%s プレイヤーの体力と満腹度を回復しました",
+  "item.goety.unholy_fabric": "反神聖な生地",
+  "item.goety.unholy_hat": "反神聖な帽子",
+  "item.goety.unholy_robe": "反神聖なローブ",
+  "item.goety.leeching_focus": "吸血のフォーカス",
+  "item.goety.leeching_focus.info": "術者の目の前のターゲットから体力を吸い上げます。",
+  "item.goety.fire_blast_focus": "ファイアブラストのフォーカス",
+  "item.goety.fire_blast_focus.info": "術者に地形を破壊しない激しい爆発を引き起こし、近くの味方以外のターゲットをノックバックして燃やし、ダメージを与えます。",
+  "info.goety.unholy_robe": "完全な火炎耐性を与えます。ネザーの術者がソウルエネルギーを使用して回復できるようにします。",
+  "info.goety.unholy_robe_discount": "ネザー呪文のソウルコストを半分にします。反神聖な帽子と一緒に着用すると、特定の火の呪文が地獄の炎のダメージを与えます。",
+  "info.goety.unholy_hat": "完全な火炎耐性を与えます。ネザーにいる間、受けるダメージが半分になります。ネザーの従者は持続します。",
+  "info.goety.unholy_hat_cast": "ネザー呪文の詠唱時間が半分になります。 反神聖なローブと一緒に着用すると、特定の火の呪文が地獄の炎のダメージを与えます。",
+  "death.attack.goety.lifeLeech": "%1$sは%2$sによって吸血された",
+  "death.attack.goety.lifeLeech.item": "%1$sは%2$sと%3$sによって体力を消耗した"
 }

@@ -105,7 +105,11 @@ public class LampBlock extends Block implements SimpleWaterloggedBlock {
         LevelAccessor iworld = pContext.getLevel();
         BlockPos blockpos = pContext.getClickedPos();
         boolean flag = iworld.getFluidState(blockpos).getType() == Fluids.WATER;
-        return this.defaultBlockState().setValue(WATERLOGGED, flag);
+        if (blockpos.getY() < iworld.getMaxBuildHeight() - 1 && iworld.getBlockState(blockpos.above()).canBeReplaced(pContext)) {
+            return this.defaultBlockState().setValue(WATERLOGGED, flag).setValue(HALF, DoubleBlockHalf.LOWER);
+        } else {
+            return null;
+        }
     }
 
     public boolean canSurvive(BlockState blockState, LevelReader level, BlockPos blockPos) {

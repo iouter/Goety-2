@@ -85,6 +85,9 @@ public class BurrowingLaserRenderer {
         Matrix4f positionMatrix = matrixstack$entry.pose();
 
         ColorUtil colorUtil = new ColorUtil(0xfff2d2);
+        if (WandUtil.getLevels(ModEnchantments.BURNING.get(), player) > 0){
+            colorUtil = new ColorUtil(0xff9166);
+        }
         //additive laser beam
         builder = buffer.getBuffer(ModRenderType.magicBeam(laserBeam));
         drawBeam(xOffset, yOffset, zOffset, builder, positionMatrix, matrixNormal, additiveThickness, activeHand, distance, 0.5F, 1, ticks, colorUtil.red(), colorUtil.green(), colorUtil.blue(), 0.7F);

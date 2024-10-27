@@ -41,6 +41,7 @@ import com.Polarice3.Goety.common.items.ModSpawnEggs;
 import com.Polarice3.Goety.common.network.ModNetwork;
 import com.Polarice3.Goety.common.ritual.ModRituals;
 import com.Polarice3.Goety.common.world.ModMobSpawnBiomeModifier;
+import com.Polarice3.Goety.common.world.placements.ModPlacementType;
 import com.Polarice3.Goety.common.world.processors.ModProcessors;
 import com.Polarice3.Goety.common.world.structures.ModStructureTypes;
 import com.Polarice3.Goety.compat.OtherModCompat;
@@ -138,6 +139,7 @@ public class Goety {
         ModLootModifier.GLOBAL_LOOT_MODIFIER.register(modEventBus);
         ModRituals.RITUALS.register(modEventBus);
         ModStructureTypes.STRUCTURE_TYPE.register(modEventBus);
+        ModPlacementType.STRUCTURE_PLACEMENT_TYPE.register(modEventBus);
         ModProcessors.STRUCTURE_PROCESSOR.register(modEventBus);
         ModCreativeTab.CREATIVE_MODE_TABS.register(modEventBus);
 

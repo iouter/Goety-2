@@ -84,10 +84,17 @@ public class ShockingSpell extends EverChargeSpell {
                 Vec3 vec31 = new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
                 ModNetwork.sendToALL(new SLightningPacket(vec3, vec31, 5));
                 if (target.hurt(ModDamageSource.directShock(entityLiving), damage)){
+                    float chainDamage = damage / 2.0F;
+                    if (worldIn.isThundering() && worldIn.isRainingAt(target.blockPosition())){
+                        chainDamage = damage;
+                    }
                     if (burning > 0){
                         if (worldIn.random.nextFloat() < 0.05F){
                             target.setSecondsOnFire(5 * burning);
                         }
+                    }
+                    if (staff){
+                        WandUtil.chainLightning(livingEntity, entityLiving, range / 4.0D, chainDamage, true);
                     }
                 }
                 worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.ZAP.get(), this.getSoundSource(), 1.0F, 1.0F);

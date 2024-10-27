@@ -9,10 +9,7 @@ import com.Polarice3.Goety.common.entities.hostile.servants.Malghast;
 import com.Polarice3.Goety.common.magic.SummonSpell;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
-import com.Polarice3.Goety.utils.BlockFinder;
-import com.Polarice3.Goety.utils.EffectsUtil;
-import com.Polarice3.Goety.utils.MobUtil;
-import com.Polarice3.Goety.utils.WandUtil;
+import com.Polarice3.Goety.utils.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -111,6 +108,9 @@ public class GhastSpell extends SummonSpell {
                 Malghast ghast = new MiniGhast(ModEntityType.MINI_GHAST.get(), worldIn);
                 if (this.NetherPower(entityLiving)){
                     ghast = new GhastServant(ModEntityType.GHAST_SERVANT.get(), worldIn);
+                    if (CuriosFinder.hasUnholySet(entityLiving)){
+                        ghast = new Malghast(ModEntityType.MALGHAST.get(), worldIn);
+                    }
                     blockpos = BlockFinder.SummonFlyingRadius(entityLiving.blockPosition().above(2), ghast, worldIn, 12);
                 }
                 ghast.setTrueOwner(entityLiving);

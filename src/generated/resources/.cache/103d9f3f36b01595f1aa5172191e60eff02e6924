@@ -1,4 +1,4 @@
-// 1.20.1	2024-07-29T16:34:43.9492969	Registries
+// 1.20.1	2024-10-22T16:19:02.3155284	Registries
 1c81619d690aa854535c8fad68b58aef03da65ab data/goety/damage_type/boiling.json
 6c769217837e51b72b3a876816a01dfd388da08b data/goety/damage_type/choke.json
 564a695e0c8fec48db39c5750c199f12645b4e43 data/goety/damage_type/direct_freeze.json
@@ -12,6 +12,7 @@ cdbfbb1c8a48d8789e2d70aca318c3081eb06cb0 data/goety/damage_type/ice_spike.json
 cdbfbb1c8a48d8789e2d70aca318c3081eb06cb0 data/goety/damage_type/indirect_freeze.json
 b25b4307d28c0d071c679a3d5c4c6dd1efe07665 data/goety/damage_type/indirect_hellfire.json
 9c519dac81d373b4dcc0e819b45f4b1d8e0359c7 data/goety/damage_type/indirect_shock.json
+a0551b237c8976d138a2b0974f8b8ad3edce8e61 data/goety/damage_type/life_leech.json
 3ee3140bd5138e8e21a74f96cb2cc8dbf265d131 data/goety/damage_type/magic_bolt.json
 7ec7c63d33e38e3aea9083b6fc4853268a50c767 data/goety/damage_type/magic_fire.json
 15c56b61b36543013283e5cf4138f34bc5b10a6c data/goety/damage_type/magic_fireball.json

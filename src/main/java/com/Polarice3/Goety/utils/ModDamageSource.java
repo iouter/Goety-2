@@ -44,6 +44,7 @@ public class ModDamageSource extends DamageSource {
     public static ResourceKey<DamageType> FROST_BREATH = create("frost_breath");
     public static ResourceKey<DamageType> MAGIC_BOLT = create("magic_bolt");
     public static ResourceKey<DamageType> SOUL_LEECH = create("soul_leech");
+    public static ResourceKey<DamageType> LIFE_LEECH = create("life_leech");
     public static ResourceKey<DamageType> SPIKE = create("spike");
     public static ResourceKey<DamageType> BOILING = create("boiling");
     public static ResourceKey<DamageType> PHOBIA = create("phobia");
@@ -200,6 +201,10 @@ public class ModDamageSource extends DamageSource {
         return noKnockbackDamageSource(pSource.level, SOUL_LEECH, pSource, pIndirectEntity);
     }
 
+    public static DamageSource lifeLeech(Entity pSource, @Nullable Entity pIndirectEntity){
+        return noKnockbackDamageSource(pSource.level, LIFE_LEECH, pSource, pIndirectEntity);
+    }
+
     public static DamageSource choke(Entity pSource, @Nullable Entity pIndirectEntity) {
         return noKnockbackDamageSource(pSource.level, CHOKE, pSource, pIndirectEntity);
     }
@@ -257,6 +262,7 @@ public class ModDamageSource extends DamageSource {
         context.register(FROST_BREATH, new DamageType("goety.frostBreath", 0.0F, DamageEffects.FREEZING));
         context.register(MAGIC_BOLT, new DamageType("indirectMagic", 0.0F));
         context.register(SOUL_LEECH, new DamageType("goety.soulLeech", 0.0F));
+        context.register(LIFE_LEECH, new DamageType("goety.lifeLeech", 0.0F));
         context.register(SPIKE, new DamageType("goety.spike", 0.0F, DamageEffects.POKING));
         context.register(BOILING, new DamageType("goety.boiling", 0.0F, DamageEffects.BURNING));
         context.register(PHOBIA, new DamageType("goety.phobia", 0.0F));

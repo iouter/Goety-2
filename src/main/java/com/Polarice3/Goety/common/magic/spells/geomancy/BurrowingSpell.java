@@ -153,6 +153,11 @@ public class BurrowingSpell extends EverChargeSpell {
                 }
                 if (SEHelper.getMiningProgress(player) >= hardness){
                     ItemStack tempTool = new ItemStack(Items.IRON_PICKAXE);
+                    if (miningLevel == 3){
+                        tempTool = new ItemStack(Items.DIAMOND_PICKAXE);
+                    } else if (miningLevel > 3){
+                        tempTool = new ItemStack(Items.NETHERITE_PICKAXE);
+                    }
                     int silk = WandUtil.getLevels(Enchantments.SILK_TOUCH, player);
                     int fortune = WandUtil.getLevels(Enchantments.BLOCK_FORTUNE, player);
 

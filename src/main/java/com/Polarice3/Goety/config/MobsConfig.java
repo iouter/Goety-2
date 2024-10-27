@@ -520,8 +520,8 @@ public class MobsConfig {
                 .defineInRange("villagerHateSpells", 0, 0, Integer.MAX_VALUE);
         VillagerConvertWarlock = BUILDER.comment("Villagers have a chance of converting into Warlocks if they're underneath a Block of Crying Obsidian, Default: true")
                 .define("villagerConvertToWarlock", true);
-        VillagerConvertHeretic = BUILDER.comment("Villagers have a chance of converting into Heretics if they're near an active Nether Portal, Default: true")
-                .define("villagerConvertToHeretic", true);
+        VillagerConvertHeretic = BUILDER.comment("Villagers have a chance of converting into Heretics if they're near an active Nether Portal, Default: false")
+                .define("villagerConvertToHeretic", false);
         TraderConvertMaverick = BUILDER.comment("Wandering Traders transforms into Mavericks when struck by lightning, Default: true")
                 .define("traderConvertMaverick", true);
         BUILDER.pop();

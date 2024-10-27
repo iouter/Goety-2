@@ -850,6 +850,20 @@ public class MobUtil {
         }
     }
 
+    public static boolean hasLineOfSight(Entity looker, Entity target) {
+        if (target.level != looker.level) {
+            return false;
+        } else {
+            Vec3 vec3 = new Vec3(looker.getX(), looker.getEyeY(), looker.getZ());
+            Vec3 vec31 = new Vec3(target.getX(), target.getEyeY(), target.getZ());
+            if (vec31.distanceTo(vec3) > 128.0D) {
+                return false;
+            } else {
+                return looker.level.clip(new ClipContext(vec3, vec31, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, looker)).getType() == HitResult.Type.MISS;
+            }
+        }
+    }
+
     public static boolean isPushed(LivingEntity livingEntity){
         List<Entity> list = livingEntity.level.getEntities(livingEntity, livingEntity.getBoundingBox(), EntitySelector.pushableBy(livingEntity));
         return !list.isEmpty() && livingEntity.isPushable();
@@ -1007,7 +1021,7 @@ public class MobUtil {
     }
 
     public static boolean canAttack(LivingEntity attacker, LivingEntity target){
-        return !attacker.isAlliedTo(target) && !target.isAlliedTo(attacker) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(target) && attacker.canAttack(target);
+        return !areAllies(attacker, target) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(target) && attacker.canAttack(target);
     }
 
     public static boolean mobCanAttack(Mob attacker, LivingEntity target){
@@ -1302,6 +1316,7 @@ public class MobUtil {
                     && !(CuriosFinder.validFrostMob(target) && owner != null && CuriosFinder.neutralFrostSet(owner))
                     && !(CuriosFinder.validWildMob(target) && owner != null && CuriosFinder.neutralWildSet(owner))
                     && !(CuriosFinder.validNetherMob(target) && owner != null && CuriosFinder.neutralNetherSet(owner))
+                    && !(target.getMobType() == MobType.ARTHROPOD && owner != null && CuriosFinder.hasWarlockRobe(owner))
                     && !(target instanceof Creeper && target.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && MobsConfig.MinionsAttackCreepers.get())
                     && !(target instanceof NeutralMob neutralMob && ((owner != null && neutralMob.getTarget() != owner) || neutralMob.getTarget() != attacker))
                     && !(target instanceof IOwned ownedTarget && (owner != null && ownedTarget.getTrueOwner() == owner))

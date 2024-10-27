@@ -90,11 +90,16 @@ public class ThunderboltSpell extends Spell {
                 ModNetwork.sendToALL(new SThunderBoltPacket(vec3, vec31, 10));
                 if (target.hurt(ModDamageSource.directShock(entityLiving), damage)){
                     float chance = rightStaff(staff) ? 0.25F : 0.05F;
+                    float chainDamage = damage / 2.0F;
                     if (worldIn.isThundering() && worldIn.isRainingAt(target.blockPosition())){
                         chance += 0.25F;
+                        chainDamage = damage;
                     }
                     if (worldIn.random.nextFloat() <= chance){
                         livingEntity.addEffect(new MobEffectInstance(GoetyEffects.SPASMS.get(), MathHelper.secondsToTicks(5)));
+                    }
+                    if (rightStaff(staff)){
+                        WandUtil.chainLightning(livingEntity, entityLiving, range / 4.0D, chainDamage);
                     }
                 }
                 worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.THUNDERBOLT.get(), this.getSoundSource(), 1.0F, 1.0F);

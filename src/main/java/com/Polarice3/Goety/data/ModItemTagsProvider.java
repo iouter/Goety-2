@@ -47,7 +47,8 @@ public class ModItemTagsProvider extends IntrinsicHolderTagsProvider<Item> {
                 ModItems.WARLOCK_ROBE.get(),
                 ModItems.WARLOCK_ROBE_DARK.get(),
                 ModItems.NETHER_ROBE.get(),
-                ModItems.NETHER_ROBE_WARPED.get()).replace(false);
+                ModItems.NETHER_ROBE_WARPED.get(),
+                ModItems.UNHOLY_HAT.get()).replace(false);
         this.tag(ModTags.Items.CAPES).add(ModItems.NECRO_CAPE.get(),
                 ModItems.NAMELESS_CAPE.get()).replace(false);
         this.tag(ModTags.Items.CROWNS).add(ModItems.NECRO_CROWN.get(),

@@ -1,0 +1,29 @@
+{
+  "name": "不洁长袍",
+  "icon": "goety:unholy_robe",
+  "category": "goety:crafts/garment",
+  "advancement": "goety:goety/kill_a_apostle",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "用黑暗使者的血，你成功复刻了他们的衣服。长袍使你再也不惧怕火焰的灼热或是灵魂的灼烧，长袍和帽子一并搭配时可以解锁一些狱火法术."
+    },
+    {
+      "type": "goety:ritual",
+      "recipe": "goety:unholy_fabric"
+    },
+    {
+      "type": "goety:ritual",
+      "recipe": "goety:unholy_robe"
+    },
+    {
+      "type": "goety:ritual",
+      "recipe": "goety:unholy_hat"
+    }
+  ],
+  "extra_recipe_mappings": {
+    "goety:unholy_fabric": 1,
+    "goety:unholy_robe": 2,
+    "goety:unholy_hat": 3
+  }
+}

@@ -62,6 +62,7 @@ import com.Polarice3.Goety.compat.patchouli.PatchouliLoaded;
 import com.Polarice3.Goety.config.ItemConfig;
 import com.Polarice3.Goety.config.MainConfig;
 import com.Polarice3.Goety.config.MobsConfig;
+import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModMobType;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.init.ModTags;
@@ -1343,6 +1344,12 @@ public class ModEvents {
         }
         if (event.getAmount() > 0.0F){
             float damageAmount = event.getAmount();
+            if (event.getSource().is(ModDamageSource.LIFE_LEECH)
+                    && event.getSource() instanceof NoKnockBackDamageSource damageSource
+                    && damageSource.getOwner() instanceof LivingEntity livingEntity){
+                float percent = SpellConfig.LeechingPercent.get() / 100.0F;
+                livingEntity.heal(event.getAmount() * percent);
+            }
             if (target.isInWaterOrRain()){
                 if (ModDamageSource.shockAttacks(event.getSource())){
                     event.setAmount(damageAmount * 1.5F);

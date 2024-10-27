@@ -44,9 +44,9 @@ public class RedstoneMonstrosityModel<T extends LivingEntity & IRM> extends Hier
 		PartDefinition left_horn = top.addOrReplaceChild("left_horn", CubeListBuilder.create().texOffs(446, 0).addBox(-12.75F, 0.5F, -6.5F, 20.0F, 13.0F, 13.0F, new CubeDeformation(0.0F))
 				.texOffs(306, 0).addBox(-1.75F, -14.5F, -6.5F, 9.0F, 15.0F, 13.0F, new CubeDeformation(0.0F)), PartPose.offset(26.75F, -23.5F, -8.5F));
 
-		PartDefinition eyes = top.addOrReplaceChild("eyes", CubeListBuilder.create().texOffs(0, 14).addBox(-14.0F, -6.0F, -20.5F, 4.0F, 4.0F, 0.0F, new CubeDeformation(0.0F))
-				.texOffs(0, 14).addBox(10.25F, -6.0F, -20.5F, 4.0F, 4.0F, 0.0F, new CubeDeformation(0.0F))
-				.texOffs(0, 18).addBox(-2.0F, -9.0F, -20.5F, 6.0F, 3.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition eyes = top.addOrReplaceChild("eyes", CubeListBuilder.create().texOffs(0, 14).addBox(-14.0F, -4.0F, 0.0F, 4.0F, 4.0F, 0.0F, new CubeDeformation(0.0F))
+				.texOffs(0, 14).addBox(10.25F, -4.0F, 0.0F, 4.0F, 4.0F, 0.0F, new CubeDeformation(0.0F))
+				.texOffs(0, 18).addBox(-2.0F, -7.0F, 0.0F, 6.0F, 3.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -2.0F, -20.5F));
 
 		PartDefinition bottom = head.addOrReplaceChild("bottom", CubeListBuilder.create().texOffs(98, 0).addBox(-14.0F, 0.0F, -20.0F, 28.0F, 10.0F, 21.0F, new CubeDeformation(0.0F))
 				.texOffs(77, 31).addBox(-14.0F, 7.0F, -20.0F, 28.0F, 0.0F, 21.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, -1.0F));
@@ -109,7 +109,6 @@ public class RedstoneMonstrosityModel<T extends LivingEntity & IRM> extends Hier
 			this.animate(redstoneMonstrosity.toStandAnimationState, RedstoneMonstrosityAnimations.TO_STAND, ageInTicks);
 			this.animate(redstoneMonstrosity.belchAnimationState, RedstoneMonstrosityAnimations.SPIT, ageInTicks);
 			this.animate(redstoneMonstrosity.deathAnimationState, RedstoneMonstrosityAnimations.DEATH, ageInTicks);
-			this.eyes.visible = redstoneMonstrosity.deathTime < 24;
 		} else if (entity instanceof HostileRedstoneMonstrosity redstoneMonstrosity){
 			this.animate(redstoneMonstrosity.activateAnimationState, RedstoneMonstrosityAnimations.ACTIVATE, ageInTicks);
 			this.animate(redstoneMonstrosity.idleAnimationState, RedstoneMonstrosityAnimations.IDLE, ageInTicks);
@@ -117,7 +116,6 @@ public class RedstoneMonstrosityModel<T extends LivingEntity & IRM> extends Hier
 			this.animate(redstoneMonstrosity.summonAnimationState, RedstoneMonstrosityAnimations.SUMMON, ageInTicks);
 			this.animate(redstoneMonstrosity.belchAnimationState, RedstoneMonstrosityAnimations.SPIT, ageInTicks);
 			this.animate(redstoneMonstrosity.deathAnimationState, RedstoneMonstrosityAnimations.DEATH, ageInTicks);
-			this.eyes.visible = redstoneMonstrosity.deathTime < 24;
 		}
 	}
 

@@ -83,11 +83,16 @@ public class DischargeSpell extends Spell {
                 if (target instanceof LivingEntity target1){
                     super.explodeHurt(target, damageSource, x, y, z, seen, actualDamage);
                     float chance = rightStaff(staff) ? 0.25F : 0.05F;
+                    float chainDamage = actualDamage / 2.0F;
                     if (worldIn.isThundering() && worldIn.isRainingAt(target1.blockPosition())){
                         chance += 0.25F;
+                        chainDamage = actualDamage;
                     }
                     if (worldIn.random.nextFloat() <= chance){
                         target1.addEffect(new MobEffectInstance(GoetyEffects.SPASMS.get(), MathHelper.secondsToTicks(5)));
+                    }
+                    if (rightStaff(staff)){
+                        WandUtil.chainLightning(target1, entityLiving, 6.0D, chainDamage);
                     }
                 }
             }

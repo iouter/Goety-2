@@ -314,7 +314,7 @@ public class Conquillager extends HuntingIllagerEntity implements CrossbowAttack
             if (livingentity != null) {
                 boolean flag = this.mob.getSensing().hasLineOfSight(livingentity);
                 boolean flag1 = this.seeTime > 0;
-                boolean noRaiders = livingentity.level.getEntitiesOfClass(Raider.class, livingentity.getBoundingBox().inflate(5.0D), (entity) -> entity != this.mob && !(entity instanceof Tormentor)).isEmpty();
+                boolean noRaiders = livingentity.level.getEntitiesOfClass(Raider.class, livingentity.getBoundingBox().inflate(5.0D), (entity) -> entity != this.mob && this.mob.hasLineOfSight(entity) && !(entity instanceof Tormentor)).isEmpty();
                 if (flag != flag1) {
                     this.seeTime = 0;
                 }

@@ -461,6 +461,10 @@ public class HostileRedstoneMonstrosity extends HostileGolem implements IRM {
         super.actuallyHurt(source, amount);
     }
 
+    public int getDeathTime(){
+        return this.deathTime;
+    }
+
     protected void tickDeath() {
         ++this.deathTime;
         if (this.deathTime >= MathHelper.secondsToTicks(5)) {

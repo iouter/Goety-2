@@ -63,6 +63,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -370,6 +371,7 @@ public class Crone extends Cultist implements RangedAttackMob {
 
     public void performRangedAttack(LivingEntity target, float p_34144_) {
         if (!this.isDrinkingPotion()) {
+            boolean grief = ForgeEventFactory.getMobGriefingEvent(this.level, this);
             Vec3 vec3 = target.getDeltaMovement();
             double d0 = target.getX() + vec3.x - this.getX();
             double d1 = target.getEyeY() - (double)1.1F - this.getY();
@@ -395,10 +397,10 @@ public class Crone extends Cultist implements RangedAttackMob {
                 this.setTarget(null);
             } else if (d3 >= 8.0D && !target.hasEffect(MobEffects.MOVEMENT_SLOWDOWN)) {
                 mobEffectInstance.add(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 1800 / (amp + 1), amp));
-                if (this.random.nextFloat() <= 0.25F && target.onGround()){
+                if (this.random.nextFloat() <= 0.25F && target.onGround() && grief){
                     brewEffectInstance.add(new BrewEffectInstance(new SweetBerriedEffect(), 1, amp));
                 }
-                if (this.random.nextFloat() <= 0.25F && this.noBrewMinions(target)){
+                if (this.random.nextFloat() <= 0.25F && this.noBrewMinions(target) && grief){
                     brewEffectInstance.add(new BrewEffectInstance(new WebbedBrewEffect(0, 0), 1, amp));
                 } else if (this.random.nextFloat() <= 0.5F){
                     if (this.random.nextBoolean()) {
@@ -443,7 +445,7 @@ public class Crone extends Cultist implements RangedAttackMob {
                 if (this.random.nextFloat() <= 0.05F){
                     brewEffectInstance.add(new BrewEffectInstance(new StripBrewEffect(0, 0)));
                 } else if (this.random.nextFloat() <= 0.25F && (target.onGround() || (!target.hasEffect(MobEffects.LEVITATION) && !target.hasEffect(GoetyEffects.PLUNGE.get())))){
-                    if (target.onGround()) {
+                    if (target.onGround() && grief) {
                         brewEffectInstance.add(new BrewEffectInstance(new ThornTrapBrewEffect(0), 1, amp));
                     } else if (!target.hasEffect(MobEffects.LEVITATION) && !target.hasEffect(GoetyEffects.PLUNGE.get())){
                         mobEffectInstance.add(new MobEffectInstance(GoetyEffects.PLUNGE.get(), 900 / (amp + 1), amp));

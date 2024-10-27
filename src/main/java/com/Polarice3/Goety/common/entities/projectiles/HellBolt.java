@@ -45,6 +45,7 @@ public class HellBolt extends WaterHurtingProjectile {
         map.put(1, Goety.location("textures/entity/projectiles/hell_bolt/bolt_2.png"));
         map.put(2, Goety.location("textures/entity/projectiles/hell_bolt/bolt_3.png"));
     });
+    public static final EntityDataAccessor<Integer> DATA_FIERY = SynchedEntityData.defineId(HellBolt.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Float> DATA_DAMAGE = SynchedEntityData.defineId(HellBolt.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Boolean> RAIN = SynchedEntityData.defineId(HellBolt.class, EntityDataSerializers.BOOLEAN);
 
@@ -64,6 +65,7 @@ public class HellBolt extends WaterHurtingProjectile {
         super.defineSynchedData();
         this.entityData.define(DATA_DAMAGE, 5.0F);
         this.entityData.define(DATA_TYPE_ID, 0);
+        this.entityData.define(DATA_FIERY, 0);
         this.entityData.define(RAIN, false);
     }
 
@@ -97,6 +99,14 @@ public class HellBolt extends WaterHurtingProjectile {
         this.entityData.set(DATA_DAMAGE, pDamage);
     }
 
+    public int getFiery() {
+        return this.entityData.get(DATA_FIERY);
+    }
+
+    public void setFiery(int fiery) {
+        this.entityData.set(DATA_FIERY, fiery);
+    }
+
     protected void onHitEntity(EntityHitResult pResult) {
         super.onHitEntity(pResult);
         if (!this.level.isClientSide) {
@@ -104,6 +114,7 @@ public class HellBolt extends WaterHurtingProjectile {
             Entity entity1 = this.getOwner();
             float enchantment = 0;
             float damage = 5.0F;
+            int flaming = this.getFiery();
             if (entity1 instanceof Player player){
                 if (WandUtil.enchantedFocus(player)){
                     enchantment = WandUtil.getLevels(ModEnchantments.POTENCY.get(), player);
@@ -112,7 +123,15 @@ public class HellBolt extends WaterHurtingProjectile {
             } else if (entity1 instanceof LivingEntity) {
                 damage = this.getDamage();
             }
-            entity.hurt(ModDamageSource.hellfire(this, entity1), damage + enchantment);
+            int i = 0;
+            if (flaming > 0){
+                i = entity.getRemainingFireTicks() + (flaming - 1);
+                entity.setSecondsOnFire(5 * flaming);
+            }
+            boolean flag = entity.hurt(ModDamageSource.hellfire(this, entity1), damage + enchantment);
+            if (!flag) {
+                entity.setRemainingFireTicks(i);
+            }
             if (entity1 instanceof LivingEntity) {
                 this.doEnchantDamageEffects((LivingEntity)entity1, entity);
             }
@@ -184,6 +203,7 @@ public class HellBolt extends WaterHurtingProjectile {
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putInt("Animation", this.getAnimation());
+        pCompound.putInt("Fiery", this.getFiery());
         pCompound.putFloat("Damage", this.getDamage());
         pCompound.putBoolean("Rain", this.isRain());
     }
@@ -191,6 +211,9 @@ public class HellBolt extends WaterHurtingProjectile {
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.setAnimation(pCompound.getInt("Animation"));
+        if (pCompound.contains("Fiery")) {
+            this.setFiery(pCompound.getInt("Fiery"));
+        }
         if (pCompound.contains("Damage")) {
             this.setDamage(pCompound.getFloat("Damage"));
         }

@@ -114,6 +114,10 @@ public class SingleStackItem extends Item implements ICurioItem {
                 tooltip.add(Component.translatable("info.goety.nether_crown").withStyle(main));
                 tooltip.add(Component.translatable("info.goety.nether_crown_cast").withStyle(secondary));
             }
+            if (stack.getItem() instanceof UnholyHatItem){
+                tooltip.add(Component.translatable("info.goety.unholy_hat").withStyle(main));
+                tooltip.add(Component.translatable("info.goety.unholy_hat_cast").withStyle(secondary));
+            }
             if (stack.getItem() instanceof NecroGarbs.NecroCapeItem capeItem) {
                 tooltip.add(Component.translatable("info.goety.necro_cape").withStyle(main));
                 tooltip.add(Component.translatable("info.goety.necro_cape_power").withStyle(secondary));
@@ -171,6 +175,10 @@ public class SingleStackItem extends Item implements ICurioItem {
                     tooltip.add(Component.translatable("info.goety.nether_robe", ItemConfig.NetherRobeResistance.get()).withStyle(main));
                 }
                 tooltip.add(Component.translatable("info.goety.nether_robe_discount").withStyle(secondary));
+            }
+            if (stack.getItem() instanceof UnholyRobeItem) {
+                tooltip.add(Component.translatable("info.goety.unholy_robe").withStyle(main));
+                tooltip.add(Component.translatable("info.goety.unholy_robe_discount").withStyle(secondary));
             }
             if (stack.is(ModItems.RING_OF_WANT.get())){
                 tooltip.add(Component.translatable("info.goety.ring_of_want").withStyle(secondary));

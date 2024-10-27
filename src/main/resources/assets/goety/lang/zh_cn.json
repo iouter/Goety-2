@@ -2413,5 +2413,19 @@
   "commands.goety.misc.repair.held.failure": "手持物品不可修复",
   "commands.goety.misc.repair.inventory.failure": "目标背包中无可修复的物品",
   "commands.goety.misc.heal.success.single": "恢复了%s的生命值和饱食度",
-  "commands.goety.misc.heal.success.multiple": "恢复了%s个玩家的生命值和饱食度"
+  "commands.goety.misc.heal.success.multiple": "恢复了%s个玩家的生命值和饱食度",
+  "item.goety.unholy_fabric": "不洁布料",
+  "item.goety.unholy_hat": "不洁圣冠",
+  "item.goety.unholy_robe": "不洁长袍",
+  "item.goety.leeching_focus": "水蛭聚晶",
+  "item.goety.leeching_focus.info": "允许施法者吸取目标实体的生命值。",
+  "item.goety.fire_blast_focus": "炎爆聚晶",
+  "item.goety.fire_blast_focus.info": "允许施法者召唤非破坏性的炎爆陷阱，伤害并且击退点燃非友军实体。",
+  "info.goety.unholy_robe": "给予防火能力，并且允许下界仆从使用灵魂能量治愈自己。",
+  "info.goety.unholy_robe_discount": "减半下界法术的灵魂消耗，与帽子搭配可以使某些火焰法术造成狱火伤害。",
+  "info.goety.unholy_hat": "给予防火能力，玩家处于下界时将会减半所受伤害，下界仆从将会永续存在。",
+  "info.goety.unholy_hat_cast": "减半下界法术的灵魂消耗，与不洁长袍搭配可以使某些火焰法术造成狱火伤害。",
+  "subtitle.goety.burrow_spell": "挖掘",
+  "death.attack.goety.lifeLeech": "%1$s的生命被%2$s吞噬了",
+  "death.attack.goety.lifeLeech.item": "%1$s被%2$s用%3$s吞噬了"
 }

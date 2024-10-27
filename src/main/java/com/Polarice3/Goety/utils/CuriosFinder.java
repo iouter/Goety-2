@@ -170,11 +170,11 @@ public class CuriosFinder {
     }
 
     public static boolean hasUnholyRobe(LivingEntity livingEntity){
-        return false;
+        return hasCurio(livingEntity, (itemStack -> itemStack.getItem() instanceof UnholyRobeItem));
     }
 
     public static boolean hasUnholyHat(LivingEntity livingEntity){
-        return false;
+        return hasCurio(livingEntity, item -> item.getItem() instanceof UnholyHatItem);
     }
 
     public static boolean hasUnholySet(LivingEntity livingEntity){

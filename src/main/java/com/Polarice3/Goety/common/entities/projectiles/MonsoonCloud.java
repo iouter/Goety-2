@@ -9,6 +9,7 @@ import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.BlockFinder;
 import com.Polarice3.Goety.utils.MathHelper;
 import com.Polarice3.Goety.utils.ModDamageSource;
+import com.Polarice3.Goety.utils.WandUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -75,11 +76,16 @@ public class MonsoonCloud extends AbstractSpellCloud{
                         ModNetwork.sendToALL(new SThunderBoltPacket(vec3, vec31, 10));
                         if (livingEntity.hurt(ModDamageSource.indirectShock(this, this.getOwner()), damage)) {
                             float chance = this.isStaff() ? 0.25F : 0.05F;
+                            float chainDamage = damage / 2.0F;
                             if (serverLevel.isThundering() && serverLevel.isRainingAt(livingEntity.blockPosition())){
                                 chance += 0.25F;
+                                chainDamage = damage;
                             }
                             if (serverLevel.random.nextFloat() <= chance){
                                 livingEntity.addEffect(new MobEffectInstance(GoetyEffects.SPASMS.get(), MathHelper.secondsToTicks(5)));
+                            }
+                            if (this.staff){
+                                WandUtil.chainLightning(livingEntity, this.getOwner() != null ? this.getOwner() : null, 6.0D, chainDamage);
                             }
                         }
                         serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(), ModSounds.THUNDERBOLT.get(), this.getSoundSource(), 1.0F, 1.0F);

@@ -552,6 +552,10 @@ public class RedstoneMonstrosity extends AbstractGolemServant implements PlayerR
         super.actuallyHurt(source, amount);
     }
 
+    public int getDeathTime(){
+        return this.deathTime;
+    }
+
     protected void tickDeath() {
         ++this.deathTime;
         if (this.deathTime >= MathHelper.secondsToTicks(5)) {

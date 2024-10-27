@@ -87,4 +87,15 @@ public abstract class EntityMixin {
             }
         }
     }
+
+    @Inject(method = "fireImmune", at = @At("HEAD"), cancellable = true)
+    public void fireImmune(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+        Entity entity = (Entity) (Object) this;
+        if (entity instanceof LivingEntity livingEntity){
+            if (CuriosFinder.hasUnholyHat(livingEntity) || CuriosFinder.hasUnholyRobe(livingEntity)){
+                callbackInfoReturnable.setReturnValue(true);
+            }
+        }
+    }
+
 }

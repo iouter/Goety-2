@@ -5,11 +5,14 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "风暴和闪电的力量都蕴含其中。有了它，风暴法术不再受避雷针的影响。"
+      "text": "风暴和闪电的力量就在这支魔杖中。有了它，风暴法术不再受避雷针的影响，你还可以将闪电连锁到多个怪物上。"
     },
     {
       "type": "goety:ritual",
       "recipe": "goety:storm_staff"
     }
-  ]
+  ],
+  "extra_recipe_mappings": {
+    "goety:storm_staff": 1
+  }
 }

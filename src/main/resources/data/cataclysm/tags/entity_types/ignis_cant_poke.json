@@ -5,6 +5,8 @@
     "goety:vizier",
     "goety:slime_servant",
     "goety:magma_cube_servant",
+    "goety:crypt_slime_servant",
+    "goety:crypt_slime",
     "goety:redstone_golem",
     "goety:hostile_redstone_golem",
     "goety:grave_golem",

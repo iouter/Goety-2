@@ -321,6 +321,7 @@ public class ClientInitEvents {
         event.registerLayerDefinition(ModModelLayer.GRAND_TURBAN, DarkHatModel::createGrandTurbanLayer);
         event.registerLayerDefinition(ModModelLayer.WITCH_HAT, WitchHatModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.CRONE_HAT, WitchHatModel::createCroneLayer);
+        event.registerLayerDefinition(ModModelLayer.UNHOLY_HAT, UnholyHatModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.IRON_CROWN, DarkHatModel::createIronCrownLayer);
         event.registerLayerDefinition(ModModelLayer.DARK_ROBE, DarkRobeModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.NECRO_CROWN, NecroCapeModel::createHeadLayer);

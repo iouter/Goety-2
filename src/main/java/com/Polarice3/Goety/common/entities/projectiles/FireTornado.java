@@ -6,6 +6,7 @@ import com.Polarice3.Goety.common.entities.boss.Apostle;
 import com.Polarice3.Goety.common.entities.neutral.AbstractHauntedArmor;
 import com.Polarice3.Goety.config.AttributesConfig;
 import com.Polarice3.Goety.init.ModSounds;
+import com.Polarice3.Goety.utils.CuriosFinder;
 import com.Polarice3.Goety.utils.MathHelper;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -79,7 +80,7 @@ public class FireTornado extends AbstractCyclone {
 
     public void hurtMobs(LivingEntity living){
         if (this.getTrueOwner() != null) {
-            if (this.getTrueOwner() instanceof Apostle) {
+            if (this.getTrueOwner() instanceof Apostle || CuriosFinder.hasUnholySet(this.getTrueOwner())) {
                 if (living.hurt(this.damageSources().indirectMagic(this, this.getTrueOwner()), AttributesConfig.ApostleMagicDamage.get().floatValue() / 1.5F)){
                     living.addEffect(new MobEffectInstance(GoetyEffects.BURN_HEX.get(), 1200));
                 }

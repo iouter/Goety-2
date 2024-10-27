@@ -38,6 +38,8 @@ import org.joml.Vector3f;
 
 public class HellBlast extends WaterHurtingProjectile {
     private static final EntityDataAccessor<Integer> DATA_TYPE_ID = SynchedEntityData.defineId(HellBlast.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> DATA_FIERY = SynchedEntityData.defineId(HellBlast.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(HellBlast.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Float> DATA_DAMAGE = SynchedEntityData.defineId(HellBlast.class, EntityDataSerializers.FLOAT);
 
     public HellBlast(EntityType<? extends HellBlast> p_i50160_1_, Level p_i50160_2_) {
@@ -56,7 +58,9 @@ public class HellBlast extends WaterHurtingProjectile {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_DAMAGE, 5.0F);
+        this.entityData.define(DATA_RADIUS, 1.5F);
         this.entityData.define(DATA_TYPE_ID, 0);
+        this.entityData.define(DATA_FIERY, 0);
     }
 
     public void tick() {
@@ -87,6 +91,22 @@ public class HellBlast extends WaterHurtingProjectile {
 
     public void setDamage(float pDamage) {
         this.entityData.set(DATA_DAMAGE, pDamage);
+    }
+
+    public float getRadius() {
+        return this.entityData.get(DATA_RADIUS);
+    }
+
+    public void setRadius(float pRadius) {
+        this.entityData.set(DATA_RADIUS, pRadius);
+    }
+
+    public int getFiery() {
+        return this.entityData.get(DATA_FIERY);
+    }
+
+    public void setFiery(int fiery) {
+        this.entityData.set(DATA_FIERY, fiery);
     }
 
     protected void onHitEntity(EntityHitResult pResult) {
@@ -136,7 +156,17 @@ public class HellBlast extends WaterHurtingProjectile {
                     }
                 }
             }
-            MobUtil.explosionDamage(this.level, this.getOwner() != null ? this.getOwner() : this, ModDamageSource.hellfire(this, this.getOwner()), vec3.x, vec3.y, vec3.z, 1.5F, 0);
+            new SpellExplosion(this.level, this.getOwner() != null ? this.getOwner() : this, ModDamageSource.hellfire(this, this.getOwner()), vec3.x, vec3.y, vec3.z, this.getRadius(), 0){
+                @Override
+                public void explodeHurt(Entity target, DamageSource damageSource, double x, double y, double z, double seen, float actualDamage) {
+                    super.explodeHurt(target, damageSource, x, y, z, seen, actualDamage);
+                    if (damageSource.getDirectEntity() instanceof HellBlast hellBlast){
+                        if (hellBlast.getFiery() > 0){
+                            entity.setSecondsOnFire(5 * hellBlast.getFiery());
+                        }
+                    }
+                }
+            };
             if (this.level instanceof ServerLevel serverLevel){
                 ServerParticleUtil.addParticlesAroundSelf(serverLevel, ModParticleTypes.BIG_FIRE.get(), this);
                 ColorUtil colorUtil = new ColorUtil(0xdd9c16);
@@ -145,9 +175,9 @@ public class HellBlast extends WaterHurtingProjectile {
                 DustCloudParticleOption cloudParticleOptions = new DustCloudParticleOption(new Vector3f(Vec3.fromRGB24(0x7a6664).toVector3f()), 1.0F);
                 DustCloudParticleOption cloudParticleOptions2 = new DustCloudParticleOption(new Vector3f(Vec3.fromRGB24(0xeca294).toVector3f()), 1.0F);
                 for (int i = 0; i < 2; ++i) {
-                    ServerParticleUtil.circularParticles(serverLevel, cloudParticleOptions, vec3.x, this.getY() + 0.25D, vec3.z, 0, 0.14D, 0, 3.0F);
+                    ServerParticleUtil.circularParticles(serverLevel, cloudParticleOptions, vec3.x, this.getY() + 0.25D, vec3.z, 0, 0.14D, 0, this.getRadius() * 2);
                 }
-                ServerParticleUtil.circularParticles(serverLevel, cloudParticleOptions2, vec3.x, this.getY() + 0.25D, vec3.z, 0, 0.14D, 0, 3.0F);
+                ServerParticleUtil.circularParticles(serverLevel, cloudParticleOptions2, vec3.x, this.getY() + 0.25D, vec3.z, 0, 0.14D, 0, this.getRadius() * 2);
             }
             this.playSound(SoundEvents.GENERIC_EXPLODE, 4.0F, 1.0F);
             this.playSound(ModSounds.HELL_BLAST_IMPACT.get(), 4.0F, 1.0F);
@@ -182,12 +212,20 @@ public class HellBlast extends WaterHurtingProjectile {
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putInt("Animation", this.getAnimation());
+        pCompound.putInt("Fiery", this.getFiery());
+        pCompound.putFloat("Radius", this.getRadius());
         pCompound.putFloat("Damage", this.getDamage());
     }
 
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.setAnimation(pCompound.getInt("Animation"));
+        if (pCompound.contains("Fiery")) {
+            this.setFiery(pCompound.getInt("Fiery"));
+        }
+        if (pCompound.contains("Radius")) {
+            this.setRadius(pCompound.getFloat("Radius"));
+        }
         if (pCompound.contains("Damage")) {
             this.setDamage(pCompound.getFloat("Damage"));
         }

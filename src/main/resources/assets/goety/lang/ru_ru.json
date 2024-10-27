@@ -2419,5 +2419,19 @@
   "commands.goety.misc.heal.success.multiple": "Восстановлены здоровье и голод %s игрокам",
   "entity.goety.crone":"Карга",
   "entity.goety.zombie_villager_servant":"Крестьянин-зомби-прислужник",
-  "entity.goety.skeleton_villager_servant":"Крестьянин-скелет-прислужник"
+  "entity.goety.skeleton_villager_servant":"Крестьянин-скелет-прислужник",
+  "item.goety.unholy_fabric": "Нечестивая ткань",
+  "item.goety.unholy_hat": "Нечестивая шляпа",
+  "item.goety.unholy_robe": "Нечестивая мантия",
+  "item.goety.leeching_focus": "Фокус пиявки",
+  "item.goety.leeching_focus.info": "Высасывает здоровье из жертвы.",
+  "item.goety.fire_blast_focus": "Фокус огненного взрыва",
+  "item.goety.fire_blast_focus.info": "Создаёт вокруг заклинателя огненный взрыв, не разрушающий блоки, но отбрасывающий, поджигающий и наносящий урон.",
+  "info.goety.unholy_robe": "Даёт огнестойкость. Позволяет незерским прислужникам исцеляться, используя энергию душ.",
+  "info.goety.unholy_robe_discount": "Сокращает стоимость незерских заклинаний вдвое. Если надеть вместе с нечестивой шляпой, то некоторые огненные фокусы будут создавать адское пламя вместо простого огня.",
+  "info.goety.unholy_hat": "Даёт огнестойкость. Уменьшает урон, получаемый вами в Незере, вдвое. Незерские прислужники не будут исчезать.",
+  "info.goety.unholy_hat_cast": "Сокращает время использования незерских заклинаний вдвое. Если надеть вместе с нечестивой мантией, то некоторые огненные фокусы будут создавать адское пламя вместо простого огня.",
+  "subtitle.goety.burrow_spell": "Бурение",
+  "death.attack.goety.lifeLeech": "Жизнь %1$s была поглощена %2$s",
+  "death.attack.goety.lifeLeech.item": "Жизнь %1$s была поглощена %2$s с помощью %3$s"
 }

@@ -1,6 +1,7 @@
 package com.Polarice3.Goety.common.items.curios;
 
 import com.Polarice3.Goety.Goety;
+import com.Polarice3.Goety.common.effects.GoetyEffects;
 import com.Polarice3.Goety.compat.iron.IronAttributes;
 import com.Polarice3.Goety.compat.iron.IronLoaded;
 import com.Polarice3.Goety.config.ItemConfig;
@@ -15,6 +16,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import top.theillusivec4.curios.api.SlotContext;
@@ -32,9 +35,14 @@ public class UnholyRobeItem extends SingleStackItem{
     public static void LivingEffects(LivingEvent.LivingTickEvent event){
         LivingEntity livingEntity = event.getEntity();
         if (livingEntity != null){
-            if (CuriosFinder.hasCurio(livingEntity, item -> item.getItem() instanceof UnholyRobeItem)){
+            if (CuriosFinder.hasUnholyRobe(livingEntity)){
                 if (livingEntity.isOnFire()){
-                    livingEntity.setRemainingFireTicks(0);
+                    livingEntity.clearFire();
+                }
+                if (!livingEntity.level.isClientSide) {
+                    if (livingEntity.hasEffect(GoetyEffects.BURN_HEX.get())){
+                        livingEntity.removeEffect(GoetyEffects.BURN_HEX.get());
+                    }
                 }
             }
         }
@@ -43,11 +51,22 @@ public class UnholyRobeItem extends SingleStackItem{
     @SubscribeEvent
     public static void HurtEvent(LivingHurtEvent event){
         LivingEntity victim = event.getEntity();
-        if (CuriosFinder.hasCurio(victim, item -> item.getItem() instanceof UnholyRobeItem)){
+        float damage = event.getAmount();
+        if (CuriosFinder.hasUnholyRobe(victim)){
             float resistance = 1.0F - (ItemConfig.NetherRobeResistance.get() / 100.0F);
             if (ModDamageSource.hellfireAttacks(event.getSource())){
                 resistance = Math.max(0.75F, resistance);
-                event.setAmount(event.getAmount() * resistance);
+                damage *= resistance;
+            }
+            event.setAmount(damage);
+        }
+    }
+
+    @SubscribeEvent
+    public static void PotionApplicationEvents(MobEffectEvent.Applicable event){
+        if (event.getEffectInstance().getEffect() == GoetyEffects.BURN_HEX.get()){
+            if (CuriosFinder.hasUnholyRobe(event.getEntity())){
+                event.setResult(Event.Result.DENY);
             }
         }
     }

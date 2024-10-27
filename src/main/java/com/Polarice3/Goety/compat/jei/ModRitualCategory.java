@@ -4,6 +4,7 @@ import com.Polarice3.Goety.Goety;
 import com.Polarice3.Goety.common.blocks.ModBlocks;
 import com.Polarice3.Goety.common.crafting.RitualRecipe;
 import com.Polarice3.Goety.common.items.ModItems;
+import com.Polarice3.Goety.common.items.research.ResearchScroll;
 import com.Polarice3.Goety.common.research.ResearchList;
 import com.Polarice3.Goety.common.ritual.EnchantItemRitual;
 import com.Polarice3.Goety.common.ritual.RitualTypes;
@@ -24,10 +25,12 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -191,26 +194,18 @@ public class ModRitualCategory implements IRecipeCategory<RitualRecipe> {
         }
 
         ItemStack itemStack = ItemStack.EMPTY;
-        if (ResearchList.getResearch(recipe.getResearch()) == ResearchList.FORBIDDEN || recipe.getCraftType().contains(RitualTypes.LICH)){
+        if (ResearchList.getResearch(recipe.getResearch()) != null){
+            for (Item item : ForgeRegistries.ITEMS){
+                if (item instanceof ResearchScroll scroll){
+                    if (scroll.research == ResearchList.getResearch(recipe.getResearch())){
+                        itemStack = new ItemStack(scroll);
+                        break;
+                    }
+                }
+            }
+        }
+        if (recipe.getCraftType().contains(RitualTypes.LICH)){
             itemStack = new ItemStack(ModItems.FORBIDDEN_SCROLL.get());
-        } else if (ResearchList.getResearch(recipe.getResearch()) == ResearchList.RAVAGING){
-            itemStack = new ItemStack(ModItems.RAVAGING_SCROLL.get());
-        } else if (ResearchList.getResearch(recipe.getResearch()) == ResearchList.WARRED){
-            itemStack = new ItemStack(ModItems.WARRED_SCROLL.get());
-        } else if (ResearchList.getResearch(recipe.getResearch()) == ResearchList.BURIED){
-            itemStack = new ItemStack(ModItems.BURIED_SCROLL.get());
-        } else if (ResearchList.getResearch(recipe.getResearch()) == ResearchList.HAUNTING){
-            itemStack = new ItemStack(ModItems.HAUNTING_SCROLL.get());
-        } else if (ResearchList.getResearch(recipe.getResearch()) == ResearchList.FRONT){
-            itemStack = new ItemStack(ModItems.FRONT_SCROLL.get());
-        } else if (ResearchList.getResearch(recipe.getResearch()) == ResearchList.MISTRAL){
-            itemStack = new ItemStack(ModItems.MISTRAL_SCROLL.get());
-        } else if (ResearchList.getResearch(recipe.getResearch()) == ResearchList.FLORAL){
-            itemStack = new ItemStack(ModItems.FLORAL_SCROLL.get());
-        } else if (ResearchList.getResearch(recipe.getResearch()) == ResearchList.BYGONE){
-            itemStack = new ItemStack(ModItems.BYGONE_SCROLL.get());
-        } else if (ResearchList.getResearch(recipe.getResearch()) == ResearchList.TERMINUS){
-            itemStack = new ItemStack(ModItems.TERMINUS_SCROLL.get());
         }
         if (!itemStack.isEmpty()) {
             recipeLayout.addSlot(RecipeIngredientRole.RENDER_ONLY, 0, 16)

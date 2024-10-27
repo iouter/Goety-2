@@ -65,6 +65,8 @@ public class ModEntityTypeTagsProvider extends IntrinsicHolderTagsProvider<Entit
                 ModEntityType.STORM_CASTER.get());
         this.tag(EntityTypeTags.RAIDERS).add(ModEntityType.ARMORED_RAVAGER.get(),
                 ModEntityType.WARLOCK.get(),
+                ModEntityType.MAVERICK.get(),
+                ModEntityType.HERETIC.get(),
                 ModEntityType.CRONE.get(),
                 ModEntityType.ENVIOKER.get(),
                 ModEntityType.INQUILLAGER.get(),

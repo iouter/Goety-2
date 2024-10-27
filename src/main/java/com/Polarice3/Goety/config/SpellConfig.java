@@ -68,6 +68,11 @@ public class SpellConfig {
     public static final ForgeConfigSpec.ConfigValue<Integer> GhostFireDuration;
     public static final ForgeConfigSpec.ConfigValue<Integer> GhostFireCoolDown;
 
+    public static final ForgeConfigSpec.ConfigValue<Integer> LeechingCost;
+    public static final ForgeConfigSpec.ConfigValue<Integer> LeechingChargeUp;
+    public static final ForgeConfigSpec.ConfigValue<Integer> LeechingPercent;
+    public static final ForgeConfigSpec.ConfigValue<Double> LeechingDamage;
+
     public static final ForgeConfigSpec.ConfigValue<Integer> HauntedSkullCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> HauntedSkullDuration;
     public static final ForgeConfigSpec.ConfigValue<Integer> HauntedSkullCoolDown;
@@ -118,6 +123,12 @@ public class SpellConfig {
     public static final ForgeConfigSpec.ConfigValue<Integer> MagmaBombCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> MagmaBombDuration;
     public static final ForgeConfigSpec.ConfigValue<Integer> MagmaBombCoolDown;
+
+    public static final ForgeConfigSpec.ConfigValue<Integer> FireBlastCost;
+    public static final ForgeConfigSpec.ConfigValue<Integer> FireBlastDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> FireBlastCoolDown;
+    public static final ForgeConfigSpec.ConfigValue<Double> FireBlastDamage;
+    public static final ForgeConfigSpec.ConfigValue<Double> FireBlastMaxDamage;
 
     public static final ForgeConfigSpec.ConfigValue<Integer> FlameStrikeCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> FlameStrikeDuration;
@@ -568,6 +579,16 @@ public class SpellConfig {
             GhostFireCoolDown = BUILDER.comment("Ghost Fire Spell Cooldown, Default: 200")
                     .defineInRange("ghostFireCoolDown", 200, 0, Integer.MAX_VALUE);
             BUILDER.pop();
+            BUILDER.push("Leeching Spell");
+            LeechingCost = BUILDER.comment("Leeching Spell Cost, Default: 8")
+                    .defineInRange("leechingCost", 8, 0, Integer.MAX_VALUE);
+            LeechingChargeUp = BUILDER.comment("How many ticks the Leeching Spell much charge before casting, Default: 0")
+                    .defineInRange("leechingChargeUp", 0, 0, Integer.MAX_VALUE);
+            LeechingPercent = BUILDER.comment("Leeching Spell healing percentage, Default: 100")
+                    .defineInRange("leechingPercent", 100, 1, 100);
+            LeechingDamage = BUILDER.comment("How much base damage Leeching Spell deals per second, Default: 1.0")
+                    .defineInRange("leechingDamage", 1.0, 1.0, Double.MAX_VALUE);
+            BUILDER.pop();
             BUILDER.push("Skull Spell");
             HauntedSkullCost = BUILDER.comment("Skull Spell Cost, Default: 16")
                     .defineInRange("hauntedSkullCost", 16, 0, Integer.MAX_VALUE);
@@ -669,6 +690,18 @@ public class SpellConfig {
                     .defineInRange("magmaBombTime", 100, 0, 72000);
             MagmaBombCoolDown = BUILDER.comment("Magma Bomb Spell Cooldown, Default: 400")
                     .defineInRange("magmaBombCoolDown", 400, 0, Integer.MAX_VALUE);
+            BUILDER.pop();
+            BUILDER.push("Fire Blast Spell");
+            FireBlastCost = BUILDER.comment("Fire Blast Spell Cost, Default: 40")
+                    .defineInRange("fireBlastCost", 40, 0, Integer.MAX_VALUE);
+            FireBlastDuration = BUILDER.comment("Time to cast Fire Blast Spell, Default: 0")
+                    .defineInRange("fireBlastDuration", 0, 0, 72000);
+            FireBlastCoolDown = BUILDER.comment("Fire Blast Spell Cooldown, Default: 100")
+                    .defineInRange("fireBlastCoolDown", 100, 0, Integer.MAX_VALUE);
+            FireBlastDamage = BUILDER.comment("How much base minimum damage Fire Blast Spell deals, Default: 6.0")
+                    .defineInRange("fireBlastDamage", 6.0, 1.0, Double.MAX_VALUE);
+            FireBlastMaxDamage = BUILDER.comment("How much base maximum damage Fire Blast Spell deals, Default: 12.0")
+                    .defineInRange("fireBlastMaxDamage", 12.0, 2.0, Double.MAX_VALUE);
             BUILDER.pop();
             BUILDER.push("Flame Strike Spell");
             FlameStrikeCost = BUILDER.comment("Flame Strike Spell Cost, Default: 32")

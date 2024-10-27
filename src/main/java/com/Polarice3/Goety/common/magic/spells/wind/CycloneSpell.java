@@ -2,10 +2,13 @@ package com.Polarice3.Goety.common.magic.spells.wind;
 
 import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
+import com.Polarice3.Goety.common.entities.projectiles.AbstractCyclone;
 import com.Polarice3.Goety.common.entities.projectiles.Cyclone;
+import com.Polarice3.Goety.common.entities.projectiles.FireTornado;
 import com.Polarice3.Goety.common.magic.Spell;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
+import com.Polarice3.Goety.utils.CuriosFinder;
 import com.Polarice3.Goety.utils.WandUtil;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -57,13 +60,22 @@ public class CycloneSpell extends Spell {
     @Override
     public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
         Vec3 vector3d = entityLiving.getViewVector( 1.0F);
-        Cyclone cyclone = new Cyclone(worldIn,
+        AbstractCyclone cyclone = new Cyclone(worldIn,
                 entityLiving.getX() + vector3d.x / 2,
                 entityLiving.getEyeY() - 0.2,
                 entityLiving.getZ() + vector3d.z / 2,
                 vector3d.x,
                 vector3d.y,
                 vector3d.z);
+        if (CuriosFinder.hasUnholySet(entityLiving)){
+            cyclone = new FireTornado(worldIn,
+                    entityLiving.getX() + vector3d.x / 2,
+                    entityLiving.getEyeY() - 0.2,
+                    entityLiving.getZ() + vector3d.z / 2,
+                    vector3d.x,
+                    vector3d.y,
+                    vector3d.z);
+        }
         cyclone.setOwnerId(entityLiving.getUUID());
         if (this.getTarget(entityLiving) != null) {
             cyclone.setTarget(this.getTarget(entityLiving));

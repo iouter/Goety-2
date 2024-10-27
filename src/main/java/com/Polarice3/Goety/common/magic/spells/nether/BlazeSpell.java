@@ -4,14 +4,12 @@ import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.effects.GoetyEffects;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.ModEntityType;
+import com.Polarice3.Goety.common.entities.hostile.servants.Inferno;
 import com.Polarice3.Goety.common.entities.neutral.BlazeServant;
 import com.Polarice3.Goety.common.magic.SummonSpell;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
-import com.Polarice3.Goety.utils.BlockFinder;
-import com.Polarice3.Goety.utils.EffectsUtil;
-import com.Polarice3.Goety.utils.MobUtil;
-import com.Polarice3.Goety.utils.WandUtil;
+import com.Polarice3.Goety.utils.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -104,6 +102,9 @@ public class BlazeSpell extends SummonSpell {
             }
             for (int i1 = 0; i1 < i; ++i1) {
                 BlazeServant blazeServant = new BlazeServant(ModEntityType.BLAZE_SERVANT.get(), worldIn);
+                if (CuriosFinder.hasUnholySet(entityLiving)){
+                    blazeServant = new Inferno(ModEntityType.INFERNO.get(), worldIn);
+                }
                 BlockPos blockPos = BlockFinder.SummonRadius(entityLiving.blockPosition(), blazeServant, worldIn);
                 if (entityLiving.isUnderWater()){
                     blockPos = BlockFinder.SummonWaterRadius(entityLiving, worldIn);

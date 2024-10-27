@@ -1,0 +1,18 @@
+{
+  "name": "Фокус пиявки",
+  "icon": "goety:leeching_focus",
+  "category": "goety:focuses/necromancy",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Наносить врагам урон — это одно, но поедать их — совсем другое. Заклинание вытягивает жизнь из жертвы, на которую вы смотрите, нанося ей урон и исцеляя вас на количество нанесённого урона."
+    },
+    {
+      "type": "goety:ritual",
+      "recipe": "goety:focus/leeching_focus"
+    }
+  ],
+  "extra_recipe_mappings": {
+    "goety:leeching_focus": 1
+  }
+}

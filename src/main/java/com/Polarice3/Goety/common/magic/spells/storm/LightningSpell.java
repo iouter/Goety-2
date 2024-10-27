@@ -6,6 +6,7 @@ import com.Polarice3.Goety.common.magic.Spell;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.BlockFinder;
+import com.Polarice3.Goety.utils.MobUtil;
 import com.Polarice3.Goety.utils.WandUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -84,6 +85,20 @@ public class LightningSpell extends Spell {
                     lightningBolt.setCause(serverPlayer);
                 }
                 worldIn.addFreshEntity(lightningBolt);
+            } else if (staff){
+                for (LivingEntity livingEntity : worldIn.getEntitiesOfClass(LivingEntity.class, entityLiving.getBoundingBox().inflate(range))){
+                    if (!MobUtil.areAllies(entityLiving, livingEntity)){
+                        LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, worldIn);
+                        lightningBolt.setDamage(damage);
+                        lightningBolt.setPos(livingEntity.position());
+                        if (entityLiving instanceof ServerPlayer serverPlayer) {
+                            lightningBolt.setCause(serverPlayer);
+                        }
+                        if (worldIn.addFreshEntity(lightningBolt)) {
+                            break;
+                        }
+                    }
+                }
             } else if (rayTraceResult instanceof BlockHitResult){
                 BlockPos blockPos = ((BlockHitResult) rayTraceResult).getBlockPos();
                 LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, worldIn);

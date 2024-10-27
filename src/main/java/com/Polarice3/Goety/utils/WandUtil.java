@@ -11,11 +11,15 @@ import com.Polarice3.Goety.common.entities.neutral.TotemicBomb;
 import com.Polarice3.Goety.common.entities.projectiles.Fangs;
 import com.Polarice3.Goety.common.entities.projectiles.IceBouquet;
 import com.Polarice3.Goety.common.entities.projectiles.Spike;
+import com.Polarice3.Goety.common.network.ModNetwork;
+import com.Polarice3.Goety.common.network.server.SLightningPacket;
+import com.Polarice3.Goety.common.network.server.SThunderBoltPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
@@ -23,10 +27,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class WandUtil {
 
@@ -120,6 +128,51 @@ public class WandUtil {
             return findFocus(playerEntity).getEnchantmentLevel(enchantment);
         } else {
             return 0;
+        }
+    }
+
+    public static void chainLightning(LivingEntity pTarget, @Nullable LivingEntity pAttacker, double range, float damage){
+        chainLightning(pTarget, pAttacker, range, damage, false);
+    }
+
+    public static void chainLightning(LivingEntity pTarget, @Nullable LivingEntity pAttacker, double range, float damage, boolean small) {
+        Level level = pTarget.level;
+
+        List<Entity> harmed = new ArrayList<>();
+        Predicate<Entity> selector = entity -> entity instanceof LivingEntity livingEntity && !harmed.contains(livingEntity);
+        if (pAttacker != null){
+            selector = selector.and(entity -> entity instanceof LivingEntity livingEntity && livingEntity != pAttacker && MobUtil.canAttack(pAttacker, livingEntity));
+        }
+        Entity prevTarget = pTarget;
+
+        int hops = level.isThundering() ? 8 : 4;
+
+        for (int i = 0; i < hops; i++) {
+            AABB aabb = new AABB(Vec3Util.subtract(prevTarget.position(), range), Vec3Util.add(prevTarget.position(), range));
+            Entity finalPrevTarget = prevTarget;
+            List<Entity> entities = level.getEntities(prevTarget, aabb, selector.and(entity -> MobUtil.hasLineOfSight(finalPrevTarget, entity)));
+            if (!entities.isEmpty()) {
+                Entity target = entities.get(level.getRandom().nextInt(entities.size()));
+                DamageSource damageSource = ModDamageSource.getDamageSource(pTarget.level, ModDamageSource.SHOCK);
+                if (pAttacker != null){
+                    damageSource = ModDamageSource.directShock(pAttacker);
+                }
+                if (target.hurt(damageSource, damage)) {
+                    if (prevTarget != target) {
+                        Vec3 vec3 = prevTarget.getEyePosition();
+                        Vec3 vec31 = target.getEyePosition();
+                        if (small){
+                            ModNetwork.sendToALL(new SLightningPacket(vec3, vec31, 5));
+                        } else {
+                            ModNetwork.sendToALL(new SThunderBoltPacket(vec3, vec31, 8));
+                        }
+                    }
+                }
+
+                harmed.add(target);
+                prevTarget = target;
+                damage--;
+            }
         }
     }
 

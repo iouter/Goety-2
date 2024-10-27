@@ -1,6 +1,8 @@
 package com.Polarice3.Goety.api.entities;
 
 public interface IRM {
+    int getDeathTime();
+
     float getBigGlow();
 
     float getMinorGlow();

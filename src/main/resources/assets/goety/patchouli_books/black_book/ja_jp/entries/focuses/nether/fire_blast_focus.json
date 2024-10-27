@@ -1,0 +1,18 @@
+{
+  "name": "ファイアブラストのフォーカス",
+  "icon": "goety:fire_blast_focus",
+  "category": "goety:focuses/nether",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "自分の位置で激しい爆発を起こし、近くのすべての生き物を傷つけ、それらを燃やします。爆発は火によるダメージを与えますが、術者自身やその仲間にはダメージを与えません。"
+    },
+    {
+      "type": "goety:ritual",
+      "recipe": "goety:focus/fire_blast_focus"
+    }
+  ],
+  "extra_recipe_mappings": {
+    "goety:fire_blast_focus": 1
+  }
+}

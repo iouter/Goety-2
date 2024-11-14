@@ -72,9 +72,6 @@
 			}
 		}
 	],
-	"overrides": [
-		{"predicate": {"reading": 1}, "model": "goety:item/nether_book_open"}
-	],
 	"display": {
 		"thirdperson_righthand": {
 			"translation": [0, 3, 1],

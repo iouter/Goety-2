@@ -22,6 +22,18 @@
     "facing=south,half=upper,lit=false": {
       "model": "goety:block/haunted_mirror_top"
     },
+    "facing=up,half=upper,lit=false": {
+      "model": "goety:block/haunted_mirror_top"
+    },
+    "facing=down,half=upper,lit=false": {
+      "model": "goety:block/haunted_mirror_top"
+    },
+    "facing=up,half=lower,lit=false": {
+      "model": "goety:block/haunted_mirror_top"
+    },
+    "facing=down,half=lower,lit=false": {
+      "model": "goety:block/haunted_mirror_top"
+    },
     "facing=west,half=lower,lit=false": {
       "model": "goety:block/haunted_mirror_bottom",
       "y": 90
@@ -50,6 +62,18 @@
       "model": "goety:block/haunted_mirror_presence_bottom"
     },
     "facing=south,half=upper,lit=true": {
+      "model": "goety:block/haunted_mirror_presence_top"
+    },
+    "facing=up,half=upper,lit=true": {
+      "model": "goety:block/haunted_mirror_presence_top"
+    },
+    "facing=down,half=upper,lit=true": {
+      "model": "goety:block/haunted_mirror_presence_top"
+    },
+    "facing=up,half=lower,lit=true": {
+      "model": "goety:block/haunted_mirror_presence_top"
+    },
+    "facing=down,half=lower,lit=true": {
       "model": "goety:block/haunted_mirror_presence_top"
     },
     "facing=west,half=lower,lit=true": {

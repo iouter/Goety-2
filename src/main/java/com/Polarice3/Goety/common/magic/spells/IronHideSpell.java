@@ -59,7 +59,7 @@ public class IronHideSpell extends Spell {
         if (caster instanceof Mob mob){
             return !mob.hasEffect(GoetyEffects.IRON_HIDE.get());
         }
-        return conditionsMet(worldIn, caster);
+        return super.conditionsMet(worldIn, caster);
     }
 
     public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat){

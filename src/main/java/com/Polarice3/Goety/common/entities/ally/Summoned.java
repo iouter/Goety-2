@@ -333,15 +333,26 @@ public class Summoned extends Owned implements IServant {
         this.setUpgraded(false);
     }
 
+    public void setCommandPos(BlockPos blockPos, boolean removeEntity) {
+        if (removeEntity) {
+            this.commandPosEntity = null;
+        }
+        this.commandPos = blockPos;
+        this.setCommandTick(MathHelper.secondsToTicks(10));
+    }
+
     public BlockPos getCommandPos(){
         return this.commandPos;
     }
 
-    public void setCommandPosEntity(LivingEntity living){
+    public void setCommandPosEntity(@Nullable LivingEntity living){
         this.commandPosEntity = living;
-        this.setCommandPos(living.blockPosition(), false);
+        if (living != null) {
+            this.setCommandPos(living.blockPosition(), false);
+        }
     }
 
+    @Nullable
     public LivingEntity getCommandPosEntity(){
         return this.commandPosEntity;
     }

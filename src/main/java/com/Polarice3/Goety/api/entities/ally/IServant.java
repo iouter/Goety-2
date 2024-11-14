@@ -25,6 +25,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
+
 public interface IServant extends IOwned {
     int PATROL_RANGE = MobsConfig.ServantPatrolRange.get();
 
@@ -116,6 +118,7 @@ public interface IServant extends IOwned {
 
     void setCommandPosEntity(LivingEntity living);
 
+    @Nullable
     default LivingEntity getCommandPosEntity(){
         return null;
     }

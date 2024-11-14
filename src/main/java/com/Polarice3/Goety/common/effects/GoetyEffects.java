@@ -95,6 +95,12 @@ public class GoetyEffects {
     public static final RegistryObject<MobEffect> SPASMS = EFFECTS.register("spasms",
             SpasmEffect::new);
 
+    public static final RegistryObject<MobEffect> ELECTRIFIED = EFFECTS.register("electrified",
+            ElectrifiedEffect::new);
+
+    public static final RegistryObject<MobEffect> TREMOR_SENSE = EFFECTS.register("tremor_sense",
+            () -> new GoetyBaseEffect(MobEffectCategory.BENEFICIAL, 0));
+
     public static final RegistryObject<MobEffect> STUNNED = EFFECTS.register("stunned",
             () -> new GoetyBaseEffect(MobEffectCategory.HARMFUL, 0xffbc2e)
                     .addAttributeModifier(ForgeMod.SWIM_SPEED.get(), "e4669259-9b6f-40d2-b253-46e65b1f3363",

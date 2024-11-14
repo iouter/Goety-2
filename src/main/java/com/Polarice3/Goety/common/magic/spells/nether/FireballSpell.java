@@ -59,66 +59,66 @@ public class FireballSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        Vec3 vector3d = entityLiving.getViewVector( 1.0F);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff) {
+        Vec3 vector3d = caster.getViewVector( 1.0F);
         AbstractHurtingProjectile smallFireballEntity = new ModFireball(worldIn,
-                entityLiving.getX() + vector3d.x / 2,
-                entityLiving.getEyeY() - 0.2,
-                entityLiving.getZ() + vector3d.z / 2,
+                caster.getX() + vector3d.x / 2,
+                caster.getEyeY() - 0.2,
+                caster.getZ() + vector3d.z / 2,
                 vector3d.x,
                 vector3d.y,
                 vector3d.z);
-        if (CuriosFinder.hasUnholySet(entityLiving)){
-            smallFireballEntity = new HellBolt(entityLiving.getX() + vector3d.x / 2,
-                    entityLiving.getEyeY() - 0.2,
-                    entityLiving.getZ() + vector3d.z / 2,
+        if (CuriosFinder.hasUnholySet(caster)){
+            smallFireballEntity = new HellBolt(caster.getX() + vector3d.x / 2,
+                    caster.getEyeY() - 0.2,
+                    caster.getZ() + vector3d.z / 2,
                     vector3d.x,
                     vector3d.y,
                     vector3d.z, worldIn);
         }
-        smallFireballEntity.setOwner(entityLiving);
+        smallFireballEntity.setOwner(caster);
         if (smallFireballEntity instanceof ModFireball fireball) {
-            if (isShifting(entityLiving)) {
+            if (isShifting(caster)) {
                 fireball.setDangerous(false);
             }
-            fireball.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
-            fireball.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), entityLiving));
+            fireball.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
+            fireball.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), caster));
         } else if (smallFireballEntity instanceof HellBolt hellBolt){
-            hellBolt.setDamage(hellBolt.getDamage() + WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
-            hellBolt.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), entityLiving));
+            hellBolt.setDamage(hellBolt.getDamage() + WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
+            hellBolt.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), caster));
         }
         worldIn.addFreshEntity(smallFireballEntity);
         if (rightStaff(staff)) {
             for (int i = 0; i < 2; ++i) {
                 AbstractHurtingProjectile smallFireballEntity2 = new ModFireball(worldIn,
-                        entityLiving.getX() + vector3d.x / 2 + worldIn.random.nextGaussian(),
-                        entityLiving.getEyeY() - 0.2,
-                        entityLiving.getZ() + vector3d.z / 2 + worldIn.random.nextGaussian(),
+                        caster.getX() + vector3d.x / 2 + worldIn.random.nextGaussian(),
+                        caster.getEyeY() - 0.2,
+                        caster.getZ() + vector3d.z / 2 + worldIn.random.nextGaussian(),
                         vector3d.x,
                         vector3d.y,
                         vector3d.z);
-                smallFireballEntity2.setOwner(entityLiving);
-                if (CuriosFinder.hasUnholySet(entityLiving)){
-                    smallFireballEntity2 = new HellBolt(entityLiving.getX() + vector3d.x / 2,
-                            entityLiving.getEyeY() - 0.2,
-                            entityLiving.getZ() + vector3d.z / 2,
+                smallFireballEntity2.setOwner(caster);
+                if (CuriosFinder.hasUnholySet(caster)){
+                    smallFireballEntity2 = new HellBolt(caster.getX() + vector3d.x / 2,
+                            caster.getEyeY() - 0.2,
+                            caster.getZ() + vector3d.z / 2,
                             vector3d.x,
                             vector3d.y,
                             vector3d.z, worldIn);
                 }
                 if (smallFireballEntity2 instanceof ModFireball fireball) {
-                    if (isShifting(entityLiving)) {
+                    if (isShifting(caster)) {
                         fireball.setDangerous(false);
                     }
-                    fireball.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
-                    fireball.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), entityLiving));
+                    fireball.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
+                    fireball.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), caster));
                 } else if (smallFireballEntity2 instanceof HellBolt hellBolt){
-                    hellBolt.setDamage(hellBolt.getDamage() + WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
-                    hellBolt.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), entityLiving));
+                    hellBolt.setDamage(hellBolt.getDamage() + WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
+                    hellBolt.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), caster));
                 }
                 worldIn.addFreshEntity(smallFireballEntity2);
             }
         }
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), CastingSound(), this.getSoundSource(), 1.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), CastingSound(), this.getSoundSource(), 1.0F, 1.0F);
     }
 }

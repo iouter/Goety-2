@@ -189,6 +189,10 @@ public abstract class HuntingIllagerEntity extends SpellcasterIllager implements
 
     }
 
+    public void upgradeAssault(int sePercent){
+
+    }
+
     public SlotAccess getSlot(int p_149743_) {
         int i = p_149743_ - 300;
         return i >= 0 && i < this.inventory.getContainerSize() ? SlotAccess.forContainer(this.inventory, i) : super.getSlot(p_149743_);

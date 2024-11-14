@@ -39,8 +39,8 @@ public class TroopSpell extends Spell {
         return SpellType.VOID;
     }
 
-    public boolean conditionsMet(ServerLevel worldIn, LivingEntity entityLiving){
-        if (entityLiving instanceof ServerPlayer player) {
+    public boolean conditionsMet(ServerLevel worldIn, LivingEntity caster){
+        if (caster instanceof ServerPlayer player) {
             if (!TroopFocus.hasSummonType(WandUtil.findFocus(player))){
                 player.displayClientMessage(Component.translatable("info.goety.focus.noSummonType"), true);
             } else {
@@ -51,8 +51,8 @@ public class TroopSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        if (entityLiving instanceof ServerPlayer player) {
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff) {
+        if (caster instanceof ServerPlayer player) {
             if (!TroopFocus.hasSummonType(WandUtil.findFocus(player))){
                 player.displayClientMessage(Component.translatable("info.goety.focus.noSummonType"), true);
             } else {

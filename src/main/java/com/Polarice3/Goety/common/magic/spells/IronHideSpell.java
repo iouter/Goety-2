@@ -3,6 +3,7 @@ package com.Polarice3.Goety.common.magic.spells;
 import com.Polarice3.Goety.common.effects.GoetyEffects;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.MathHelper;
@@ -11,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
@@ -18,6 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IronHideSpell extends Spell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setDuration(1);
+    }
 
     @Override
     public int defaultSoulCost() {
@@ -47,14 +54,22 @@ public class IronHideSpell extends Spell {
         return list;
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        int enchantment = 0;
-        int duration = 1;
-        if (WandUtil.enchantedFocus(entityLiving)) {
-            enchantment = WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
-            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving);
+    @Override
+    public boolean conditionsMet(ServerLevel worldIn, LivingEntity caster) {
+        if (caster instanceof Mob mob){
+            return !mob.hasEffect(GoetyEffects.IRON_HIDE.get());
         }
-        entityLiving.addEffect(new MobEffectInstance(GoetyEffects.IRON_HIDE.get(), MathHelper.minutesToTicks(duration), enchantment, false, false, true));
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.IRON_HIDE.get(), this.getSoundSource(), 1.0F, 1.0F);
+        return conditionsMet(worldIn, caster);
+    }
+
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat){
+        int potency = spellStat.getPotency();
+        int duration = spellStat.getDuration();
+        if (WandUtil.enchantedFocus(caster)) {
+            potency = WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), caster);
+        }
+        caster.addEffect(new MobEffectInstance(GoetyEffects.IRON_HIDE.get(), MathHelper.minutesToTicks(duration), potency, false, false, true));
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.IRON_HIDE.get(), this.getSoundSource(), 1.0F, 1.0F);
     }
 }

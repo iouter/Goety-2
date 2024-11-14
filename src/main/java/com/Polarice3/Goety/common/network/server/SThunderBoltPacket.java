@@ -1,6 +1,7 @@
 package com.Polarice3.Goety.common.network.server;
 
 import com.Polarice3.Goety.Goety;
+import com.Polarice3.Goety.utils.ColorUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
@@ -14,15 +15,21 @@ public class SThunderBoltPacket {
     private final double x2;
     private final double y2;
     private final double z2;
+    private final float red;
+    private final float green;
+    private final float blue;
     private final int lifespan;
 
-    public SThunderBoltPacket(double x, double y, double z, double x2, double y2, double z2, int lifespan){
+    public SThunderBoltPacket(double x, double y, double z, double x2, double y2, double z2, float red, float green, float blue, int lifespan){
         this.x = x;
         this.y = y;
         this.z = z;
         this.x2 = x2;
         this.y2 = y2;
         this.z2 = z2;
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
         this.lifespan = lifespan;
     }
 
@@ -33,21 +40,42 @@ public class SThunderBoltPacket {
         this.x2 = end.x;
         this.y2 = end.y;
         this.z2 = end.z;
+        ColorUtil colorUtil = new ColorUtil(0xb1ebdc);
+        this.red = colorUtil.red();
+        this.green = colorUtil.green();
+        this.blue = colorUtil.blue();
+        this.lifespan = lifespan;
+    }
+
+    public SThunderBoltPacket(Vec3 start, Vec3 end, ColorUtil colorUtil, int lifespan){
+        this.x = start.x;
+        this.y = start.y;
+        this.z = start.z;
+        this.x2 = end.x;
+        this.y2 = end.y;
+        this.z2 = end.z;
+        this.red = colorUtil.red();
+        this.green = colorUtil.green();
+        this.blue = colorUtil.blue();
         this.lifespan = lifespan;
     }
 
     public static void encode(SThunderBoltPacket packet, FriendlyByteBuf buffer) {
-        buffer.writeFloat((float)packet.x);
-        buffer.writeFloat((float)packet.y);
-        buffer.writeFloat((float)packet.z);
-        buffer.writeFloat((float)packet.x2);
-        buffer.writeFloat((float)packet.y2);
-        buffer.writeFloat((float)packet.z2);
+        buffer.writeDouble(packet.x);
+        buffer.writeDouble(packet.y);
+        buffer.writeDouble(packet.z);
+        buffer.writeDouble(packet.x2);
+        buffer.writeDouble(packet.y2);
+        buffer.writeDouble(packet.z2);
+        buffer.writeFloat(packet.red);
+        buffer.writeFloat(packet.green);
+        buffer.writeFloat(packet.blue);
         buffer.writeInt(packet.lifespan);
     }
 
     public static SThunderBoltPacket decode(FriendlyByteBuf buffer) {
-        return new SThunderBoltPacket(buffer.readFloat(), buffer.readFloat(), buffer.readFloat(),
+        return new SThunderBoltPacket(buffer.readDouble(), buffer.readDouble(), buffer.readDouble(),
+                buffer.readDouble(), buffer.readDouble(), buffer.readDouble(),
                 buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readInt());
     }
 
@@ -55,7 +83,8 @@ public class SThunderBoltPacket {
         ctx.get().enqueueWork(() -> {
             Vec3 start = new Vec3(packet.x, packet.y, packet.z);
             Vec3 end = new Vec3(packet.x2, packet.y2, packet.z2);
-            Goety.PROXY.thunderBolt(start, end, packet.lifespan);
+            ColorUtil colorUtil = new ColorUtil(packet.red, packet.green, packet.blue);
+            Goety.PROXY.thunderBolt(start, end, colorUtil, packet.lifespan);
         });
         ctx.get().setPacketHandled(true);
     }

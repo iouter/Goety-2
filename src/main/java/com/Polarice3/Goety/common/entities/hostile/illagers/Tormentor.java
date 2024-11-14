@@ -245,11 +245,12 @@ public class Tormentor extends AbstractIllager implements ICustomAttributes {
 
         public void start() {
             LivingEntity livingentity = Tormentor.this.getTarget();
-            assert livingentity != null;
-            Vec3 vector3d = livingentity.position();
-            Tormentor.this.moveControl.setWantedPosition(vector3d.x, vector3d.y, vector3d.z, 1.0D);
-            Tormentor.this.setIsCharging(true);
-            Tormentor.this.playSound(ModSounds.TORMENTOR_CHARGE.get(), 1.0F, 1.0F);
+            if (livingentity != null) {
+                Vec3 vector3d = livingentity.position();
+                Tormentor.this.moveControl.setWantedPosition(vector3d.x, vector3d.y, vector3d.z, 1.0D);
+                Tormentor.this.setIsCharging(true);
+                Tormentor.this.playSound(ModSounds.TORMENTOR_CHARGE.get(), 1.0F, 1.0F);
+            }
         }
 
         public void stop() {
@@ -258,15 +259,16 @@ public class Tormentor extends AbstractIllager implements ICustomAttributes {
 
         public void tick() {
             LivingEntity livingentity = Tormentor.this.getTarget();
-            assert livingentity != null;
-            if (Tormentor.this.getBoundingBox().inflate(1.0F).intersects(livingentity.getBoundingBox())) {
-                Tormentor.this.doHurtTarget(livingentity);
-                Tormentor.this.setIsCharging(false);
-            } else {
-                double d0 = Tormentor.this.distanceToSqr(livingentity);
-                if (d0 < 9.0D) {
-                    Vec3 vector3d = livingentity.getEyePosition(1.0F);
-                    Tormentor.this.moveControl.setWantedPosition(vector3d.x, vector3d.y, vector3d.z, 1.0D);
+            if (livingentity != null) {
+                if (Tormentor.this.getBoundingBox().inflate(1.0F).intersects(livingentity.getBoundingBox())) {
+                    Tormentor.this.doHurtTarget(livingentity);
+                    Tormentor.this.setIsCharging(false);
+                } else {
+                    double d0 = Tormentor.this.distanceToSqr(livingentity);
+                    if (d0 < 9.0D) {
+                        Vec3 vector3d = livingentity.getEyePosition(1.0F);
+                        Tormentor.this.moveControl.setWantedPosition(vector3d.x, vector3d.y, vector3d.z, 1.0D);
+                    }
                 }
             }
 

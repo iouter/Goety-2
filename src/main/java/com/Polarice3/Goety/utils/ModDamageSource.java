@@ -6,10 +6,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.damagesource.DamageEffects;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.damagesource.*;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,6 +37,8 @@ public class ModDamageSource extends DamageSource {
     public static ResourceKey<DamageType> MAGIC_FIRE = create("magic_fire");
     public static ResourceKey<DamageType> MAGIC_FIREBALL = create("magic_fireball");
     public static ResourceKey<DamageType> NO_OWNER_MAGIC_FIREBALL = create("no_owner_magic_fireball");
+    public static ResourceKey<DamageType> LOOT_EXPLODE = create("loot_explode");
+    public static ResourceKey<DamageType> LOOT_EXPLODE_OWNED = create("loot_explode_owned");
     public static ResourceKey<DamageType> FIRE_BREATH = create("fire_breath");
     public static ResourceKey<DamageType> FROST_BREATH = create("frost_breath");
     public static ResourceKey<DamageType> MAGIC_BOLT = create("magic_bolt");
@@ -51,6 +50,7 @@ public class ModDamageSource extends DamageSource {
     public static ResourceKey<DamageType> CHOKE = create("choke");
     public static ResourceKey<DamageType> SWARM = create("swarm");
     public static ResourceKey<DamageType> DOOM = create("doom");
+    public static ResourceKey<DamageType> DEATH = create("death");
 
     public ModDamageSource(Holder<DamageType> p_270906_, @Nullable Entity p_270796_, @Nullable Entity p_270459_, @Nullable Vec3 p_270623_) {
         super(p_270906_, p_270796_, p_270459_, p_270623_);
@@ -80,7 +80,11 @@ public class ModDamageSource extends DamageSource {
      * Based on @TeamTwilight's codes: <a href="https://github.com/TeamTwilight/twilightforest/blob/1.20.x/src/main/java/twilightforest/init/TFDamageTypes.java#L14">...</a>
      */
     public static DamageSource getIndirectEntityDamageSource(Level level, ResourceKey<DamageType> type, @Nullable Entity attacker, @Nullable Entity indirectAttacker, EntityType<?>... toIgnore) {
-        return toIgnore.length > 0 ? new EntityExcludedDamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(type), toIgnore) : new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(type), attacker, indirectAttacker);
+        return toIgnore.length > 0 ? new EntityExcludedDamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(type), toIgnore) : source(level, type, attacker, indirectAttacker);
+    }
+
+    public static DamageSource source(Level level, ResourceKey<DamageType> type, @Nullable Entity attacker, @Nullable Entity indirectAttacker){
+        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(type), attacker, indirectAttacker);
     }
 
     public static DamageSource noKnockbackDamageSource(Level level, ResourceKey<DamageType> type, @Nullable Entity attacker, @Nullable Entity indirectAttacker, EntityType<?>... toIgnore) {
@@ -124,6 +128,10 @@ public class ModDamageSource extends DamageSource {
         return pIndirectEntity == null ? indirectEntityDamageSource(world, NO_OWNER_MAGIC_FIREBALL, p_270147_, null) : indirectEntityDamageSource(world, MAGIC_FIREBALL, p_270147_, pIndirectEntity);
     }
 
+    public static DamageSource lootExplosion(@Nullable Entity pSource, @Nullable Entity pIndirectEntity, Level world) {
+        return source(world, pIndirectEntity != null && pSource != null ? LOOT_EXPLODE_OWNED : LOOT_EXPLODE, pSource, pIndirectEntity);
+    }
+
     public static DamageSource sword(Entity pSource, @Nullable Entity pIndirectEntity){
         return indirectEntityDamageSource(pSource.level, SWORD, pSource, pIndirectEntity);
     }
@@ -158,6 +166,10 @@ public class ModDamageSource extends DamageSource {
 
     public static DamageSource windBlast(Entity pSource, @Nullable Entity pIndirectEntity){
         return indirectEntityDamageSource(pSource.level, WIND_BLAST, pSource, pIndirectEntity);
+    }
+
+    public static DamageSource deathCurse(Entity pSource){
+        return noKnockbackDamageSource(pSource.level, DEATH, pSource, pSource);
     }
 
     public static boolean hellfireAttacks(DamageSource source){
@@ -257,6 +269,8 @@ public class ModDamageSource extends DamageSource {
         context.register(INDIRECT_HELLFIRE, new DamageType("goety.indirectHellfire", 0.0F, DamageEffects.BURNING));
         context.register(MAGIC_FIREBALL, new DamageType("fireball", 0.1F, DamageEffects.BURNING));
         context.register(NO_OWNER_MAGIC_FIREBALL, new DamageType("onFire", 0.1F, DamageEffects.BURNING));
+        context.register(LOOT_EXPLODE, new DamageType("explosion", DamageScaling.ALWAYS, 0.1F));
+        context.register(LOOT_EXPLODE_OWNED, new DamageType("explosion.player", DamageScaling.ALWAYS, 0.1F));
         context.register(FIRE_BREATH, new DamageType("goety.fireBreath", 0.0F, DamageEffects.BURNING));
         context.register(MAGIC_FIRE, new DamageType("goety.fireBreath", 0.0F, DamageEffects.BURNING));
         context.register(FROST_BREATH, new DamageType("goety.frostBreath", 0.0F, DamageEffects.FREEZING));
@@ -269,6 +283,7 @@ public class ModDamageSource extends DamageSource {
         context.register(CHOKE, new DamageType("goety.choke", 0.0F));
         context.register(SWARM, new DamageType("goety.swarm", 0.0F));
         context.register(DOOM, new DamageType("goety.doom", 0.0F));
+        context.register(DEATH, new DamageType("goety.death", 0.0F));
     }
 
 }

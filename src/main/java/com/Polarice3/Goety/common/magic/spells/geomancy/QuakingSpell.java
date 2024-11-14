@@ -5,6 +5,7 @@ import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.util.ModFallingBlock;
 import com.Polarice3.Goety.common.items.ModItems;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.MobUtil;
@@ -32,6 +33,11 @@ import java.util.List;
 public class QuakingSpell extends Spell {
 
     @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setRange(12).setRadius(4.0D);
+    }
+
+    @Override
     public int defaultSoulCost() {
         return SpellConfig.QuakingCost.get();
     }
@@ -42,7 +48,7 @@ public class QuakingSpell extends Spell {
     }
 
     @Override
-    public int castDuration(LivingEntity entityLiving) {
+    public int castDuration(LivingEntity caster) {
         return 72000;
     }
 
@@ -70,46 +76,47 @@ public class QuakingSpell extends Spell {
     }
 
     @Override
-    public void useSpell(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff, int castTime) {
-        int range = 12;
-        int radius = 4;
+    public void useSpell(ServerLevel worldIn, LivingEntity caster, ItemStack staff, int castTime, SpellStat spellStat) {
+        int range = spellStat.getRange();
+        int radius = (int) spellStat.getRadius();
         float damage = SpellConfig.QuakingDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
-        if (WandUtil.enchantedFocus(entityLiving)) {
-            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
-            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), entityLiving);
-            damage += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
+        if (WandUtil.enchantedFocus(caster)) {
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
+            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), caster);
+            damage += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
         }
+        damage += spellStat.getPotency();
         if (castTime > this.defaultCastDuration()) {
-            if (!this.isShifting(entityLiving)) {
+            if (!this.isShifting(caster)) {
                 for (int i = 0; i <= range; ++i) {
                     if (castTime == i + this.defaultCastDuration()) {
-                        tremor(entityLiving, i, 3, 0.0F, damage, 0.1F);
-                        tremor(entityLiving, i, 3, 1.5F, damage, 0.1F);
-                        tremor(entityLiving, i, 3, -1.5F, damage, 0.1F);
+                        tremor(caster, i, 3, 0.0F, damage, 0.1F);
+                        tremor(caster, i, 3, 1.5F, damage, 0.1F);
+                        tremor(caster, i, 3, -1.5F, damage, 0.1F);
                     }
                 }
                 if (castTime >= range + this.defaultCastDuration()){
-                    entityLiving.stopUsingItem();
-                    this.stopSpell(worldIn, entityLiving, staff, castTime);
+                    caster.stopUsingItem();
+                    this.stopSpell(worldIn, caster, staff, castTime);
                 }
             } else {
                 for (int i = 0; i <= radius; ++i) {
                     if (castTime == i + this.defaultCastDuration()) {
-                        surroundTremor(entityLiving, i, 3, 0.0F, false, damage, 0.1F);
+                        surroundTremor(caster, i, 3, 0.0F, false, damage, 0.1F);
                     }
                 }
                 if (castTime >= radius + this.defaultCastDuration()){
-                    entityLiving.stopUsingItem();
-                    this.stopSpell(worldIn, entityLiving, staff, castTime);
+                    caster.stopUsingItem();
+                    this.stopSpell(worldIn, caster, staff, castTime);
                 }
             }
         }
     }
 
     @Override
-    public void stopSpell(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff, int useTimeRemaining) {
+    public void stopSpell(ServerLevel worldIn, LivingEntity caster, ItemStack staff, int useTimeRemaining) {
         if (useTimeRemaining > this.defaultCastDuration()){
-            if (entityLiving instanceof Player player) {
+            if (caster instanceof Player player) {
                 SEHelper.addCooldown(player, ModItems.QUAKING_FOCUS.get(), this.spellCooldown());
                 SEHelper.sendSEUpdatePacket(player);
             }
@@ -117,7 +124,7 @@ public class QuakingSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff) {
     }
 
     //Based on @l_ender's codes: https://github.com/lender544/L_ender-s-Cataclysm-Backport-1.19.2-1.80/blob/7a1a4cea139685cd4fb11a482d4af893efa1f607/src/main/java/com/github/L_Ender/cataclysm/entity/BossMonsters/Ignis_Entity.java#L1853

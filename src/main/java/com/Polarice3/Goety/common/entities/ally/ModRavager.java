@@ -257,8 +257,8 @@ public class ModRavager extends Summoned implements PlayerRideable, IAutoRideabl
 
     public void aiStep() {
         super.aiStep();
-        if (this.tickCount % 20 == 0) {
-            if (this.isHostile() && this.getMobType() != MobType.UNDEAD) {
+        if (this.isHostile() && this.getMobType() != MobType.UNDEAD) {
+            if (this.tickCount % 20 == 0) {
                 if (this.hasSaddle()) {
                     if (!this.getArmor().isEmpty()) {
                         ArmoredRavager armoredRavager = this.convertTo(ModEntityType.ARMORED_RAVAGER.get(), false);

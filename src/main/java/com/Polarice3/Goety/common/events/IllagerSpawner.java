@@ -6,6 +6,7 @@ import com.Polarice3.Goety.common.items.ModItems;
 import com.Polarice3.Goety.common.listeners.IllagerAssaultListener;
 import com.Polarice3.Goety.common.network.ModNetwork;
 import com.Polarice3.Goety.common.network.server.SPlayPlayerSoundPacket;
+import com.Polarice3.Goety.config.MainConfig;
 import com.Polarice3.Goety.config.MobsConfig;
 import com.Polarice3.Goety.init.ModTags;
 import com.Polarice3.Goety.utils.BlockFinder;
@@ -159,8 +160,13 @@ public class IllagerSpawner {
                 illager.setPos((double) pos.getX(), (double) pos.getY(), (double) pos.getZ());
                 ForgeEventFactory.onFinalizeSpawn(illager, worldIn, worldIn.getCurrentDifficultyAt(pos), MobSpawnType.PATROL, null, null);
                 illager.goalSelector.addGoal(0, new HuntDownPlayerGoal<>(illager));
-                if (illager instanceof HuntingIllagerEntity huntingIllager && random.nextInt(4) == 0){
-                    huntingIllager.setRider(true);
+                if (illager instanceof HuntingIllagerEntity huntingIllager){
+                    float rawPercent = (float) SEHelper.getSoulAmountInt(player) / MainConfig.MaxArcaSouls.get();
+                    int sePercent = (int) (rawPercent * 100);
+                    huntingIllager.upgradeAssault(sePercent);
+                    if (random.nextInt(4) == 0) {
+                        huntingIllager.setRider(true);
+                    }
                 }
                 if (EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)) {
                     illager.setTarget(player);

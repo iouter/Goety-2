@@ -5,6 +5,7 @@ import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.neutral.AbstractMonolith;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.BlockFinder;
@@ -71,54 +72,54 @@ public class OvergrowthSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        int range = 16;
-        int potency = 0;
-        int duration = 0;
-        if (WandUtil.enchantedFocus(entityLiving)) {
-            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
-            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
-            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        int range = spellStat.getRange();
+        int potency = spellStat.getPotency();
+        int duration = spellStat.getDuration();
+        if (WandUtil.enchantedFocus(caster)) {
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), caster);
         }
-        HitResult rayTraceResult = this.rayTrace(worldIn, entityLiving, range, 3);
-        LivingEntity target = this.getTarget(entityLiving, range);
+        HitResult rayTraceResult = this.rayTrace(worldIn, caster, range, 3);
+        LivingEntity target = this.getTarget(caster, range);
         if (target != null){
-            if (this.isShifting(entityLiving)){
-                int x = (int) (this.getHorizontalLeftLookAngle(entityLiving).x * 2);
-                int z = (int) (this.getHorizontalLeftLookAngle(entityLiving).z * 2);
-                int x1 = (int) (this.getHorizontalRightLookAngle(entityLiving).x * 2);
-                int z1 = (int) (this.getHorizontalRightLookAngle(entityLiving).z * 2);
-                BlockPos left = new BlockPos(entityLiving.blockPosition().offset(x, 0, z));
-                BlockPos right = new BlockPos(entityLiving.blockPosition().offset(x1, 0, z1));
+            if (this.isShifting(caster)){
+                int x = (int) (this.getHorizontalLeftLookAngle(caster).x * 2);
+                int z = (int) (this.getHorizontalLeftLookAngle(caster).z * 2);
+                int x1 = (int) (this.getHorizontalRightLookAngle(caster).x * 2);
+                int z1 = (int) (this.getHorizontalRightLookAngle(caster).z * 2);
+                BlockPos left = new BlockPos(caster.blockPosition().offset(x, 0, z));
+                BlockPos right = new BlockPos(caster.blockPosition().offset(x1, 0, z1));
                 EntityType<? extends AbstractMonolith> entityType = ModEntityType.POISON_QUILL_VINE.get();
-                WandUtil.summonTurret(entityLiving, BlockFinder.SummonPosition(entityLiving, left), entityType, target, duration, potency);
+                WandUtil.summonTurret(caster, BlockFinder.SummonPosition(caster, left), entityType, target, duration, potency);
                 if (rightStaff(staff)) {
-                    WandUtil.summonTurret(entityLiving, BlockFinder.SummonPosition(entityLiving, right), entityType, target, duration, potency);
+                    WandUtil.summonTurret(caster, BlockFinder.SummonPosition(caster, right), entityType, target, duration, potency);
                 }
             } else {
                 int random = worldIn.random.nextInt(5);
                 Direction direction = Direction.fromYRot(target.getYHeadRot());
                 EntityType<? extends AbstractMonolith> entityType = ModEntityType.QUICK_GROWING_VINE.get();
                 if (random == 0) {
-                    WandUtil.summonMinorSquareTrap(entityLiving, target, entityType, direction, duration);
+                    WandUtil.summonMinorSquareTrap(caster, target, entityType, direction, duration);
                 } else if (random == 1) {
-                    WandUtil.summonHallTrap(entityLiving, target, entityType, duration);
+                    WandUtil.summonHallTrap(caster, target, entityType, duration);
                 } else if (random == 2) {
-                    WandUtil.summonCubeTrap(entityLiving, target, entityType, duration);
+                    WandUtil.summonCubeTrap(caster, target, entityType, duration);
                 } else if (random == 3) {
-                    WandUtil.summonCircleTrap(entityLiving, target, entityType, direction, duration);
+                    WandUtil.summonCircleTrap(caster, target, entityType, direction, duration);
                 } else {
-                    WandUtil.summonSurroundTrap(entityLiving, target, entityType, duration);
+                    WandUtil.summonSurroundTrap(caster, target, entityType, duration);
                 }
             }
         } else if (rayTraceResult instanceof BlockHitResult){
             BlockPos blockPos = ((BlockHitResult) rayTraceResult).getBlockPos();
-            if (this.isShifting(entityLiving)){
+            if (this.isShifting(caster)){
                 EntityType<? extends AbstractMonolith> entityType = ModEntityType.POISON_QUILL_VINE.get();
-                WandUtil.summonTurret(entityLiving, blockPos, entityType, null, duration, potency);
+                WandUtil.summonTurret(caster, blockPos, entityType, null, duration, potency);
             } else {
                 EntityType<? extends AbstractMonolith> entityType = ModEntityType.QUICK_GROWING_VINE.get();
-                WandUtil.summonCubeTrap(entityLiving, blockPos, entityType, duration);
+                WandUtil.summonCubeTrap(caster, blockPos, entityType, duration);
             }
         }
     }

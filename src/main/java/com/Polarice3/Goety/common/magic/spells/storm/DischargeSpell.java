@@ -6,6 +6,7 @@ import com.Polarice3.Goety.client.particles.ShockwaveParticleOption;
 import com.Polarice3.Goety.common.effects.GoetyEffects;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.*;
@@ -24,6 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DischargeSpell extends Spell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setRadius(3.0D);
+    }
 
     @Override
     public int defaultSoulCost() {
@@ -58,26 +64,28 @@ public class DischargeSpell extends Spell {
         return list;
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        int radius = 3;
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat){
+        int radius = (int) spellStat.getRadius();
+        float potency = spellStat.getPotency();
         float damage = SpellConfig.DischargeDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
         float maxDamage = SpellConfig.DischargeMaxDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
-        if (WandUtil.enchantedFocus(entityLiving)){
-            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), entityLiving);
-            damage += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving) / 2.0F;
-            maxDamage += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving) / 2.0F;
+        if (WandUtil.enchantedFocus(caster)){
+            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), caster);
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster) / 2.0F;
         }
+        damage += potency;
+        maxDamage += potency;
         for (int i = -radius; i < radius; ++i){
             for (int k = -radius; k < radius; ++k){
-                BlockPos blockPos = entityLiving.blockPosition().offset(i, 0, k);
+                BlockPos blockPos = caster.blockPosition().offset(i, 0, k);
                 worldIn.sendParticles(ModParticleTypes.ELECTRIC.get(), blockPos.getX(), blockPos.getY() + 0.5F, blockPos.getZ(), 0, 0, 0.04D, 0, 0.5F);
             }
         }
         ColorUtil colorUtil = new ColorUtil(0xfef597);
-        worldIn.sendParticles(new ShockwaveParticleOption(colorUtil.red(), colorUtil.green(), colorUtil.blue()), entityLiving.getX(), entityLiving.getY() + 0.5F, entityLiving.getZ(), 0, 0, 0, 0, 0);
-        worldIn.sendParticles(ModParticleTypes.ELECTRIC_EXPLODE.get(), entityLiving.getX(), entityLiving.getY() + 0.5F, entityLiving.getZ(), 0, colorUtil.red(), colorUtil.green(), colorUtil.blue(), 1.0F);
+        worldIn.sendParticles(new ShockwaveParticleOption(colorUtil.red(), colorUtil.green(), colorUtil.blue()), caster.getX(), caster.getY() + 0.5F, caster.getZ(), 0, 0, 0, 0, 0);
+        worldIn.sendParticles(ModParticleTypes.ELECTRIC_EXPLODE.get(), caster.getX(), caster.getY() + 0.5F, caster.getZ(), 0, colorUtil.red(), colorUtil.green(), colorUtil.blue(), 1.0F);
         float trueDamage = Mth.clamp(damage + worldIn.random.nextInt((int) (maxDamage - damage)), damage, maxDamage);
-        new SpellExplosion(worldIn, entityLiving, ModDamageSource.directShock(entityLiving), entityLiving.blockPosition(), radius, trueDamage){
+        new SpellExplosion(worldIn, caster, ModDamageSource.directShock(caster), caster.blockPosition(), radius, trueDamage){
             @Override
             public void explodeHurt(Entity target, DamageSource damageSource, double x, double y, double z, double seen, float actualDamage) {
                 if (target instanceof LivingEntity target1){
@@ -92,11 +100,11 @@ public class DischargeSpell extends Spell {
                         target1.addEffect(new MobEffectInstance(GoetyEffects.SPASMS.get(), MathHelper.secondsToTicks(5)));
                     }
                     if (rightStaff(staff)){
-                        WandUtil.chainLightning(target1, entityLiving, 6.0D, chainDamage);
+                        WandUtil.chainLightning(target1, caster, 6.0D, chainDamage);
                     }
                 }
             }
         };
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.REDSTONE_EXPLODE.get(), this.getSoundSource(), 1.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.REDSTONE_EXPLODE.get(), this.getSoundSource(), 1.0F, 1.0F);
     }
 }

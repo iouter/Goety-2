@@ -5,7 +5,10 @@ import com.Polarice3.Goety.common.items.ModItems;
 import com.Polarice3.Goety.common.items.ModTiers;
 import com.Polarice3.Goety.common.items.equipment.PhilosophersMaceItem;
 import com.Polarice3.Goety.config.ItemConfig;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -24,6 +27,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 public class ItemHelper {
@@ -260,6 +264,20 @@ public class ItemHelper {
         } else if (stack.getItem() instanceof PhilosophersMaceItem){
             int i2 = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.MOB_LOOTING, stack);
             victim.addEffect(new MobEffectInstance(GoetyEffects.GOLD_TOUCHED.get(), 300, i2));
+        }
+    }
+
+    //Stolen from @Vazkii: https://github.com/VazkiiMods/Botania/blob/1.20.x/Xplat/src/main/java/vazkii/botania/client/gui/TooltipHandler.java
+    public static Component getShiftInfoTooltip() {
+        Component shift = Component.literal("SHIFT").withStyle(ChatFormatting.AQUA);
+        return Component.translatable("info.goety.item_info", shift).withStyle(ChatFormatting.GRAY);
+    }
+
+    public static void addOnShift(List<Component> tooltip, Runnable lambda) {
+        if (Screen.hasShiftDown()) {
+            lambda.run();
+        } else {
+            tooltip.add(getShiftInfoTooltip());
         }
     }
 }

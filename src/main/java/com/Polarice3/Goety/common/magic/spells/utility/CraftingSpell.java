@@ -36,10 +36,10 @@ public class CraftingSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        if (entityLiving instanceof Player player){
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff) {
+        if (caster instanceof Player player){
             player.openMenu(new SimpleMenuProvider((p_52229_, p_52230_, p_52231_) -> {
-                return new CraftingFocusMenu(p_52229_, p_52230_, ContainerLevelAccess.create(worldIn, entityLiving.blockPosition()));
+                return new CraftingFocusMenu(p_52229_, p_52230_, ContainerLevelAccess.create(worldIn, caster.blockPosition()));
             }, CONTAINER_TITLE));
         }
     }

@@ -4,6 +4,7 @@ import com.Polarice3.Goety.client.particles.CircleExplodeParticleOption;
 import com.Polarice3.Goety.client.particles.ModParticleTypes;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.common.network.ModNetwork;
 import com.Polarice3.Goety.common.network.server.SPlayWorldSoundPacket;
 import com.Polarice3.Goety.common.network.server.SSoulExplodePacket;
@@ -25,6 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShockwaveSpell extends Spell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setRadius(3.0D);
+    }
 
     @Override
     public int defaultSoulCost() {
@@ -54,29 +60,31 @@ public class ShockwaveSpell extends Spell {
         return list;
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        int radius = 3;
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat){
+        int radius = (int) spellStat.getRadius();
+        int potency = spellStat.getPotency();
         float damage = SpellConfig.ShockwaveDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
         float maxDamage = SpellConfig.ShockwaveMaxDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
-        if (WandUtil.enchantedFocus(entityLiving)){
-            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), entityLiving);
-            damage += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
-            maxDamage += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
+        if (WandUtil.enchantedFocus(caster)){
+            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), caster);
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
         }
+        damage += potency;
+        maxDamage += potency;
         for (int i = -radius; i < radius; ++i){
             for (int k = -radius; k < radius; ++k){
-                BlockPos blockPos = entityLiving.blockPosition().offset(i, 0, k);
+                BlockPos blockPos = caster.blockPosition().offset(i, 0, k);
                 if (worldIn.random.nextFloat() <= 0.25F){
                     worldIn.sendParticles(ModParticleTypes.SOUL_EXPLODE.get(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), 0, 0, 0.04D, 0, 0.5F);
                 }
             }
         }
         ColorUtil colorUtil = new ColorUtil(0x2ac9cf);
-        worldIn.sendParticles(new CircleExplodeParticleOption(colorUtil.red(), colorUtil.green(), colorUtil.blue(), radius * 2, radius), entityLiving.getX(), entityLiving.getY() + 0.5F, entityLiving.getZ(), 0, 0, 0, 0, 0);
-        ServerParticleUtil.windShockwaveParticle(worldIn, colorUtil, radius, 0, -1, entityLiving.position().add(0.0D, 0.5D, 0.0D));
+        worldIn.sendParticles(new CircleExplodeParticleOption(colorUtil.red(), colorUtil.green(), colorUtil.blue(), radius * 2, radius), caster.getX(), caster.getY() + 0.5F, caster.getZ(), 0, 0, 0, 0, 0);
+        ServerParticleUtil.windShockwaveParticle(worldIn, colorUtil, radius, 0, -1, caster.position().add(0.0D, 0.5D, 0.0D));
         float trueDamage = Mth.clamp(damage + worldIn.random.nextInt((int) (maxDamage - damage)), damage, maxDamage);
-        ModNetwork.sendToALL(new SSoulExplodePacket(entityLiving.blockPosition(), radius));
-        ModNetwork.sendToALL(new SPlayWorldSoundPacket(entityLiving.blockPosition(), ModSounds.SOUL_EXPLODE.get(), 4.0F, 1.0F));
-        MobUtil.explosionDamage(worldIn, entityLiving, worldIn.damageSources().indirectMagic(entityLiving, entityLiving), entityLiving.blockPosition(), radius, trueDamage);
+        ModNetwork.sendToALL(new SSoulExplodePacket(caster.blockPosition(), radius));
+        ModNetwork.sendToALL(new SPlayWorldSoundPacket(caster.blockPosition(), ModSounds.SOUL_EXPLODE.get(), 4.0F, 1.0F));
+        MobUtil.explosionDamage(worldIn, caster, worldIn.damageSources().indirectMagic(caster, caster), caster.blockPosition(), radius, trueDamage);
     }
 }

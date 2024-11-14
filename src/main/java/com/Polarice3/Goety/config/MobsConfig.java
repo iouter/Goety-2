@@ -134,6 +134,7 @@ public class MobsConfig {
     public static final ForgeConfigSpec.ConfigValue<Boolean> ConquillagerRaid;
     public static final ForgeConfigSpec.ConfigValue<Boolean> InquillagerRaid;
     public static final ForgeConfigSpec.ConfigValue<Boolean> EnviokerRaid;
+    public static final ForgeConfigSpec.ConfigValue<Boolean> SorcererRaid;
     public static final ForgeConfigSpec.ConfigValue<Boolean> MinisterRaid;
     public static final ForgeConfigSpec.ConfigValue<Boolean> HostileRedstoneGolemRaid;
     public static final ForgeConfigSpec.ConfigValue<Boolean> HostileRedstoneMonstrosityRaid;
@@ -150,6 +151,7 @@ public class MobsConfig {
     public static ForgeConfigSpec.ConfigValue<List<? extends Integer>> ConquillagerRaidCount;
     public static ForgeConfigSpec.ConfigValue<List<? extends Integer>> InquillagerRaidCount;
     public static ForgeConfigSpec.ConfigValue<List<? extends Integer>> EnviokerRaidCount;
+    public static ForgeConfigSpec.ConfigValue<List<? extends Integer>> SorcererRaidCount;
     public static ForgeConfigSpec.ConfigValue<List<? extends Integer>> MinisterRaidCount;
     public static ForgeConfigSpec.ConfigValue<List<? extends Integer>> HostileRedstoneGolemRaidCount;
     public static ForgeConfigSpec.ConfigValue<List<? extends Integer>> HostileRedstoneMonstrosityRaidCount;
@@ -157,6 +159,7 @@ public class MobsConfig {
     public static ForgeConfigSpec.ConfigValue<List<? extends Integer>> MaverickRaidCount;
 
     public static final ForgeConfigSpec.ConfigValue<Boolean> CryologerIceChunk;
+    public static final ForgeConfigSpec.ConfigValue<Boolean> SorcererHPIncrease;
 
     public static final ForgeConfigSpec.ConfigValue<Boolean> WightSpawn;
 
@@ -463,6 +466,14 @@ public class MobsConfig {
                         .defineList("enviokerRaidCount",
                                 Arrays.asList(0, 0, 0, 1, 0, 1, 1, 2), (i) -> i instanceof Integer);
                 BUILDER.pop();
+                BUILDER.push("Sorcerer");
+                SorcererRaid = BUILDER.comment("Whether Sorcerers appear in Raids, Default: true")
+                        .define("sorcererRaid", true);
+                SorcererRaidCount = BUILDER.comment("How many Sorcerers each wave", "Requires game restart", "Must have no more and no less than 8 integers")
+                        .worldRestart()
+                        .defineList("sorcererRaidCount",
+                                Arrays.asList(0, 0, 1, 0, 1, 0, 1, 1), (i) -> i instanceof Integer);
+                BUILDER.pop();
                 BUILDER.push("Minister");
                 MinisterRaid = BUILDER.comment("Whether Ministers appear in Raids, Default: true")
                         .define("ministerRaid", true);
@@ -506,6 +517,8 @@ public class MobsConfig {
             BUILDER.pop();
         CryologerIceChunk = BUILDER.comment("Whether Cryologers can summon Ice Chunks on Hard Difficulty, Default: false")
                 .define("cryologerIceChunk", false);
+        SorcererHPIncrease = BUILDER.comment("Whether Sorcerers' max health increases the higher level they are, Default: true")
+                .define("sorcererHPIncrease", true);
         IllagueSpread = BUILDER.comment("Whether Illague Effect can spread from non Conquillagers that has the effect, Default: true")
                 .define("illagueSpread", true);
         IllagerSteal = BUILDER.comment("Whether Enviokers, Inquillagers and Conquillagers can steal Totems of Souls or Totems of Undying, Default: true")

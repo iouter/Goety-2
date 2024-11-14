@@ -3,6 +3,7 @@ package com.Polarice3.Goety.common.magic.spells;
 import com.Polarice3.Goety.api.magic.ITouchSpell;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.BlockSpell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.utils.MobUtil;
 import com.Polarice3.Goety.utils.WandUtil;
@@ -61,8 +62,8 @@ public class IgniteSpell extends BlockSpell implements ITouchSpell {
     }
 
     @Override
-    public void touchResult(ServerLevel worldIn, LivingEntity caster, LivingEntity target) {
+    public void touchResult(ServerLevel worldIn, LivingEntity caster, LivingEntity target, SpellStat spellStat) {
         worldIn.playSound(null, target, SoundEvents.FIRECHARGE_USE, this.getSoundSource(), 1.0F, 1.0F);
-        target.setSecondsOnFire(SpellConfig.IgniteFireSeconds.get() + WandUtil.getLevels(ModEnchantments.BURNING.get(), caster));
+        target.setSecondsOnFire(SpellConfig.IgniteFireSeconds.get() + spellStat.getBurning() + WandUtil.getLevels(ModEnchantments.BURNING.get(), caster));
     }
 }

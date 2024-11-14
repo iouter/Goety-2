@@ -3,6 +3,7 @@ package com.Polarice3.Goety.common.magic.spells.necromancy;
 import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.MathHelper;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IceBouquetSpell extends Spell {
+
     @Override
     public int defaultSoulCost() {
         return SpellConfig.GhostFireCost.get();
@@ -58,17 +60,17 @@ public class IceBouquetSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        int range = 16;
-        int potency = 0;
-        int duration = 0;
-        if (WandUtil.enchantedFocus(entityLiving)) {
-            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
-            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
-            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        int range = spellStat.getRange();
+        int potency = spellStat.getPotency();
+        int duration = spellStat.getDuration();
+        if (WandUtil.enchantedFocus(caster)) {
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), caster);
         }
-        HitResult rayTraceResult = this.rayTrace(worldIn, entityLiving, range, 3);
-        LivingEntity target = this.getTarget(entityLiving, range);
+        HitResult rayTraceResult = this.rayTrace(worldIn, caster, range, 3);
+        LivingEntity target = this.getTarget(caster, range);
         Vec3 vec3 = null;
         if (target != null){
             vec3 = target.position();
@@ -78,14 +80,14 @@ public class IceBouquetSpell extends Spell {
         if (vec3 != null) {
             if (rightStaff(staff)) {
                 if (worldIn.random.nextFloat() <= 0.05F) {
-                    WandUtil.spawnCrossIceBouquet(worldIn, vec3, entityLiving, potency, MathHelper.secondsToTicks(duration));
+                    WandUtil.spawnCrossIceBouquet(worldIn, vec3, caster, potency, MathHelper.secondsToTicks(duration));
                 } else {
-                    WandUtil.spawnIceBouquet(worldIn, vec3, entityLiving, potency, MathHelper.secondsToTicks(duration));
+                    WandUtil.spawnIceBouquet(worldIn, vec3, caster, potency, MathHelper.secondsToTicks(duration));
                 }
             } else {
-                WandUtil.spawn4x4IceBouquet(worldIn, vec3, entityLiving, potency, MathHelper.secondsToTicks(duration));
+                WandUtil.spawn4x4IceBouquet(worldIn, vec3, caster, potency, MathHelper.secondsToTicks(duration));
             }
-            SoundUtil.playNecromancerSummon(entityLiving);
+            SoundUtil.playNecromancerSummon(caster);
         }
     }
 }

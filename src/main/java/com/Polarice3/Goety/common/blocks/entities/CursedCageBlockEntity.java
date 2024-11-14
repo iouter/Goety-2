@@ -70,8 +70,9 @@ public class CursedCageBlockEntity extends BlockEntity implements Clearable {
                 }
             }
             if (this.item.getItem() instanceof ITotem) {
-                assert this.item.getTag() != null;
-                return this.item.getTag().getInt(ITotem.SOULS_AMOUNT);
+                if (this.item.getTag() != null) {
+                    return this.item.getTag().getInt(ITotem.SOULS_AMOUNT);
+                }
             }
         }
         return 0;
@@ -79,13 +80,14 @@ public class CursedCageBlockEntity extends BlockEntity implements Clearable {
 
     public void decreaseSouls(int souls) {
         if (this.item.getItem() instanceof ITotem) {
-            assert this.item.getTag() != null;
-            int Soulcount = this.item.getTag().getInt(ITotem.SOULS_AMOUNT);
-            if (!this.item.isEmpty()) {
-                if (Soulcount > 0){
-                    Soulcount -= souls;
-                    this.item.getTag().putInt(ITotem.SOULS_AMOUNT, Soulcount);
-                    this.generateParticles();
+            if (this.item.getTag() != null) {
+                int Soulcount = this.item.getTag().getInt(ITotem.SOULS_AMOUNT);
+                if (!this.item.isEmpty()) {
+                    if (Soulcount > 0) {
+                        Soulcount -= souls;
+                        this.item.getTag().putInt(ITotem.SOULS_AMOUNT, Soulcount);
+                        this.generateParticles();
+                    }
                 }
             }
         }

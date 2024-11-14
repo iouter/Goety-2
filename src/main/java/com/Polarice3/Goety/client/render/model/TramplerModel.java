@@ -1,5 +1,6 @@
 package com.Polarice3.Goety.client.render.model;
 
+import com.Polarice3.Goety.common.entities.ally.AllyTrampler;
 import com.Polarice3.Goety.common.entities.hostile.illagers.Trampler;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.model.HierarchicalModel;
@@ -7,8 +8,9 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
-public class TramplerModel<T extends Trampler> extends HierarchicalModel<T> {
+public class TramplerModel<T extends Entity> extends HierarchicalModel<T> {
 	private final ModelPart root;
 	private final ModelPart trampler;
 	protected final ModelPart body;
@@ -86,8 +88,29 @@ public class TramplerModel<T extends Trampler> extends HierarchicalModel<T> {
 
 	public void prepareMobModel(T p_102780_, float p_102781_, float p_102782_, float p_102783_) {
 		super.prepareMobModel(p_102780_, p_102781_, p_102782_, p_102783_);
-		float f = Mth.rotLerp(p_102783_, p_102780_.yBodyRotO, p_102780_.yBodyRot);
-		float f1 = Mth.rotLerp(p_102783_, p_102780_.yHeadRotO, p_102780_.yHeadRot);
+		float yBodyRotO = 0.0F;
+		float yBodyRot = 0.0F;
+		float yHeadRotO = 0.0F;
+		float yHeadRot = 0.0F;
+		float standingScale = 0.0F;
+		float mouthAnim = 0.0F;
+		if (p_102780_ instanceof Trampler trampler1){
+			yBodyRotO = trampler1.yBodyRotO;
+			yBodyRot = trampler1.yBodyRot;
+			yHeadRotO = trampler1.yHeadRotO;
+			yHeadRot = trampler1.yHeadRot;
+			standingScale = trampler1.getStandingAnimationScale(p_102783_);
+			mouthAnim = trampler1.getMouthAnim(p_102783_);
+		} else if (p_102780_ instanceof AllyTrampler trampler1){
+			yBodyRotO = trampler1.yBodyRotO;
+			yBodyRot = trampler1.yBodyRot;
+			yHeadRotO = trampler1.yHeadRotO;
+			yHeadRot = trampler1.yHeadRot;
+			standingScale = trampler1.getStandingAnimationScale(p_102783_);
+			mouthAnim = trampler1.getMouthAnim(p_102783_);
+		}
+		float f = Mth.rotLerp(p_102783_, yBodyRotO, yBodyRot);
+		float f1 = Mth.rotLerp(p_102783_, yHeadRotO, yHeadRot);
 		float f2 = Mth.lerp(p_102783_, p_102780_.xRotO, p_102780_.getXRot());
 		float f3 = f1 - f;
 		float f4 = f2 * ((float)Math.PI / 180F);
@@ -104,9 +127,9 @@ public class TramplerModel<T extends Trampler> extends HierarchicalModel<T> {
 		}
 
 		float f5 = 0.0F;
-		float f6 = p_102780_.getStandingAnimationScale(p_102783_);
+		float f6 = standingScale;
 		float f7 = 1.0F - f6;
-		float f8 = p_102780_.getMouthAnim(p_102783_);
+		float f8 = mouthAnim;
 		float f9 = (float)p_102780_.tickCount + p_102783_;
 		this.body.xRot = 0.0F;
 		this.headParts.xRot = f4;

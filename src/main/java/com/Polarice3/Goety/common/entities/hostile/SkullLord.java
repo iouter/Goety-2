@@ -38,9 +38,12 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.warden.AngerLevel;
+import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -326,6 +329,7 @@ public class SkullLord extends Monster implements ICustomAttributes {
                     this.level.broadcastEntityEvent(this, (byte) 4);
                     this.hitTimes = 0;
                     this.boneLordRegen = delay * 2;
+                    this.stopAttackersFromAttacking();
                 }
             }
             if (this.isCharging()){
@@ -354,6 +358,34 @@ public class SkullLord extends Monster implements ICustomAttributes {
                 --this.shockWaveCool;
             }
         }
+    }
+
+    public void stopAttackersFromAttacking() {
+        List<Mob> list = this.level.getEntitiesOfClass(Mob.class, this.getBoundingBox().inflate(100.0F));
+        if (this.getBoneLord() != null) {
+            for (Mob attacker : list) {
+                if (attacker.getLastHurtByMob() == this) {
+                    attacker.setLastHurtByMob(this.getBoneLord());
+                }
+
+                if (attacker.getTarget() == this) {
+                    attacker.setTarget(this.getBoneLord());
+                }
+
+                if (attacker instanceof Warden warden) {
+                    if (warden.getTarget() == this) {
+                        warden.increaseAngerAt(this.getBoneLord(), AngerLevel.ANGRY.getMinimumAnger() + 100, false);
+                        warden.setAttackTarget(this.getBoneLord());
+                    }
+                } else {
+                    if (attacker.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET) && attacker.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).isPresent() && attacker.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).get() == this) {
+                        attacker.getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, this.getBoneLord().getUUID(), 600L);
+                        attacker.getBrain().setMemoryWithExpiry(MemoryModuleType.ATTACK_TARGET, this.getBoneLord(), 600L);
+                    }
+                }
+            }
+        }
+
     }
 
     public float getSwelling(float p_32321_) {

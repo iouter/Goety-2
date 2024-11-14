@@ -70,8 +70,14 @@ public class SpellConfig {
 
     public static final ForgeConfigSpec.ConfigValue<Integer> LeechingCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> LeechingChargeUp;
+    public static final ForgeConfigSpec.ConfigValue<Integer> LeechingDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> LeechingCoolDown;
     public static final ForgeConfigSpec.ConfigValue<Integer> LeechingPercent;
     public static final ForgeConfigSpec.ConfigValue<Double> LeechingDamage;
+
+    public static final ForgeConfigSpec.ConfigValue<Integer> KillingCost;
+    public static final ForgeConfigSpec.ConfigValue<Integer> KillingDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> KillingCoolDown;
 
     public static final ForgeConfigSpec.ConfigValue<Integer> HauntedSkullCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> HauntedSkullDuration;
@@ -174,16 +180,22 @@ public class SpellConfig {
 
     public static final ForgeConfigSpec.ConfigValue<Integer> FireBreathCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> FireBreathChargeUp;
+    public static final ForgeConfigSpec.ConfigValue<Integer> FireBreathDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> FireBreathCoolDown;
     public static final ForgeConfigSpec.ConfigValue<Double> FireBreathDamage;
     public static final ForgeConfigSpec.ConfigValue<Boolean> DragonFireGriefing;
 
     public static final ForgeConfigSpec.ConfigValue<Integer> FrostBreathCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> FrostBreathChargeUp;
+    public static final ForgeConfigSpec.ConfigValue<Integer> FrostBreathDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> FrostBreathCoolDown;
     public static final ForgeConfigSpec.ConfigValue<Double> FrostBreathDamage;
     public static final ForgeConfigSpec.ConfigValue<Boolean> DragonFrostGriefing;
 
     public static final ForgeConfigSpec.ConfigValue<Integer> ShockingCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> ShockingChargeUp;
+    public static final ForgeConfigSpec.ConfigValue<Integer> ShockingDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> ShockingCoolDown;
     public static final ForgeConfigSpec.ConfigValue<Double> ShockingDamage;
 
     public static final ForgeConfigSpec.ConfigValue<Integer> SoulLightCost;
@@ -235,6 +247,10 @@ public class SpellConfig {
     public static final ForgeConfigSpec.ConfigValue<Integer> BurrowingChargeUp;
     public static final ForgeConfigSpec.ConfigValue<Integer> BurrowingInitialSpeed;
 
+    public static final ForgeConfigSpec.ConfigValue<Integer> SensingCost;
+    public static final ForgeConfigSpec.ConfigValue<Integer> SensingDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> SensingCoolDown;
+
     public static final ForgeConfigSpec.ConfigValue<Integer> EruptionCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> EruptionDuration;
     public static final ForgeConfigSpec.ConfigValue<Integer> EruptionCoolDown;
@@ -255,6 +271,8 @@ public class SpellConfig {
 
     public static final ForgeConfigSpec.ConfigValue<Integer> WhirlwindCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> WhirlwindChargeUp;
+    public static final ForgeConfigSpec.ConfigValue<Integer> WhirlwindDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> WhirlwindCoolDown;
 
     public static final ForgeConfigSpec.ConfigValue<Integer> CushionCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> CushionDuration;
@@ -279,6 +297,8 @@ public class SpellConfig {
 
     public static final ForgeConfigSpec.ConfigValue<Integer> SwarmCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> SwarmChargeUp;
+    public static final ForgeConfigSpec.ConfigValue<Integer> SwarmDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> SwarmCoolDown;
     public static final ForgeConfigSpec.ConfigValue<Double> SwarmDamage;
 
     public static final ForgeConfigSpec.ConfigValue<Integer> PoisonDartCost;
@@ -340,6 +360,11 @@ public class SpellConfig {
     public static final ForgeConfigSpec.ConfigValue<Integer> DischargeCoolDown;
     public static final ForgeConfigSpec.ConfigValue<Double> DischargeDamage;
     public static final ForgeConfigSpec.ConfigValue<Double> DischargeMaxDamage;
+
+    public static final ForgeConfigSpec.ConfigValue<Integer> BoltingCost;
+    public static final ForgeConfigSpec.ConfigValue<Integer> BoltingDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> BoltingCoolDown;
+    public static final ForgeConfigSpec.ConfigValue<Double> BoltingDamage;
 
     public static final ForgeConfigSpec.ConfigValue<Integer> LightningCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> LightningDuration;
@@ -411,6 +436,11 @@ public class SpellConfig {
     public static final ForgeConfigSpec.ConfigValue<Integer> SoulHealCoolDown;
     public static final ForgeConfigSpec.ConfigValue<Integer> SoulHealAmount;
 
+    public static final ForgeConfigSpec.ConfigValue<Integer> ArrowRainCost;
+    public static final ForgeConfigSpec.ConfigValue<Integer> ArrowRainChargeUp;
+    public static final ForgeConfigSpec.ConfigValue<Integer> ArrowRainDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> ArrowRainCoolDown;
+
     public static final ForgeConfigSpec.ConfigValue<Integer> TelekinesisCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> TelekinesisChargeUp;
     public static final ForgeConfigSpec.ConfigValue<Integer> TelekinesisMaxHealth;
@@ -422,6 +452,8 @@ public class SpellConfig {
 
     public static final ForgeConfigSpec.ConfigValue<Integer> CorruptionCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> CorruptionChargeUp;
+    public static final ForgeConfigSpec.ConfigValue<Integer> CorruptionDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> CorruptionCoolDown;
     public static final ForgeConfigSpec.ConfigValue<Double> CorruptedBeamDamage;
     public static final ForgeConfigSpec.ConfigValue<Boolean> CorruptionImmobile;
 
@@ -584,10 +616,22 @@ public class SpellConfig {
                     .defineInRange("leechingCost", 8, 0, Integer.MAX_VALUE);
             LeechingChargeUp = BUILDER.comment("How many ticks the Leeching Spell much charge before casting, Default: 0")
                     .defineInRange("leechingChargeUp", 0, 0, Integer.MAX_VALUE);
+            LeechingDuration = BUILDER.comment("How long the Leeching Spell can be casted, setting it to 0 will allow the spell to be cast indefinitely, Default: 0")
+                    .defineInRange("leechingTime", 0, 0, 72000);
+            LeechingCoolDown = BUILDER.comment("Leeching Spell Cooldown, Default: 0")
+                    .defineInRange("leechingCoolDown", 0, 0, 72000);
             LeechingPercent = BUILDER.comment("Leeching Spell healing percentage, Default: 100")
                     .defineInRange("leechingPercent", 100, 1, 100);
             LeechingDamage = BUILDER.comment("How much base damage Leeching Spell deals per second, Default: 1.0")
                     .defineInRange("leechingDamage", 1.0, 1.0, Double.MAX_VALUE);
+            BUILDER.pop();
+            BUILDER.push("Killing Spell");
+            KillingCost = BUILDER.comment("Killing Spell Cost, Default: 4000")
+                    .defineInRange("killingCost", 4000, 0, Integer.MAX_VALUE);
+            KillingDuration = BUILDER.comment("Time to cast Killing Spell, Default: 60")
+                    .defineInRange("killingTime", 60, 0, 72000);
+            KillingCoolDown = BUILDER.comment("Killing Spell Cooldown, Default: 200")
+                    .defineInRange("killingCoolDown", 200, 0, Integer.MAX_VALUE);
             BUILDER.pop();
             BUILDER.push("Skull Spell");
             HauntedSkullCost = BUILDER.comment("Skull Spell Cost, Default: 16")
@@ -792,6 +836,10 @@ public class SpellConfig {
                     .defineInRange("fireBreathCost", 2, 0, Integer.MAX_VALUE);
             FireBreathChargeUp = BUILDER.comment("How many ticks the Fire Breath Spell much charge before casting, Default: 0")
                     .defineInRange("fireBreathChargeUp", 0, 0, Integer.MAX_VALUE);
+            FireBreathDuration = BUILDER.comment("How long the Fire Breath Spell can be casted, setting it to 0 will allow the spell to be cast indefinitely, Default: 100")
+                    .defineInRange("fireBreathTime", 100, 0, 72000);
+            FireBreathCoolDown = BUILDER.comment("Fire Breath Spell Cooldown, Default: 100")
+                    .defineInRange("fireBreathCoolDown", 100, 0, 72000);
             FireBreathDamage = BUILDER.comment("How much base damage Fire Breath deals, Default: 2.0")
                     .defineInRange("fireBreathDamage", 2.0, 1.0, Double.MAX_VALUE);
             DragonFireGriefing = BUILDER.comment("Ring of the Dragon Fire Breath deals environmental damage, Default: true")
@@ -802,6 +850,10 @@ public class SpellConfig {
                     .defineInRange("frostBreathCost", 2, 0, Integer.MAX_VALUE);
             FrostBreathChargeUp = BUILDER.comment("How many ticks the Frost Breath Spell much charge before casting, Default: 0")
                     .defineInRange("frostBreathChargeUp", 0, 0, Integer.MAX_VALUE);
+            FrostBreathDuration = BUILDER.comment("How long the Frost Breath Spell can be casted, setting it to 0 will allow the spell to be cast indefinitely, Default: 100")
+                    .defineInRange("frostBreathTime", 100, 0, 72000);
+            FrostBreathCoolDown = BUILDER.comment("Frost Breath Spell Cooldown, Default: 100")
+                    .defineInRange("frostBreathCoolDown", 100, 0, 72000);
             FrostBreathDamage = BUILDER.comment("How much base damage Frost Breath deals, Default: 1.0")
                     .defineInRange("frostBreathDamage", 1.0, 1.0, Double.MAX_VALUE);
             DragonFrostGriefing = BUILDER.comment("Ring of the Dragon Frost Breath deals environmental damage, Default: true")
@@ -812,6 +864,10 @@ public class SpellConfig {
                     .defineInRange("shockingCost", 4, 0, Integer.MAX_VALUE);
             ShockingChargeUp = BUILDER.comment("How many ticks the Shocking Spell much charge before casting, Default: 0")
                     .defineInRange("shockingChargeUp", 0, 0, Integer.MAX_VALUE);
+            ShockingDuration = BUILDER.comment("How long the Shocking Spell can be casted, setting it to 0 will allow the spell to be cast indefinitely, Default: 100")
+                    .defineInRange("shockingTime", 100, 0, 72000);
+            ShockingCoolDown = BUILDER.comment("Shocking Spell Cooldown, Default: 100")
+                    .defineInRange("shockingCoolDown", 100, 0, 72000);
             ShockingDamage = BUILDER.comment("How much base damage Shocking Sparks deals, Default: 2.0")
                     .defineInRange("shockingDamage", 2.0, 1.0, Double.MAX_VALUE);
             BUILDER.pop();
@@ -913,6 +969,14 @@ public class SpellConfig {
             BurrowingInitialSpeed = BUILDER.comment("The initial breaking speed of the Burrowing spell, the lower the value the quicker, Default: 4")
                     .defineInRange("burrowingInitialSpeed", 4, 0, Integer.MAX_VALUE);
             BUILDER.pop();
+            BUILDER.push("Sensing Spell");
+            SensingCost = BUILDER.comment("Sensing Spell Cost, Default: 8")
+                    .defineInRange("sensingCost", 8, 0, Integer.MAX_VALUE);
+            SensingDuration = BUILDER.comment("Time to cast Sensing Spell, Default: 20")
+                    .defineInRange("sensingTime", 20, 0, 72000);
+            SensingCoolDown = BUILDER.comment("Sensing Spell Cooldown, Default: 200")
+                    .defineInRange("sensingCoolDown", 200, 0, Integer.MAX_VALUE);
+            BUILDER.pop();
             BUILDER.push("Eruption Spell");
             EruptionCost = BUILDER.comment("Eruption Spell Cost, Default: 32")
                     .defineInRange("eruptionCost", 32, 0, Integer.MAX_VALUE);
@@ -954,6 +1018,10 @@ public class SpellConfig {
                     .defineInRange("whirlwindCost", 4, 0, Integer.MAX_VALUE);
             WhirlwindChargeUp = BUILDER.comment("How many ticks the Whirlwind Spell much charge before casting, Default: 0")
                     .defineInRange("whirlwindChargeUp", 0, 0, Integer.MAX_VALUE);
+            WhirlwindDuration = BUILDER.comment("How long the Whirlwind Spell can be casted, setting it to 0 will allow the spell to be cast indefinitely, Default: 0")
+                    .defineInRange("whirlwindTime", 0, 0, 72000);
+            WhirlwindCoolDown = BUILDER.comment("Whirlwind Spell Cooldown, Default: 0")
+                    .defineInRange("whirlwindCoolDown", 0, 0, 72000);
             BUILDER.pop();
             BUILDER.push("Cushion Spell");
             CushionCost = BUILDER.comment("Cushion Spell Cost, Default: 8")
@@ -1002,6 +1070,10 @@ public class SpellConfig {
                     .defineInRange("swarmCost", 2, 0, Integer.MAX_VALUE);
             SwarmChargeUp = BUILDER.comment("How many ticks the Swarm Spell much charge before casting, Default: 0")
                     .defineInRange("swarmChargeUp", 0, 0, Integer.MAX_VALUE);
+            SwarmDuration = BUILDER.comment("How long the Swarm Spell can be casted, setting it to 0 will allow the spell to be cast indefinitely, Default: 100")
+                    .defineInRange("swarmTime", 100, 0, 72000);
+            SwarmCoolDown = BUILDER.comment("Swarm Spell Cooldown, Default: 100")
+                    .defineInRange("swarmCoolDown", 100, 0, 72000);
             SwarmDamage = BUILDER.comment("How much base damage Swarm deals, Default: 2.0")
                     .defineInRange("swarmDamage", 2.0, 1.0, Double.MAX_VALUE);
             BUILDER.pop();
@@ -1124,6 +1196,16 @@ public class SpellConfig {
                     .defineInRange("dischargeMinDamage", 6.0, 1.0, Double.MAX_VALUE);
             DischargeMaxDamage = BUILDER.comment("How much base maximum damage Discharge Spell deals, Default: 12.0")
                     .defineInRange("dischargeMaxDamage", 12.0, 2.0, Double.MAX_VALUE);
+            BUILDER.pop();
+            BUILDER.push("Bolting Spell");
+            BoltingCost = BUILDER.comment("Bolting Spell Cost, Default: 40")
+                    .defineInRange("boltingCost", 40, 0, Integer.MAX_VALUE);
+            BoltingDuration = BUILDER.comment("Time to cast Bolting Spell, Default: 0")
+                    .defineInRange("boltingTime", 0, 0, 72000);
+            BoltingCoolDown = BUILDER.comment("Bolting Spell Cooldown, Default: 200")
+                    .defineInRange("boltingCoolDown", 200, 0, Integer.MAX_VALUE);
+            BoltingDamage = BUILDER.comment("How much base damage Bolting Spell deals, Default: 5.0")
+                    .defineInRange("boltingDamage", 5.0, 1.0, Double.MAX_VALUE);
             BUILDER.pop();
             BUILDER.push("Lightning Spell");
             LightningCost = BUILDER.comment("Lightning Spell Cost, Default: 16")
@@ -1283,6 +1365,16 @@ public class SpellConfig {
                     .defineList("telekinesisBlackList", Lists.newArrayList(),
                             (itemRaw) -> itemRaw instanceof String);
             BUILDER.pop();
+            BUILDER.push("Arrow Rain Spell");
+            ArrowRainCost = BUILDER.comment("Arrow Rain Spell Cost, Default: 4")
+                    .defineInRange("arrowRainCost", 4, 0, Integer.MAX_VALUE);
+            ArrowRainChargeUp = BUILDER.comment("How many ticks the Arrow Rain Spell much charge before casting, Default: 20")
+                    .defineInRange("arrowRainChargeUp", 20, 0, Integer.MAX_VALUE);
+            ArrowRainDuration = BUILDER.comment("How long the Arrow Rain Spell can be casted, setting it to 0 will allow the spell to be cast indefinitely, Default: 100")
+                    .defineInRange("arrowRainTime", 100, 0, 72000);
+            ArrowRainCoolDown = BUILDER.comment("Arrow Rain Spell Cooldown, Default: 400")
+                    .defineInRange("arrowRainCoolDown", 400, 0, 72000);
+            BUILDER.pop();
             BUILDER.push("Sonic Boom Spell");
             SonicBoomCost = BUILDER.comment("Sonic Boom Spell Cost, Default: 16")
                     .defineInRange("sonicBoomCost", 16, 0, Integer.MAX_VALUE);
@@ -1298,6 +1390,10 @@ public class SpellConfig {
                     .defineInRange("corruptionCost", 2500, 0, Integer.MAX_VALUE);
             CorruptionChargeUp = BUILDER.comment("How many ticks the Corruption Spell much charge before casting, Default: 0")
                     .defineInRange("corruptionChargeUp", 0, 0, Integer.MAX_VALUE);
+            CorruptionDuration = BUILDER.comment("How long the Corruption Spell can be casted, setting it to 0 will allow the spell to be cast indefinitely, Default: 0")
+                    .defineInRange("corruptionTime", 0, 0, 72000);
+            CorruptionCoolDown = BUILDER.comment("Corruption Spell Cooldown, Default: 50")
+                    .defineInRange("corruptionCoolDown", 50, 0, Integer.MAX_VALUE);
             CorruptedBeamDamage = BUILDER.comment("How much base damage Corrupted Beam Spell deals per tick, Default: 10.0")
                     .defineInRange("corruptedBeamDamage", 10.0, 0.0, Double.MAX_VALUE);
             CorruptionImmobile = BUILDER.comment("Whether casting Corruption spell immobilizes the caster, Default: true")

@@ -2,6 +2,7 @@ package com.Polarice3.Goety.common.magic.spells;
 
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.EverChargeSpell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.SEHelper;
 import com.Polarice3.Goety.utils.ServerParticleUtil;
@@ -39,16 +40,17 @@ public class WardingSpell extends EverChargeSpell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        int potency = 0;
-        if (WandUtil.enchantedFocus(entityLiving)){
-            potency = WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        int potency = spellStat.getPotency();
+        if (WandUtil.enchantedFocus(caster)){
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
         }
-        if (entityLiving instanceof Player player){
+        if (caster instanceof Player player){
             SEHelper.setMaxWarding(player, 20);
             if (player.tickCount % 5 == 0) {
                 SEHelper.increaseWarding(player, 1 + potency);
             }
-            ServerParticleUtil.addParticlesAroundSelf(worldIn, ParticleTypes.ENCHANT, player);        }
+            ServerParticleUtil.addParticlesAroundSelf(worldIn, ParticleTypes.ENCHANT, player);
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.Polarice3.Goety.common.effects.GoetyEffects;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.projectiles.AbstractCyclone;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.CuriosFinder;
@@ -32,6 +33,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WindBlastSpell extends Spell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setPotency(1).setRange(8);
+    }
 
     public int defaultSoulCost() {
         return SpellConfig.WindBlastCost.get();
@@ -63,17 +69,21 @@ public class WindBlastSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        Vec3 srcVec = new Vec3(entityLiving.getX(), entityLiving.getEyeY(), entityLiving.getZ());
-        Vec3 lookVec = entityLiving.getViewVector(1.0F);
-        double knock = rightStaff(staff) ? 2.0D : 1.0D;
-        int range = rightStaff(staff) ? 16 : 8;
-        if (WandUtil.enchantedFocus(entityLiving)){
-            knock += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving) / 4.0D;
-            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        Vec3 srcVec = new Vec3(caster.getX(), caster.getEyeY(), caster.getZ());
+        Vec3 lookVec = caster.getViewVector(1.0F);
+        double knock = spellStat.getPotency();
+        int range = spellStat.getRange();
+        if (rightStaff(staff)){
+            range *= 2;
+            knock *= 2;
+        }
+        if (WandUtil.enchantedFocus(caster)){
+            knock += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster) / 4.0D;
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
         }
         for(int i = 1; i < range; ++i) {
-            Vec3 vector3d2 = srcVec.add(lookVec.scale((double)i));
+            Vec3 vector3d2 = srcVec.add(lookVec.scale(i));
             worldIn.sendParticles(ModParticleTypes.WIND_BLAST.get(), vector3d2.x, vector3d2.y, vector3d2.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
             if (typeStaff(staff, SpellType.FROST)){
                 worldIn.sendParticles(ModParticleTypes.FROST.get(), vector3d2.x, vector3d2.y, vector3d2.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
@@ -86,7 +96,7 @@ public class WindBlastSpell extends Spell {
             }
         }
         Vec3 rangeVec = new Vec3(lookVec.x * range, lookVec.y * range, lookVec.z * range);
-        BlockHitResult result = this.blockResult(worldIn, entityLiving, range);
+        BlockHitResult result = this.blockResult(worldIn, caster, range);
         if (result != null){
             BlockPos blockPos = result.getBlockPos();
             BlockEntity blockEntity = worldIn.getBlockEntity(blockPos);
@@ -94,17 +104,17 @@ public class WindBlastSpell extends Spell {
                 windPowered.activate(MathHelper.secondsToTicks(15));
             }
         }
-        List<Entity> entities = entityLiving.level.getEntities(entityLiving, entityLiving.getBoundingBox().inflate(1.0D).expandTowards(rangeVec));
+        List<Entity> entities = caster.level.getEntities(caster, caster.getBoundingBox().inflate(1.0D).expandTowards(rangeVec));
         for (Entity entity : entities){
-            if (entityLiving.hasLineOfSight(entity)){
+            if (caster.hasLineOfSight(entity)){
                 if (entity instanceof LivingEntity living) {
-                    MobUtil.knockBack(living, entityLiving, 2.0D * knock, 0.2D * knock, 2.0D * knock);
+                    MobUtil.knockBack(living, caster, 2.0D * knock, 0.2D * knock, 2.0D * knock);
                     if (typeStaff(staff, SpellType.FROST)){
                         living.addEffect(new MobEffectInstance(GoetyEffects.FREEZING.get(), MathHelper.secondsToTicks(5)));
                     }
                     if (typeStaff(staff, SpellType.WILD)){
                         MobEffect mobEffect = MobEffects.POISON;
-                        if (CuriosFinder.hasWildRobe(entityLiving)){
+                        if (CuriosFinder.hasWildRobe(caster)){
                             mobEffect = GoetyEffects.ACID_VENOM.get();
                         }
                         living.addEffect(new MobEffectInstance(mobEffect, MathHelper.secondsToTicks(5)));
@@ -118,6 +128,6 @@ public class WindBlastSpell extends Spell {
                 }
             }
         }
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.WIND_BLAST.get(), this.getSoundSource(), 3.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.WIND_BLAST.get(), this.getSoundSource(), 3.0F, 1.0F);
     }
 }

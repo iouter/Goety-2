@@ -35,15 +35,15 @@ public class SSetPlayerOwnerPacket {
 
     public static void consume(SSetPlayerOwnerPacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            assert ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT;
-
-            ClientLevel clientWorld = Minecraft.getInstance().level;
-            if (clientWorld != null){
-                Entity entity = EntityFinder.getEntityByUuiDGlobal(packet.summoned).isPresent() ? EntityFinder.getEntityByUuiDGlobal(packet.summoned).get() : null;
-                Player playerEntity = Goety.PROXY.getPlayer();
-                if (entity != null && playerEntity != null){
-                    if (entity instanceof IOwned owned){
-                        owned.setTrueOwner(playerEntity);
+            if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                ClientLevel clientWorld = Minecraft.getInstance().level;
+                if (clientWorld != null) {
+                    Entity entity = EntityFinder.getEntityByUuiDGlobal(packet.summoned).isPresent() ? EntityFinder.getEntityByUuiDGlobal(packet.summoned).get() : null;
+                    Player playerEntity = Goety.PROXY.getPlayer();
+                    if (entity != null && playerEntity != null) {
+                        if (entity instanceof IOwned owned) {
+                            owned.setTrueOwner(playerEntity);
+                        }
                     }
                 }
             }

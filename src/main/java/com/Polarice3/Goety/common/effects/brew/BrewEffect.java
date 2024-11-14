@@ -131,6 +131,17 @@ public abstract class BrewEffect {
         return result;
     }
 
+    public List<BlockPos> getSquarePos(BlockPos initial, int range){
+        List<BlockPos> result = new ArrayList<>();
+        for (int i = -range; i <= range; ++i) {
+            for (int k = -range; k <= range; ++k) {
+                BlockPos blockpos1 = initial.offset(i, 0, k);
+                result.add(blockpos1);
+            }
+        }
+        return result;
+    }
+
     public List<BlockPos> getCubePos(BlockPos initial, int range){
         List<BlockPos> result = new ArrayList<>();
         for (int i = -range; i <= range; ++i) {

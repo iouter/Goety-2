@@ -465,6 +465,78 @@ public class SEHelper {
         return entityTypes;
     }
 
+    public static boolean addGroundedEntity(Player owner, LivingEntity target){
+        if (target != owner) {
+            if (!getGroundedEntities(owner).contains(target)) {
+                getCapability(owner).addGrounded(target.getUUID());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean removeGroundedEntity(Player owner, LivingEntity target){
+        if (target != owner) {
+            if (getGroundedEntities(owner).contains(target)) {
+                getCapability(owner).removeGrounded(target.getUUID());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static List<LivingEntity> getGroundedEntities(Player owner){
+        List<LivingEntity> livingEntities = new ArrayList<>();
+        if (!getCapability(owner).groundedList().isEmpty()){
+            for (UUID uuid : getCapability(owner).groundedList()){
+                Entity entity = EntityFinder.getLivingEntityByUuiD(uuid);
+                if (entity instanceof LivingEntity target && !livingEntities.contains(target) && target != owner){
+                    livingEntities.add(target);
+                }
+            }
+        }
+        return livingEntities;
+    }
+
+    public static boolean addGroundedEntityType(Player owner, EntityType<?> target){
+        if (!getGroundedEntityTypes(owner).contains(target)) {
+            getCapability(owner).addGroundedType(target);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean removeGroundedEntityType(Player owner, EntityType<?> target){
+        if (getGroundedEntityTypes(owner).contains(target)) {
+            getCapability(owner).removeGroundedType(target);
+            return true;
+        }
+        return false;
+    }
+
+    public static List<EntityType<?>> getGroundedEntityTypes(Player owner){
+        List<EntityType<?>> entityTypes = new ArrayList<>();
+        if (!getCapability(owner).groundedTypeList().isEmpty()){
+            for (EntityType<?> entityType : getCapability(owner).groundedTypeList()){
+                if (!entityTypes.contains(entityType)){
+                    entityTypes.add(entityType);
+                }
+            }
+        }
+        return entityTypes;
+    }
+
+    public static boolean isGrounded(LivingEntity owner, LivingEntity livingEntity){
+        if (owner instanceof Player player){
+            return isGrounded(player, livingEntity);
+        }
+        return false;
+    }
+
+    public static boolean isGrounded(Player owner, LivingEntity livingEntity){
+        return getGroundedEntities(owner).contains(livingEntity) || getGroundedEntityTypes(owner).contains(livingEntity.getType());
+    }
+
     public static boolean addResearch(Player player, Research research){
         if (!getResearch(player).contains(research)) {
             getCapability(player).addResearch(research);
@@ -813,6 +885,28 @@ public class SEHelper {
             }
         }
 
+        if (soulEnergy.groundedList() != null) {
+            ListTag listTag = new ListTag();
+            if (!soulEnergy.groundedList().isEmpty()) {
+                for (UUID uuid : soulEnergy.groundedList()) {
+                    listTag.add(NbtUtils.createUUID(uuid));
+                }
+                tag.put("groundedList", listTag);
+            }
+        }
+
+        if (soulEnergy.groundedTypeList() != null){
+            ListTag listTag = new ListTag();
+            if (!soulEnergy.groundedTypeList().isEmpty()) {
+                for (EntityType<?> entityType : soulEnergy.groundedTypeList()){
+                    CompoundTag compoundTag = new CompoundTag();
+                    compoundTag.putString("id", EntityType.getKey(entityType).toString());
+                    listTag.add(compoundTag);
+                }
+                tag.put("groundedTypeList", listTag);
+            }
+        }
+
         if (soulEnergy.getResearch() != null){
             ListTag listTag = new ListTag();
             if (!soulEnergy.getResearch().isEmpty()){
@@ -898,6 +992,21 @@ public class SEHelper {
                 String string = listtag.getCompound(i).getString("id");
                 if (EntityType.byString(string).isPresent()){
                     soulEnergy.addAllyType(EntityType.byString(string).get());
+                }
+            }
+        }
+        if (tag.contains("groundedList", 9)) {
+            ListTag listtag = tag.getList("groundedList", 11);
+            for (Tag value : listtag) {
+                soulEnergy.addGrounded(NbtUtils.loadUUID(value));
+            }
+        }
+        if (tag.contains("groundedTypeList", Tag.TAG_LIST)) {
+            ListTag listtag = tag.getList("groundedTypeList", Tag.TAG_COMPOUND);
+            for (int i = 0; i < listtag.size(); ++i) {
+                String string = listtag.getCompound(i).getString("id");
+                if (EntityType.byString(string).isPresent()){
+                    soulEnergy.addGroundedType(EntityType.byString(string).get());
                 }
             }
         }

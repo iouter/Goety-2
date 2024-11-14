@@ -13,6 +13,14 @@ public class AttributesConfig {
 
     public static final ForgeConfigSpec.ConfigValue<Double> SkeletonVillagerServantHealth;
     public static final ForgeConfigSpec.ConfigValue<Double> SkeletonVillagerServantDamage;
+    public static final ForgeConfigSpec.ConfigValue<Double> WarlockHealth;
+    public static final ForgeConfigSpec.ConfigValue<Double> WarlockArmor;
+    public static final ForgeConfigSpec.ConfigValue<Double> MaverickHealth;
+    public static final ForgeConfigSpec.ConfigValue<Double> MaverickArmor;
+    public static final ForgeConfigSpec.ConfigValue<Double> MaverickDamage;
+    public static final ForgeConfigSpec.ConfigValue<Double> HereticHealth;
+    public static final ForgeConfigSpec.ConfigValue<Double> HereticArmor;
+    public static final ForgeConfigSpec.ConfigValue<Double> HereticDamage;
     public static final ForgeConfigSpec.ConfigValue<Double> ZPiglinServantHealth;
     public static final ForgeConfigSpec.ConfigValue<Double> ZPiglinServantArmor;
     public static final ForgeConfigSpec.ConfigValue<Double> ZPiglinServantDamage;
@@ -38,6 +46,9 @@ public class AttributesConfig {
     public static final ForgeConfigSpec.ConfigValue<Double> InfernoRangeDamage;
     public static final ForgeConfigSpec.ConfigValue<Double> MalghastHealth;
 
+    public static final ForgeConfigSpec.ConfigValue<Double> SorcererHealth;
+    public static final ForgeConfigSpec.ConfigValue<Double> SorcererArmor;
+    public static final ForgeConfigSpec.ConfigValue<Double> SorcererDamage;
     public static final ForgeConfigSpec.ConfigValue<Double> EnviokerHealth;
     public static final ForgeConfigSpec.ConfigValue<Double> EnviokerArmor;
     public static final ForgeConfigSpec.ConfigValue<Double> EnviokerDamage;
@@ -245,27 +256,27 @@ public class AttributesConfig {
                 SkeletonVillagerServantDamage = BUILDER.comment("How much damage Skeleton Villager Servants deals, Default: 2.0")
                         .defineInRange("skeletonVillagerServantDamage", 2.0, 1.0, Double.MAX_VALUE);
                 BUILDER.pop();
-                BUILDER.push("Blaze Servant");
-                BlazeServantHealth = BUILDER.comment("How much Max Health Blaze Servants have, Default: 20.0")
-                        .defineInRange("blazeServantHealth", 20.0, 1.0, Double.MAX_VALUE);
-                BlazeServantArmor = BUILDER.comment("How much natural armor points Blaze Servants have, Default: 0.0")
-                        .defineInRange("blazeServantArmor", 0.0, 0.0, Double.MAX_VALUE);
-                BlazeServantMeleeDamage = BUILDER.comment("How much melee damage Blaze Servants deals, Default: 6.0")
-                        .defineInRange("blazeServantMeleeDamage", 6.0, 1.0, Double.MAX_VALUE);
-                BlazeServantRangeDamage = BUILDER.comment("How much ranged damage Blaze Servants deals, Default: 5.0")
-                        .defineInRange("blazeServantRangeDamage", 5.0, 1.0, Double.MAX_VALUE);
+                BUILDER.push("Warlock");
+                WarlockHealth = BUILDER.comment("How much Max Health Warlocks have, Default: 26.0")
+                        .defineInRange("warlockHealth", 26.0, 0.0, Double.MAX_VALUE);
+                WarlockArmor = BUILDER.comment("How much natural armor points Warlocks have, Default: 0.0")
+                        .defineInRange("warlockArmor", 0.0, 0.0, Double.MAX_VALUE);
                 BUILDER.pop();
-                BUILDER.push("Wildfire");
-                WildfireHealth = BUILDER.comment("How much Max Health Wildfires have, Default: 75.0")
-                        .defineInRange("wildfireHealth", 75.0, 1.0, Double.MAX_VALUE);
-                WildfireShieldHealth = BUILDER.comment("How much Health each Wildfire's shields have, Default: 12.5")
-                        .defineInRange("wildfireShieldHealth", 12.5, 1.0, Double.MAX_VALUE);
-                WildfireArmor = BUILDER.comment("How much natural armor points Wildfires have, Default: 0.0")
-                        .defineInRange("wildfireArmor", 0.0, 0.0, Double.MAX_VALUE);
-                WildfireMeleeDamage = BUILDER.comment("How much melee damage Wildfires deals, Default: 6.0")
-                        .defineInRange("wildfireMeleeDamage", 6.0, 1.0, Double.MAX_VALUE);
-                WildfireRangeDamage = BUILDER.comment("How much ranged damage Wildfires deals, Default: 10.0")
-                        .defineInRange("wildfireRangeDamage", 10.0, 1.0, Double.MAX_VALUE);
+                BUILDER.push("Maverick");
+                MaverickHealth = BUILDER.comment("How much Max Health Mavericks have, Default: 26.0")
+                        .defineInRange("maverickHealth", 26.0, 0.0, Double.MAX_VALUE);
+                MaverickArmor = BUILDER.comment("How much natural armor points Mavericks have, Default: 0.0")
+                        .defineInRange("maverickArmor", 0.0, 0.0, Double.MAX_VALUE);
+                MaverickDamage = BUILDER.comment("How much damage Mavericks deals, Default: 2.0")
+                        .defineInRange("maverickDamage", 2.0, 1.0, Double.MAX_VALUE);
+                BUILDER.pop();
+                BUILDER.push("Heretic");
+                HereticHealth = BUILDER.comment("How much Max Health Heretics have, Default: 26.0")
+                        .defineInRange("hereticHealth", 26.0, 0.0, Double.MAX_VALUE);
+                HereticArmor = BUILDER.comment("How much natural armor points Heretics have, Default: 0.0")
+                        .defineInRange("hereticArmor", 0.0, 0.0, Double.MAX_VALUE);
+                HereticDamage = BUILDER.comment("How much damage Heretics deals, Default: 2.0")
+                        .defineInRange("hereticDamage", 2.0, 1.0, Double.MAX_VALUE);
                 BUILDER.pop();
                 BUILDER.push("Inferno");
                 InfernoHealth = BUILDER.comment("How much Max Health Inferno have, Default: 20.0")
@@ -277,22 +288,6 @@ public class AttributesConfig {
                 InfernoRangeDamage = BUILDER.comment("How much range damage Inferno deals, Default: 5.0")
                         .defineInRange("infernoRangeDamage", 5.0, 1.0, Double.MAX_VALUE);
                 BUILDER.pop();
-                BUILDER.push("Zombified Piglin Servant");
-                ZPiglinServantHealth = BUILDER.comment("How much Max Health Zombified Piglin Servants have, Default: 20.0")
-                        .defineInRange("zombifiedPiglinServantHealth", 20.0, 1.0, Double.MAX_VALUE);
-                ZPiglinServantArmor = BUILDER.comment("How much natural armor points Zombified Piglin Servants have, Default: 2.0")
-                        .defineInRange("zombifiedPiglinServantArmor", 2.0, 0.0, Double.MAX_VALUE);
-                ZPiglinServantDamage = BUILDER.comment("How much damage Zombified Piglin Servants deals, Default: 5.0")
-                        .defineInRange("zombifiedPiglinServantDamage", 5.0, 1.0, Double.MAX_VALUE);
-                BUILDER.pop();
-                BUILDER.push("Zombified Piglin Brute Servant");
-                ZPiglinBruteServantHealth = BUILDER.comment("How much Max Health Zombified Piglin Brute Servants have, Default: 50.0")
-                        .defineInRange("zombifiedPiglinBruteServantHealth", 50.0, 1.0, Double.MAX_VALUE);
-                ZPiglinBruteServantArmor = BUILDER.comment("How much natural armor points Zombified Piglin Brute Servants have, Default: 2.0")
-                        .defineInRange("zombifiedPiglinBruteServantArmor", 2.0, 0.0, Double.MAX_VALUE);
-                ZPiglinBruteServantDamage = BUILDER.comment("How much damage Zombified Piglin Brute Servants deals, Default: 7.0")
-                        .defineInRange("zombifiedPiglinBruteServantDamage", 7.0, 1.0, Double.MAX_VALUE);
-                BUILDER.pop();
                 BUILDER.push("Obsidian Monolith");
                 ObsidianMonolithHealth = BUILDER.comment("How much Max Health Obsidian Monolith have, Default: 50.0")
                         .defineInRange("obsidianMonolithHealth", 50.0, 1.0, Double.MAX_VALUE);
@@ -301,6 +296,14 @@ public class AttributesConfig {
                 BUILDER.pop();
             BUILDER.pop();
             BUILDER.push("Illagers");
+                BUILDER.push("Sorcerer");
+                SorcererHealth = BUILDER.comment("How much Max Health Sorcerers have, Default: 24.0")
+                        .defineInRange("sorcererHealth", 24.0, 1.0, Double.MAX_VALUE);
+                SorcererArmor = BUILDER.comment("How much natural Armor Sorcerers have, Default: 0.0")
+                        .defineInRange("sorcererArmor", 0.0, 0.0, Double.MAX_VALUE);
+                SorcererDamage = BUILDER.comment("How much damage Sorcerers deals, Default: 5.0")
+                        .defineInRange("sorcererDamage", 5.0, 1.0, Double.MAX_VALUE);
+                BUILDER.pop();
                 BUILDER.push("Envioker");
                 EnviokerHealth = BUILDER.comment("How much Max Health Envioker have, Default: 24.0")
                         .defineInRange("enviokerHealth", 24.0, 1.0, Double.MAX_VALUE);
@@ -459,6 +462,22 @@ public class AttributesConfig {
                 JungleZombieServantDamage = BUILDER.comment("How much damage Jungle Zombie Servants deals, Default: 3.0")
                         .defineInRange("jungleZombieServantDamage", 3.0, 1.0, Double.MAX_VALUE);
                 BUILDER.pop();
+                BUILDER.push("Zombified Piglin Servant");
+                ZPiglinServantHealth = BUILDER.comment("How much Max Health Zombified Piglin Servants have, Default: 20.0")
+                        .defineInRange("zombifiedPiglinServantHealth", 20.0, 1.0, Double.MAX_VALUE);
+                ZPiglinServantArmor = BUILDER.comment("How much natural armor points Zombified Piglin Servants have, Default: 2.0")
+                        .defineInRange("zombifiedPiglinServantArmor", 2.0, 0.0, Double.MAX_VALUE);
+                ZPiglinServantDamage = BUILDER.comment("How much damage Zombified Piglin Servants deals, Default: 5.0")
+                        .defineInRange("zombifiedPiglinServantDamage", 5.0, 1.0, Double.MAX_VALUE);
+                BUILDER.pop();
+                BUILDER.push("Zombified Piglin Brute Servant");
+                ZPiglinBruteServantHealth = BUILDER.comment("How much Max Health Zombified Piglin Brute Servants have, Default: 50.0")
+                        .defineInRange("zombifiedPiglinBruteServantHealth", 50.0, 1.0, Double.MAX_VALUE);
+                ZPiglinBruteServantArmor = BUILDER.comment("How much natural armor points Zombified Piglin Brute Servants have, Default: 2.0")
+                        .defineInRange("zombifiedPiglinBruteServantArmor", 2.0, 0.0, Double.MAX_VALUE);
+                ZPiglinBruteServantDamage = BUILDER.comment("How much damage Zombified Piglin Brute Servants deals, Default: 7.0")
+                        .defineInRange("zombifiedPiglinBruteServantDamage", 7.0, 1.0, Double.MAX_VALUE);
+                BUILDER.pop();
                 BUILDER.push("Blackguard Servant");
                 BlackguardServantHealth = BUILDER.comment("How much Max Health Blackguard Servants have, Default: 20.0")
                         .defineInRange("blackguardServantHealth", 20.0, 1.0, Double.MAX_VALUE);
@@ -578,6 +597,28 @@ public class AttributesConfig {
                         .defineInRange("ghastServantHealth", 10.0, 1.0, Double.MAX_VALUE);
                 GhastServantDamage = BUILDER.comment("How much damage Ghast Servants' lavaballs deals, Default: 6.0")
                         .defineInRange("ghastServantDamage", 6.0, 1.0, Double.MAX_VALUE);
+                BUILDER.pop();
+                BUILDER.push("Blaze Servant");
+                BlazeServantHealth = BUILDER.comment("How much Max Health Blaze Servants have, Default: 20.0")
+                        .defineInRange("blazeServantHealth", 20.0, 1.0, Double.MAX_VALUE);
+                BlazeServantArmor = BUILDER.comment("How much natural armor points Blaze Servants have, Default: 0.0")
+                        .defineInRange("blazeServantArmor", 0.0, 0.0, Double.MAX_VALUE);
+                BlazeServantMeleeDamage = BUILDER.comment("How much melee damage Blaze Servants deals, Default: 6.0")
+                        .defineInRange("blazeServantMeleeDamage", 6.0, 1.0, Double.MAX_VALUE);
+                BlazeServantRangeDamage = BUILDER.comment("How much ranged damage Blaze Servants deals, Default: 5.0")
+                        .defineInRange("blazeServantRangeDamage", 5.0, 1.0, Double.MAX_VALUE);
+                BUILDER.pop();
+                BUILDER.push("Wildfire");
+                WildfireHealth = BUILDER.comment("How much Max Health Wildfires have, Default: 75.0")
+                        .defineInRange("wildfireHealth", 75.0, 1.0, Double.MAX_VALUE);
+                WildfireShieldHealth = BUILDER.comment("How much Health each Wildfire's shields have, Default: 12.5")
+                        .defineInRange("wildfireShieldHealth", 12.5, 1.0, Double.MAX_VALUE);
+                WildfireArmor = BUILDER.comment("How much natural armor points Wildfires have, Default: 0.0")
+                        .defineInRange("wildfireArmor", 0.0, 0.0, Double.MAX_VALUE);
+                WildfireMeleeDamage = BUILDER.comment("How much melee damage Wildfires deals, Default: 6.0")
+                        .defineInRange("wildfireMeleeDamage", 6.0, 1.0, Double.MAX_VALUE);
+                WildfireRangeDamage = BUILDER.comment("How much ranged damage Wildfires deals, Default: 10.0")
+                        .defineInRange("wildfireRangeDamage", 10.0, 1.0, Double.MAX_VALUE);
                 BUILDER.pop();
                 BUILDER.push("Spider Servant");
                 SpiderServantHealth = BUILDER.comment("How much Max Health Spider Servants have, Default: 16.0")

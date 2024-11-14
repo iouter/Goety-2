@@ -3,6 +3,7 @@ package com.Polarice3.Goety.client.events;
 import com.Polarice3.Goety.Goety;
 import com.Polarice3.Goety.api.blocks.entities.IOwnedBlock;
 import com.Polarice3.Goety.api.blocks.entities.ITrainingBlock;
+import com.Polarice3.Goety.api.items.magic.IWand;
 import com.Polarice3.Goety.api.magic.ISpell;
 import com.Polarice3.Goety.client.audio.*;
 import com.Polarice3.Goety.client.gui.screen.inventory.BrewRadialMenuScreen;
@@ -202,7 +203,7 @@ public class ClientEvents {
         if (event.getEntity().level instanceof ClientLevel){
             Minecraft minecraft = Minecraft.getInstance();
             SoundManager soundHandler = minecraft.getSoundManager();
-            if (WandUtil.getSpell(event.getEntity()) != null){
+            if (WandUtil.getSpell(event.getEntity()) != null && event.getItem().getItem() instanceof IWand){
                 ISpell spells = WandUtil.getSpell(event.getEntity());
                 if (spells != null) {
                     if (spells.loopSound(event.getEntity()) != null) {
@@ -414,6 +415,17 @@ public class ClientEvents {
                                     RenderSystem.enableBlend();
                                     RenderSystem.defaultBlendFunc();
                                     String s0 = Component.translatable("tooltip.goety.blockSense").getString();
+                                    int l0 = fontRenderer.width(s0);
+                                    event.getGuiGraphics().drawString(fontRenderer, s0, (-l0 / 2), -4, 0xFFFFFF);
+                                    RenderSystem.disableBlend();
+                                    poseStack.popPose();
+                                }
+                                if (trainingBlock.isGrounding()) {
+                                    poseStack.pushPose();
+                                    poseStack.translate((float) (width / 2), (float) (height - 46), 0.0F);
+                                    RenderSystem.enableBlend();
+                                    RenderSystem.defaultBlendFunc();
+                                    String s0 = Component.translatable("tooltip.goety.blockGrounded").getString();
                                     int l0 = fontRenderer.width(s0);
                                     event.getGuiGraphics().drawString(fontRenderer, s0, (-l0 / 2), -4, 0xFFFFFF);
                                     RenderSystem.disableBlend();

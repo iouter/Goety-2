@@ -11,7 +11,7 @@ public interface IBlockSpell extends ISpell{
         return 0;
     }
 
-    default void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
+    default void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff) {
     }
 
     default boolean rightBlock(ServerLevel worldIn, LivingEntity caster, BlockPos target){

@@ -38,15 +38,15 @@ public class WBUpdatePacket {
 
     public static void consume(WBUpdatePacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            assert ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT;
-
-            ClientLevel clientLevel = Minecraft.getInstance().level;
-            if (clientLevel != null){
-                Entity entity = clientLevel.getEntity(packet.witchId);
-                if (entity != null) {
-                    entity.getCapability(WitchBarterProvider.CAPABILITY).ifPresent((barter) -> {
-                        WitchBarterProvider.load(packet.tag, barter);
-                    });
+            if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                ClientLevel clientLevel = Minecraft.getInstance().level;
+                if (clientLevel != null) {
+                    Entity entity = clientLevel.getEntity(packet.witchId);
+                    if (entity != null) {
+                        entity.getCapability(WitchBarterProvider.CAPABILITY).ifPresent((barter) -> {
+                            WitchBarterProvider.load(packet.tag, barter);
+                        });
+                    }
                 }
             }
 

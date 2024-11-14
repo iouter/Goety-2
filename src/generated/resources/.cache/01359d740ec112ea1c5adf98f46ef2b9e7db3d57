@@ -1,9 +1,11 @@
-// 1.20.1	2024-10-22T16:19:02.3095449	Tags for minecraft:damage_type mod id goety
-27bb3312fcba1ed03dfbfb7f82dd7680195cdcbf data/goety/tags/damage_type/no_knockback.json
-294e5d0725f68824da6d55a4ce50442d050606a6 data/minecraft/tags/damage_type/bypasses_armor.json
+// 1.20.1	2024-11-08T22:19:15.924174	Tags for minecraft:damage_type mod id goety
+f6fe2551514ac59aa9f7d68fb80778895fe1fd01 data/goety/tags/damage_type/no_knockback.json
+8df553ab7d84ec656518ce85a346c81c853feb88 data/minecraft/tags/damage_type/bypasses_armor.json
 45bd31380beeeacc2b228c26991ec336266f046d data/minecraft/tags/damage_type/bypasses_effects.json
 45bd31380beeeacc2b228c26991ec336266f046d data/minecraft/tags/damage_type/bypasses_enchantments.json
 45bd31380beeeacc2b228c26991ec336266f046d data/minecraft/tags/damage_type/bypasses_resistance.json
+cb85161ea2fb59ce280e25eac9c057912b1c2516 data/minecraft/tags/damage_type/bypasses_shield.json
+f183160a6b3101a9832abbf5143d6d07c25e6c4b data/minecraft/tags/damage_type/is_explosion.json
 44cac629124d5921ca0e9cf2d7c0420ad4b38f7b data/minecraft/tags/damage_type/is_fire.json
 01cce596397b6b0103aacd48a7c3065767e9fec6 data/minecraft/tags/damage_type/is_freezing.json
 4861a20e396717468bd601cb4a92c8e904bf3c38 data/minecraft/tags/damage_type/is_projectile.json

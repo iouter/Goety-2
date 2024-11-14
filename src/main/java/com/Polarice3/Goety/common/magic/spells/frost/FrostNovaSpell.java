@@ -6,6 +6,7 @@ import com.Polarice3.Goety.client.particles.ShockwaveParticleOption;
 import com.Polarice3.Goety.common.effects.GoetyEffects;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.*;
@@ -25,6 +26,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FrostNovaSpell extends Spell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return new SpellStat(0, 1, 0, 2.5D, 0, 0.0F);
+    }
+
     @Override
     public int defaultSoulCost() {
         return SpellConfig.FrostNovaCost.get();
@@ -61,30 +68,32 @@ public class FrostNovaSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        float radius = 2.5F;
-        int duration = 1;
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        float potency = spellStat.getPotency();
+        float radius = (float) spellStat.getRadius();
+        int duration = spellStat.getDuration();
         float damage = SpellConfig.FrostNovaDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
         float maxDamage = SpellConfig.FrostNovaMaxDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
-        if (WandUtil.enchantedFocus(entityLiving)){
-            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), entityLiving);
-            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving);
-            damage += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving) / 2.0F;
-            maxDamage += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving) / 2.0F;
+        if (WandUtil.enchantedFocus(caster)){
+            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), caster);
+            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), caster);
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster) / 2.0F;
         }
-        LivingEntity spellTarget = entityLiving;
-        LivingEntity target = this.getTarget(entityLiving);
-        if (isShifting(entityLiving) && target != null){
+        damage += potency;
+        maxDamage += potency;
+        LivingEntity spellTarget = caster;
+        LivingEntity target = this.getTarget(caster);
+        if (isShifting(caster) && target != null){
             spellTarget = target;
         }
         this.createParticleBall(worldIn, spellTarget, (int) radius);
-        worldIn.sendParticles(new ShockwaveParticleOption(0, radius * 2, 1), spellTarget.getX(), spellTarget.getY() + 0.5F, spellTarget.getZ(), 0, 0, 0, 0, 0);
+        worldIn.sendParticles(new ShockwaveParticleOption(0, (float) (radius * 2), 1), spellTarget.getX(), spellTarget.getY() + 0.5F, spellTarget.getZ(), 0, 0, 0, 0, 0);
         float trueDamage = Mth.clamp(damage + worldIn.random.nextInt((int) (maxDamage - damage)), damage, maxDamage);
         int finalDuration = duration;
-        new SpellExplosion(worldIn, entityLiving, ModDamageSource.directFreeze(entityLiving), spellTarget.blockPosition(), radius, trueDamage){
+        new SpellExplosion(worldIn, caster, ModDamageSource.directFreeze(caster), spellTarget.blockPosition(), (float) radius, trueDamage){
             @Override
             public void explodeHurt(Entity target, DamageSource damageSource, double x, double y, double z, double seen, float actualDamage) {
-                if (target instanceof LivingEntity target1 && !MobUtil.areAllies(entityLiving, target1) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(target1)){
+                if (target instanceof LivingEntity target1 && !MobUtil.areAllies(caster, target1) && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(target1)){
                     super.explodeHurt(target, damageSource, x, y, z, seen, actualDamage);
                     target1.addEffect(new MobEffectInstance(GoetyEffects.FREEZING.get(), MathHelper.secondsToTicks(5) * finalDuration));
                 }

@@ -138,12 +138,12 @@ public class IceStorm extends SpellHurtingProjectile {
                 if (livingEntity != null) {
                     if (owner != null) {
                         if (!MobUtil.areAllies(owner, livingEntity) && livingEntity != owner) {
-                            if (livingEntity.hurt(ModDamageSource.frostBreath(this, owner), baseDamage + this.getExtraDamage())) {
+                            if (livingEntity.hurt(ModDamageSource.indirectFreeze(this, owner), baseDamage + this.getExtraDamage())) {
                                 livingEntity.addEffect(new MobEffectInstance(GoetyEffects.FREEZING.get(), MathHelper.secondsToTicks(1 + this.getDuration())));
                             }
                         }
                     } else {
-                        if (livingEntity.hurt(ModDamageSource.frostBreath(this, this), baseDamage + this.getExtraDamage())) {
+                        if (livingEntity.hurt(ModDamageSource.indirectFreeze(this, this), baseDamage + this.getExtraDamage())) {
                             livingEntity.addEffect(new MobEffectInstance(GoetyEffects.FREEZING.get(), MathHelper.secondsToTicks(1 + this.getDuration())));
                         }
                     }

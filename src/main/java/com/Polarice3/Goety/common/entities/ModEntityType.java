@@ -96,6 +96,12 @@ public class ModEntityType {
                     .clientTrackingRange(4)
                     .updateInterval(20));
 
+    public static final RegistryObject<EntityType<RainArrow>> RAIN_ARROW = register("rain_arrow",
+            EntityType.Builder.<RainArrow>of(RainArrow::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F)
+                    .clientTrackingRange(4)
+                    .updateInterval(20));
+
     public static final RegistryObject<EntityType<DeathArrow>> DEATH_ARROW = register("death_arrow",
             EntityType.Builder.<DeathArrow>of(DeathArrow::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F)
@@ -754,6 +760,12 @@ public class ModEntityType {
                     .sized(0.6F, 0.7F)
                     .clientTrackingRange(8));
 
+    public static final RegistryObject<EntityType<AllyTrampler>> ALLY_TRAMPLER = register("ally_trampler",
+            EntityType.Builder.of(AllyTrampler::new, MobCategory.MONSTER)
+                    .canSpawnFarFromPlayer()
+                    .sized(1.3964844F, 1.6F)
+                    .clientTrackingRange(10));
+
     public static final RegistryObject<EntityType<Ravaged>> RAVAGED = register("ravaged",
             EntityType.Builder.of(Ravaged::new, MobCategory.MONSTER)
                     .sized(1.0F, 1.0F)
@@ -853,6 +865,12 @@ public class ModEntityType {
                     .fireImmune()
                     .sized(1.0F, 1.0F)
                     .clientTrackingRange(10));
+
+    public static final RegistryObject<EntityType<Sorcerer>> SORCERER = register("sorcerer",
+            EntityType.Builder.of(Sorcerer::new, MobCategory.MONSTER)
+                    .canSpawnFarFromPlayer()
+                    .sized(0.6F, 1.95F)
+                    .clientTrackingRange(8));
 
     public static final RegistryObject<EntityType<Envioker>> ENVIOKER = register("envioker",
             EntityType.Builder.of(Envioker::new, MobCategory.MONSTER)
@@ -1181,12 +1199,6 @@ public class ModEntityType {
                     .noSummon()
                     .sized(1.0F, 1.0F)
                     .updateInterval(Integer.MAX_VALUE));
-
-    public static final RegistryObject<EntityType<TunnelingFang>> TUNNELING_FANG = register("tunneling_fang",
-            EntityType.Builder.of(TunnelingFang::new, MobCategory.MISC)
-                    .fireImmune()
-                    .sized(0.5F, 0.5F)
-                    .clientTrackingRange(10));
 
     private static <T extends Entity> RegistryObject<EntityType<T>> register(String p_20635_, EntityType.Builder<T> p_20636_) {
         return ENTITY_TYPE.register(p_20635_, () -> p_20636_.build(Goety.location(p_20635_).toString()));

@@ -6,6 +6,7 @@ import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.client.particles.FoggyCloudParticleOption;
 import com.Polarice3.Goety.client.particles.GatherTrailParticle;
 import com.Polarice3.Goety.client.particles.ModParticleTypes;
+import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.items.ModItems;
 import com.Polarice3.Goety.utils.ColorUtil;
 import com.Polarice3.Goety.utils.CuriosFinder;
@@ -16,7 +17,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -46,36 +46,52 @@ public abstract class Spell implements ISpell {
     public abstract int defaultSpellCooldown();
 
     public void SpellResult(LivingEntity caster, ItemStack staff){
-        SpellResult(caster.level, caster, staff);
+        SpellResult(caster.level, caster, staff, this.defaultStats());
+    }
+
+    public void SpellResult(LivingEntity caster, ItemStack staff, SpellStat spellStat){
+        SpellResult(caster.level, caster, staff, spellStat);
     }
 
     public void SpellResult(Level level, LivingEntity caster, ItemStack staff){
         if (level instanceof ServerLevel serverLevel){
-            SpellResult(serverLevel, caster, staff);
+            SpellResult(serverLevel, caster, staff, this.defaultStats());
         }
     }
 
-    public abstract void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff);
+    public void SpellResult(Level level, LivingEntity caster, ItemStack staff, SpellStat spellStat){
+        if (level instanceof ServerLevel serverLevel){
+            SpellResult(serverLevel, caster, staff, spellStat);
+        }
+    }
 
     public SpellType getSpellType(){
         return SpellType.NONE;
     }
 
-    public boolean GeoPower(LivingEntity entityLiving){
-        return CuriosFinder.hasCurio(entityLiving, ModItems.AMETHYST_NECKLACE.get());
+    public boolean GeoPower(LivingEntity caster){
+        return CuriosFinder.hasCurio(caster, ModItems.AMETHYST_NECKLACE.get());
     }
 
-    public boolean isShifting(LivingEntity entityLiving){
-        return (entityLiving.isCrouching() || entityLiving.isShiftKeyDown()) && !WandUtil.findWand(entityLiving).isEmpty();
+    public boolean isShifting(LivingEntity caster){
+        return (caster.isCrouching() || caster.isShiftKeyDown()) && !WandUtil.findWand(caster).isEmpty();
     }
 
-    public boolean conditionsMet(ServerLevel worldIn, LivingEntity entityLiving){
-        return true;
+    public boolean conditionsMet(Level worldIn, LivingEntity caster){
+        if (worldIn instanceof ServerLevel serverLevel){
+            return this.conditionsMet(serverLevel, caster);
+        } else {
+            return false;
+        }
     }
 
     @Nullable
     public LivingEntity getTarget(LivingEntity caster){
-        return this.getTarget(caster, 16);
+        int range = this.defaultStats().getRange();
+        if (WandUtil.enchantedFocus(caster)) {
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
+        }
+        return this.getTarget(caster, range);
     }
 
     @Nullable
@@ -105,12 +121,25 @@ public abstract class Spell implements ISpell {
     }
 
     @Override
-    public void useParticle(Level worldIn, LivingEntity livingEntity, ItemStack stack) {
-        if (this.getSpellType() == SpellType.WILD) {
+    public void useParticle(Level worldIn, LivingEntity caster, ItemStack stack) {
+        if (this.getSpellType() == SpellType.WIND) {
+            if (worldIn instanceof ServerLevel serverLevel) {
+                if (caster.tickCount % 5 == 0) {
+                    ColorUtil colorUtil = new ColorUtil(0x458c88);
+                    ServerParticleUtil.gatheringParticles(new GatherTrailParticle.Option(colorUtil, caster.position().add(0, 1, 0)), caster, serverLevel, 1);
+                }
+            }
+        } else if (this.getSpellType() == SpellType.STORM) {
+            if (worldIn instanceof ServerLevel serverLevel) {
+                if (caster.tickCount % 5 == 0) {
+                    ServerParticleUtil.addParticlesAroundMiddleSelf(serverLevel, ModParticleTypes.SPELL_ELECTRIC.get(), caster);
+                }
+            }
+        } else if (this.getSpellType() == SpellType.WILD) {
             if (worldIn instanceof ServerLevel serverLevel) {
                 ColorUtil colorUtil = new ColorUtil(0xfcd9f7);
-                serverLevel.sendParticles(ModParticleTypes.SPELL_SQUARE.get(), livingEntity.getX(), livingEntity.getY() + 2.0D, livingEntity.getZ(), 0, colorUtil.red(), colorUtil.green(), colorUtil.blue(), 0.5F);
-                serverLevel.sendParticles(new FoggyCloudParticleOption(new ColorUtil(0xcf75af), 0.25F, 6), livingEntity.getX(), livingEntity.getY() + 1.5D, livingEntity.getZ(), 1, 0, 0, 0, 0);
+                serverLevel.sendParticles(ModParticleTypes.SPELL_SQUARE.get(), caster.getX(), caster.getY() + 2.0D, caster.getZ(), 0, colorUtil.red(), colorUtil.green(), colorUtil.blue(), 0.5F);
+                serverLevel.sendParticles(new FoggyCloudParticleOption(new ColorUtil(0xcf75af), 0.25F, 6), caster.getX(), caster.getY() + 1.5D, caster.getZ(), 1, 0, 0, 0, 0);
             }
         } else if (this.getSpellType() == SpellType.NECROMANCY){
             if (worldIn instanceof ServerLevel serverLevel){
@@ -120,10 +149,10 @@ public abstract class Spell implements ISpell {
                     range = 3;
                     colorUtil = new ColorUtil(0xa7fc3e);
                 }
-                ServerParticleUtil.gatheringParticles(new GatherTrailParticle.Option(colorUtil, livingEntity.position().add(0, 2, 0)), livingEntity, serverLevel, range);
+                ServerParticleUtil.gatheringParticles(new GatherTrailParticle.Option(colorUtil, caster.position().add(0, 2, 0)), caster, serverLevel, range);
             }
         } else {
-            ISpell.super.useParticle(worldIn, livingEntity, stack);
+            ISpell.super.useParticle(worldIn, caster, stack);
         }
     }
 
@@ -131,20 +160,20 @@ public abstract class Spell implements ISpell {
         return new ArrayList<>();
     }
 
-    protected HitResult rayTraceCollide(Level worldIn, LivingEntity livingEntity, int range, double radius) {
-        if (this.entityCollideResult(worldIn, livingEntity, range, radius) == null){
-            return this.blockResult(worldIn, livingEntity, range);
+    protected HitResult rayTraceCollide(Level worldIn, LivingEntity caster, int range, double radius) {
+        if (this.entityCollideResult(worldIn, caster, range, radius) == null){
+            return this.blockResult(worldIn, caster, range);
         } else {
-            return this.entityCollideResult(worldIn, livingEntity, range, radius);
+            return this.entityCollideResult(worldIn, caster, range, radius);
         }
     }
 
-    protected EntityHitResult entityCollideResult(Level worldIn, LivingEntity livingEntity, int range, double radius){
-        Vec3 srcVec = livingEntity.getEyePosition(1.0F);
-        Vec3 lookVec = livingEntity.getViewVector(1.0F);
+    protected EntityHitResult entityCollideResult(Level worldIn, LivingEntity caster, int range, double radius){
+        Vec3 srcVec = caster.getEyePosition(1.0F);
+        Vec3 lookVec = caster.getViewVector(1.0F);
         Vec3 destVec = srcVec.add(lookVec.x * range, lookVec.y * range, lookVec.z * range);
-        AABB axisalignedbb = livingEntity.getBoundingBox().expandTowards(lookVec.scale(range)).inflate(radius, radius, radius);
-        return ProjectileUtil.getEntityHitResult(worldIn, livingEntity, srcVec, destVec, axisalignedbb, entity -> entity instanceof LivingEntity && livingEntity.hasLineOfSight(entity) && !entity.isSpectator() && entity.isPickable());
+        AABB axisalignedbb = caster.getBoundingBox().expandTowards(lookVec.scale(range)).inflate(radius, radius, radius);
+        return ProjectileUtil.getEntityHitResult(worldIn, caster, srcVec, destVec, axisalignedbb, entity -> entity instanceof LivingEntity && caster.hasLineOfSight(entity) && !entity.isSpectator() && entity.isPickable());
     }
 
     public SoundSource getSoundSource(){
@@ -156,6 +185,6 @@ public abstract class Spell implements ISpell {
     }
 
     public void playSound(ServerLevel serverLevel, LivingEntity caster, SoundEvent soundEvent, float volume, float pitch){
-        serverLevel.playSound((Player) null, caster.getX(), caster.getY(), caster.getZ(), soundEvent, this.getSoundSource(), volume, pitch);
+        serverLevel.playSound(null, caster.getX(), caster.getY(), caster.getZ(), soundEvent, this.getSoundSource(), volume, pitch);
     }
 }

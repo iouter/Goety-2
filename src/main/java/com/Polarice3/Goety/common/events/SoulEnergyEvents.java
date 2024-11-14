@@ -149,10 +149,16 @@ public class SoulEnergyEvents {
             }
             soulEnergy.grudgeList().removeIf(uuid -> {
                 Entity entity = EntityFinder.getLivingEntityByUuiD(uuid);
+                if ((entity == null || entity instanceof Player) && world.getServer() != null){
+                    return world.getServer().getPlayerList().getPlayer(uuid) == null;
+                }
                 return (entity instanceof Mob mob && (!mob.isAlive() || mob.isRemoved())) || entity == null;
             });
             soulEnergy.allyList().removeIf(uuid -> {
                 Entity entity = EntityFinder.getLivingEntityByUuiD(uuid);
+                if ((entity == null || entity instanceof Player) && world.getServer() != null){
+                      return world.getServer().getPlayerList().getPlayer(uuid) == null;
+                }
                 return (entity instanceof Mob mob && (!mob.isAlive() || mob.isRemoved())) || entity == null;
             });
         }

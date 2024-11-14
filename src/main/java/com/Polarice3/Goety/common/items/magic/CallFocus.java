@@ -9,6 +9,7 @@ import com.Polarice3.Goety.common.network.server.SPlayWorldSoundPacket;
 import com.Polarice3.Goety.utils.BlockFinder;
 import com.Polarice3.Goety.utils.EntityFinder;
 import com.Polarice3.Goety.utils.MobUtil;
+import com.Polarice3.Goety.utils.SEHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -101,7 +102,7 @@ public class CallFocus extends MagicFocus{
                         for (Entity entity : serverLevel.getAllEntities()) {
                             if (entity instanceof LivingEntity livingEntity1 && entity.getType() == livingEntity.getType()) {
                                 if (livingEntity1 instanceof OwnableEntity ownable){
-                                    if (ownable.getOwner() == player){
+                                    if (ownable.getOwner() == player && !SEHelper.getGroundedEntities(player).contains(livingEntity1)){
                                         list.add(livingEntity1);
                                     }
                                 }
@@ -160,6 +161,13 @@ public class CallFocus extends MagicFocus{
                 compoundTag.putUUID(TAG_ENTITY, livingEntity.getUUID());
             }
         }
+    }
+
+    public static LivingEntity getSummon(ItemStack stack){
+        if (stack.getTag() != null){
+            return getSummon(stack.getTag());
+        }
+        return null;
     }
 
     public static LivingEntity getSummon(CompoundTag compoundTag){

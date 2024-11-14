@@ -677,6 +677,10 @@ public class MobUtil {
         new SpellExplosion(level, source, damageSource, x, y, z, radius, damage);
     }
 
+    public static boolean canPositionBeSeen(Level level, LivingEntity living, Vec3 vec3) {
+        return canPositionBeSeen(level, living, vec3.x, vec3.y, vec3.z);
+    }
+
     public static boolean canPositionBeSeen(Level level, LivingEntity living, double x, double y, double z) {
         HitResult result = level.clip(new ClipContext(new Vec3(living.getX(), living.getY() + (double) living.getEyeHeight(), living.getZ()), new Vec3(x, y, z), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, living));
         double dist = result.getLocation().distanceToSqr(x, y, z);

@@ -3,6 +3,7 @@ package com.Polarice3.Goety.common.magic.spells;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.items.ModItems;
 import com.Polarice3.Goety.common.magic.EverChargeSpell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.*;
@@ -22,6 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TelekinesisSpell extends EverChargeSpell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setPotency(1);
+    }
+
     @Override
     public int defaultSoulCost() {
         return SpellConfig.TelekinesisCost.get();
@@ -38,9 +45,9 @@ public class TelekinesisSpell extends EverChargeSpell {
     }
 
     @Override
-    public boolean conditionsMet(ServerLevel worldIn, LivingEntity entityLiving) {
-        if (entityLiving.hurtTime > 0){
-            if (entityLiving instanceof Player player){
+    public boolean conditionsMet(ServerLevel worldIn, LivingEntity caster) {
+        if (caster.hurtTime > 0){
+            if (caster instanceof Player player){
                 player.stopUsingItem();
                 SEHelper.addCooldown(player, ModItems.TELEKINESIS_FOCUS.get(), MathHelper.secondsToTicks(5));
                 SEHelper.sendSEUpdatePacket(player);
@@ -59,16 +66,16 @@ public class TelekinesisSpell extends EverChargeSpell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        double potency = 1.0D;
-        int range = 16;
-        if (WandUtil.enchantedFocus(entityLiving)){
-            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving) / 2.0D;
-            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        double potency = spellStat.getPotency();
+        int range = spellStat.getRange();
+        if (WandUtil.enchantedFocus(caster)){
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster) / 2.0D;
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
         }
-        Entity target = MobUtil.getSingleTarget(worldIn, entityLiving, range, 3, EntitySelector.NO_CREATIVE_OR_SPECTATOR);
+        Entity target = MobUtil.getSingleTarget(worldIn, caster, range, 3, EntitySelector.NO_CREATIVE_OR_SPECTATOR);
         if (target != null){
-            if ((entityLiving.getBoundingBox().inflate(0.5D).getSize() * potency) >= target.getBoundingBox().getSize()) {
+            if ((caster.getBoundingBox().inflate(0.5D).getSize() * potency) >= target.getBoundingBox().getSize()) {
                 boolean flag = true;
                 if (target instanceof LivingEntity livingTarget){
                     if (livingTarget.getMaxHealth() >= SpellConfig.TelekinesisMaxHealth.get()
@@ -77,18 +84,18 @@ public class TelekinesisSpell extends EverChargeSpell {
                     }
                 }
                 if (flag) {
-                    Vec3 lookVec = entityLiving.getLookAngle();
-                    double x = entityLiving.getX() + lookVec.x * 1.6D - target.getX();
-                    double y = entityLiving.getEyeY() + lookVec.y * 1.6D - target.getY();
-                    double z = entityLiving.getZ() + lookVec.z * 1.6D - target.getZ();
+                    Vec3 lookVec = caster.getLookAngle();
+                    double x = caster.getX() + lookVec.x * 1.6D - target.getX();
+                    double y = caster.getEyeY() + lookVec.y * 1.6D - target.getY();
+                    double z = caster.getZ() + lookVec.z * 1.6D - target.getZ();
                     double offset = 0.1D;
                     target.setDeltaMovement(x * offset, y * offset, z * offset);
                     target.move(MoverType.SELF, target.getDeltaMovement());
-                    if (CuriosFinder.hasCurio(entityLiving, ModItems.RING_OF_FORCE.get())){
+                    if (CuriosFinder.hasCurio(caster, ModItems.RING_OF_FORCE.get())){
                         target.setAirSupply(Math.max(-20, target.getAirSupply() - 10));
                         if (target.getAirSupply() <= -20){
                             target.setAirSupply(0);
-                            target.hurt(ModDamageSource.choke(entityLiving, entityLiving), 2.0F);
+                            target.hurt(ModDamageSource.choke(caster, caster), 2.0F);
                         }
                     }
                     ServerParticleUtil.addParticlesAroundSelf(worldIn, ParticleTypes.PORTAL, target);

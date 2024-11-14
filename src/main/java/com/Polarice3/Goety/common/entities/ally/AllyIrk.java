@@ -146,10 +146,11 @@ public class AllyIrk extends Minion {
 
         public void start() {
             LivingEntity livingentity = AllyIrk.this.getTarget();
-            assert livingentity != null;
-            Vec3 vector3d = livingentity.getEyePosition(1.0F);
-            if (AllyIrk.this.distanceTo(livingentity) > 4.0F) {
-                AllyIrk.this.getMoveControl().setWantedPosition(vector3d.x, vector3d.y, vector3d.z, 1.0F);
+            if (livingentity != null) {
+                Vec3 vector3d = livingentity.getEyePosition(1.0F);
+                if (AllyIrk.this.distanceTo(livingentity) > 4.0F) {
+                    AllyIrk.this.getMoveControl().setWantedPosition(vector3d.x, vector3d.y, vector3d.z, 1.0F);
+                }
             }
         }
 

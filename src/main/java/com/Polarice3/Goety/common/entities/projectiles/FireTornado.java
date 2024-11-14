@@ -46,15 +46,17 @@ public class FireTornado extends AbstractCyclone {
     }
 
     public void fakeRemove(double x, double y, double z){
-        FireTornado fireTornadoEntity = new FireTornado(this.level, this.getTrueOwner(), x, y, z);
-        fireTornadoEntity.setOwner(this.getTrueOwner());
-        fireTornadoEntity.setTarget(this.getTarget());
-        fireTornadoEntity.setLifespan(this.getLifespan());
-        fireTornadoEntity.setTotalLife(this.getTotalLife());
-        fireTornadoEntity.setSpun(this.getSpun());
-        fireTornadoEntity.setSize(this.getSize());
-        fireTornadoEntity.setPos(this.getX(), this.getY(), this.getZ());
-        this.level.addFreshEntity(fireTornadoEntity);
+        FireTornado cyclone = new FireTornado(this.level, this.getTrueOwner(), x, y, z);
+        cyclone.setOwner(this.getTrueOwner());
+        cyclone.setTarget(this.getTarget());
+        cyclone.setLifespan(this.getLifespan());
+        cyclone.setTotalLife(this.getTotalLife());
+        cyclone.setSpun(this.getSpun());
+        cyclone.setSize(this.getSize());
+        cyclone.setDamage(this.getDamage());
+        cyclone.setExtraDamage(this.getExtraDamage());
+        cyclone.setPos(this.getX(), this.getY(), this.getZ());
+        this.level.addFreshEntity(cyclone);
         this.remove();
     }
 

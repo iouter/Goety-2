@@ -38,13 +38,13 @@ public class SPlayEntitySoundPacket {
 
     public static void consume(SPlayEntitySoundPacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            assert ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT;
-
-            ClientLevel clientWorld = Minecraft.getInstance().level;
-            if (clientWorld != null){
-                Entity entity = EntityFinder.getEntityByUuiDGlobal(packet.entity).get();
-                if (entity != null){
-                    clientWorld.playLocalSound(entity.blockPosition(), packet.soundEvent, entity.getSoundSource(), packet.volume, packet.pitch, false);
+            if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                ClientLevel clientWorld = Minecraft.getInstance().level;
+                if (clientWorld != null) {
+                    Entity entity = EntityFinder.getEntityByUuiDGlobal(packet.entity).get();
+                    if (entity != null) {
+                        clientWorld.playLocalSound(entity.blockPosition(), packet.soundEvent, entity.getSoundSource(), packet.volume, packet.pitch, false);
+                    }
                 }
             }
         });

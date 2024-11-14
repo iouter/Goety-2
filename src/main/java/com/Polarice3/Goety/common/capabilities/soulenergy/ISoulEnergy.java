@@ -44,6 +44,12 @@ public interface ISoulEnergy {
     List<EntityType<?>> allyTypeList();
     void addAllyType(EntityType<?> entityType);
     void removeAllyType(EntityType<?> entityType);
+    Set<UUID> groundedList();
+    void addGrounded(UUID uuid);
+    void removeGrounded(UUID uuid);
+    List<EntityType<?>> groundedTypeList();
+    void addGroundedType(EntityType<?> entityType);
+    void removeGroundedType(EntityType<?> entityType);
     List<Research> getResearch();
     void addResearch(Research research);
     void removeResearch(Research research);

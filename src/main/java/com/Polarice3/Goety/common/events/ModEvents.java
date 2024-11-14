@@ -19,7 +19,6 @@ import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.ai.TargetHostileOwnedGoal;
 import com.Polarice3.Goety.common.entities.ai.WitchBarterGoal;
-import com.Polarice3.Goety.common.entities.ally.AllyIrk;
 import com.Polarice3.Goety.common.entities.ally.ModRavager;
 import com.Polarice3.Goety.common.entities.ally.Ravaged;
 import com.Polarice3.Goety.common.entities.ally.golem.IceGolem;
@@ -45,6 +44,7 @@ import com.Polarice3.Goety.common.items.ModTiers;
 import com.Polarice3.Goety.common.items.armor.ModArmorMaterials;
 import com.Polarice3.Goety.common.items.brew.BrewItem;
 import com.Polarice3.Goety.common.items.curios.WarlockGarmentItem;
+import com.Polarice3.Goety.common.items.curios.WayfarersBeltItem;
 import com.Polarice3.Goety.common.items.curios.WitchHatItem;
 import com.Polarice3.Goety.common.items.equipment.DarkScytheItem;
 import com.Polarice3.Goety.common.items.equipment.DeathScytheItem;
@@ -74,7 +74,6 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
@@ -99,7 +98,6 @@ import net.minecraft.world.entity.ai.gossip.GossipType;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
 import net.minecraft.world.entity.animal.AbstractGolem;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.*;
@@ -688,13 +686,6 @@ public class ModEvents {
             if (MiscCapHelper.getShieldCool(livingEntity) > 0){
                 MiscCapHelper.decreaseShieldCool(livingEntity);
             }
-            if (CuriosFinder.hasWitchSet(livingEntity)){
-                if (livingEntity.getRandom().nextFloat() < 7.5E-4F){
-                    for(int i = 0; i < livingEntity.getRandom().nextInt(35) + 10; ++i) {
-                        livingEntity.level.addParticle(ParticleTypes.WITCH, livingEntity.getX() + livingEntity.getRandom().nextGaussian() * (double)0.13F, livingEntity.getBoundingBox().maxY + 0.5D + livingEntity.getRandom().nextGaussian() * (double)0.13F, livingEntity.getZ() + livingEntity.getRandom().nextGaussian() * (double)0.13F, 0.0D, 0.0D, 0.0D);
-                    }
-                }
-            }
             if (livingEntity instanceof Mob mob){
                 double followRange = 32.0D;
                 if (mob.getAttribute(Attributes.FOLLOW_RANGE) != null){
@@ -724,33 +715,6 @@ public class ModEvents {
                     if (SEHelper.getSoulAmountInt(player) > MobsConfig.IllagerAssaultSEThreshold.get() * 2){
                         if (!raider.isAggressive()) {
                             raider.setAggressive(true);
-                        }
-                    }
-                }
-            }
-            if (livingEntity instanceof AbstractHorse horse){
-                if (horse.getOwnerUUID() != null){
-                    LivingEntity living = EntityFinder.getLivingEntityByUuiD(horse.getOwnerUUID());
-                    if (living instanceof Player owner) {
-                        if (horse.getMobType() == MobType.UNDEAD) {
-                            if (!horse.isOnFire() && !horse.isDeadOrDying()) {
-                                if (MobsConfig.UndeadMinionHeal.get() && horse.getHealth() < horse.getMaxHealth()) {
-                                    if (CuriosFinder.hasUndeadCape(owner)) {
-                                        int SoulCost = MobsConfig.UndeadMinionHealCost.get();
-                                        if (SEHelper.getSoulsAmount(owner, SoulCost)){
-                                            if (horse.tickCount % MathHelper.secondsToTicks(MobsConfig.UndeadMinionHealTime.get()) == 0) {
-                                                horse.heal(horse.getMaxHealth() * 0.025F);
-                                                Vec3 vector3d = horse.getDeltaMovement();
-                                                if (!horse.level.isClientSide){
-                                                    ServerLevel serverWorld = (ServerLevel) horse.level;
-                                                    SEHelper.decreaseSouls(owner, SoulCost);
-                                                    serverWorld.sendParticles(ParticleTypes.SCULK_SOUL, horse.getRandomX(0.5D), horse.getRandomY(), horse.getRandomZ(0.5D), 0, vector3d.x * -0.2D, 0.1D, vector3d.z * -0.2D, 0.5F);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                 }
@@ -817,8 +781,8 @@ public class ModEvents {
                             }
                         }
                         if (MobsConfig.VillagerConvertHeretic.get()) {
-                            if (BlockFinder.findNetherPortal(serverLevel, villager.blockPosition(), 8).isPresent()){
-                                if (villager.getRandom().nextFloat() < 7.5E-4F && serverLevel.getDifficulty() != Difficulty.PEACEFUL) {
+                            if (villager.getRandom().nextFloat() < 7.5E-4F && serverLevel.getDifficulty() != Difficulty.PEACEFUL) {
+                                if (BlockFinder.findNetherPortal(serverLevel, villager.blockPosition(), 8).isPresent()){
                                     if (ForgeEventFactory.canLivingConvert(villager, ModEntityType.HERETIC.get(), (timer) -> {
                                     })) {
                                         serverLevel.explode(villager, villager.getX(), villager.getY(), villager.getZ(), 0.1F, Level.ExplosionInteraction.NONE);
@@ -920,96 +884,6 @@ public class ModEvents {
         LivingEntity target = event.getOriginalTarget();
         if (attacker instanceof Mob mobAttacker) {
             if (target != null) {
-                if (target instanceof Player) {
-                    if (MobUtil.isWitchType(mobAttacker)) {
-                        if (CuriosFinder.isWitchFriendly(target)) {
-                            if (mobAttacker.getLastHurtByMob() != target) {
-                                if (event.getTargetType() == MOB_TARGET) {
-                                    event.setNewTarget(null);
-                                } else {
-                                    event.setCanceled(true);
-                                }
-                            } else {
-                                mobAttacker.setLastHurtByMob(target);
-                            }
-                        }
-                    }
-
-                    if (CuriosFinder.hasUnholyRobe(target) || CuriosFinder.hasUnholyHat(target)) {
-                        if (mobAttacker instanceof Ghast || mobAttacker instanceof Blaze || mobAttacker instanceof MagmaCube) {
-                            if (event.getTargetType() == MOB_TARGET) {
-                                event.setNewTarget(null);
-                            } else {
-                                event.setCanceled(true);
-                            }
-                        }
-                    }
-
-                    if (CuriosFinder.neutralFrostSet(target)) {
-                        if (CuriosFinder.validFrostMob(mobAttacker)) {
-                            if (mobAttacker.getLastHurtByMob() != target) {
-                                if (event.getTargetType() == MOB_TARGET) {
-                                    event.setNewTarget(null);
-                                } else {
-                                    event.setCanceled(true);
-                                }
-                            } else {
-                                mobAttacker.setLastHurtByMob(target);
-                            }
-                        }
-                    }
-
-                    if (CuriosFinder.neutralWildSet(target)) {
-                        if (CuriosFinder.validWildMob(mobAttacker)) {
-                            if (mobAttacker.getLastHurtByMob() != target) {
-                                if (event.getTargetType() == MOB_TARGET) {
-                                    event.setNewTarget(null);
-                                } else {
-                                    event.setCanceled(true);
-                                }
-                            } else {
-                                mobAttacker.setLastHurtByMob(target);
-                            }
-                        }
-                    }
-
-                    if (CuriosFinder.neutralNetherSet(target)) {
-                        if (CuriosFinder.validNetherMob(mobAttacker)) {
-                            if (mobAttacker.getLastHurtByMob() != target) {
-                                if (event.getTargetType() == MOB_TARGET) {
-                                    event.setNewTarget(null);
-                                } else {
-                                    event.setCanceled(true);
-                                }
-                            } else {
-                                mobAttacker.setLastHurtByMob(target);
-                            }
-                        }
-                    }
-
-                    if (CuriosFinder.neutralNecroSet(target) || CuriosFinder.neutralNamelessSet(target)) {
-                        boolean undead = CuriosFinder.validNecroUndead(mobAttacker);
-                        if (target.level instanceof ServerLevel serverLevel) {
-                            if (MobsConfig.HostileCryptUndead.get()) {
-                                if (BlockFinder.findStructure(serverLevel, target.blockPosition(), ModStructureTags.NECRO_HOSTILE)
-                                        && !CuriosFinder.neutralNamelessSet(target)) {
-                                    undead = false;
-                                }
-                            }
-                        }
-                        if (undead || (CuriosFinder.neutralNamelessSet(target) && CuriosFinder.validNamelessUndead(mobAttacker))) {
-                            if (mobAttacker.getLastHurtByMob() != target) {
-                                if (event.getTargetType() == MOB_TARGET) {
-                                    event.setNewTarget(null);
-                                } else {
-                                    event.setCanceled(true);
-                                }
-                            } else {
-                                mobAttacker.setLastHurtByMob(target);
-                            }
-                        }
-                    }
-                }
                 if ((mobAttacker.getMobType() == MobType.UNDEAD && !(mobAttacker instanceof IOwned) && mobAttacker.getMaxHealth() < 100.0F) || mobAttacker instanceof Creeper) {
                     if (event.getNewTarget() instanceof Apostle) {
                         event.setCanceled(true);
@@ -1028,75 +902,6 @@ public class ModEvents {
                     } else {
                         event.setCanceled(true);
                     }
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void VisibilityEvent(LivingEvent.LivingVisibilityEvent event){
-        LivingEntity entity = event.getEntity();
-        if (event.getLookingEntity() instanceof LivingEntity looker && entity instanceof Player) {
-            boolean undead = CuriosFinder.validNecroUndead(looker);
-            if (entity.level instanceof ServerLevel serverLevel){
-                if (MobsConfig.HostileCryptUndead.get()) {
-                    if (BlockFinder.findStructure(serverLevel, entity.blockPosition(), ModStructureTags.NECRO_HOSTILE)
-                            && !(CuriosFinder.neutralNamelessCrown(entity) || CuriosFinder.neutralNamelessCape(entity))) {
-                        undead = false;
-                    }
-                }
-            }
-            if (CuriosFinder.neutralNecroCrown(entity)) {
-                if (undead) {
-                    event.modifyVisibility(0.5);
-                }
-            } else if (CuriosFinder.neutralNamelessCrown(entity)) {
-                if (CuriosFinder.validNamelessUndead(looker)) {
-                    event.modifyVisibility(0.5);
-                }
-            }
-            if (CuriosFinder.neutralNecroCape(entity)) {
-                if (undead) {
-                    event.modifyVisibility(0.5);
-                }
-            } else if (CuriosFinder.neutralNamelessCape(entity)) {
-                if (CuriosFinder.validNamelessUndead(looker)) {
-                    event.modifyVisibility(0.5);
-                }
-            }
-            if (ItemConfig.FrostSetMobNeutral.get()) {
-                if (CuriosFinder.validFrostMob(looker)) {
-                    if (CuriosFinder.hasFrostCrown(entity)) {
-                        event.modifyVisibility(0.5);
-                    }
-                    if (CuriosFinder.hasFrostRobes(looker)) {
-                        event.modifyVisibility(0.5);
-                    }
-                }
-            }
-            if (ItemConfig.WildSetMobNeutral.get()) {
-                if (CuriosFinder.validWildMob(looker)) {
-                    if (CuriosFinder.hasWildCrown(entity)) {
-                        event.modifyVisibility(0.5);
-                    }
-                    if (CuriosFinder.hasWildRobe(looker)) {
-                        event.modifyVisibility(0.5);
-                    }
-                }
-            }
-            if (ItemConfig.NetherSetMobNeutral.get()) {
-                if (CuriosFinder.validNetherMob(looker)) {
-                    if (CuriosFinder.hasNetherCrown(entity)) {
-                        event.modifyVisibility(0.5);
-                    }
-                    if (CuriosFinder.hasNetherRobe(looker)) {
-                        event.modifyVisibility(0.5);
-                    }
-                }
-            }
-            if (CuriosFinder.hasIllusionRobe(entity)){
-                if (entity.isInvisible()){
-                    event.modifyVisibility(0.0);
                 }
             }
         }
@@ -1131,33 +936,6 @@ public class ModEvents {
                     }
                 }
             }
-            if (event.getSource().is(DamageTypeTags.IS_FIRE)){
-                LivingEntity source1 = null;
-                Entity direct1 = direct;
-                if (source instanceof LivingEntity living1) {
-                    source1 = living1;
-                } else if (source instanceof OwnableEntity ownable && ownable.getOwner() != null) {
-                    source1 = ownable.getOwner();
-                }
-                if (event.getSource() instanceof NoKnockBackDamageSource damageSource){
-                    if (damageSource.getOwner() instanceof LivingEntity living1) {
-                        source1 = living1;
-                    } else if (damageSource.getOwner() instanceof OwnableEntity ownable && ownable.getOwner() != null) {
-                        source1 = ownable.getOwner();
-                    }
-                    direct1 = damageSource.getDirectAttacker();
-                }
-                if (CuriosFinder.hasNetherRobe(source1)){
-                    if (victim.isInvulnerableTo(event.getSource()) || victim.hasEffect(MobEffects.FIRE_RESISTANCE)){
-                        DamageSource damageSource = ModDamageSource.magicFireBreath(direct1, source1);
-                        if (CuriosFinder.hasUnholyRobe(source1)){
-                            damageSource = ModDamageSource.hellfire(direct1, source1);
-                        }
-                        victim.hurt(damageSource, event.getAmount());
-                        event.setCanceled(true);
-                    }
-                }
-            }
         }
 
         if (event.getSource() instanceof NoKnockBackDamageSource damageSource){
@@ -1170,14 +948,6 @@ public class ModEvents {
                 }
                 if (damageSource.getOwner() instanceof ServerPlayer) {
                     CriteriaTriggers.PLAYER_HURT_ENTITY.trigger((ServerPlayer) damageSource.getOwner(), victim, event.getSource(), event.getAmount(), event.getAmount(), false);
-                }
-            }
-        }
-
-        if (source instanceof MagmaCube magmaCube){
-            if (CuriosFinder.neutralNetherSet(victim)){
-                if (magmaCube.getLastHurtByMob() != victim) {
-                    event.setCanceled(true);
                 }
             }
         }
@@ -1210,37 +980,6 @@ public class ModEvents {
     @SubscribeEvent
     public static void HurtEvent(LivingHurtEvent event){
         LivingEntity victim = event.getEntity();
-        if (CuriosFinder.hasCurio(victim, ModItems.GRAND_TURBAN.get())){
-            if (victim instanceof Player player) {
-                if (SEHelper.getSoulsAmount(player, ItemConfig.ItemsRepairAmount.get())) {
-                    int irks = victim.level.getEntitiesOfClass(AllyIrk.class, victim.getBoundingBox().inflate(32)).size();
-                    if ((victim.level.random.nextBoolean() || victim.getHealth() <= victim.getMaxHealth() / 2) && irks < 16) {
-                        AllyIrk irk = new AllyIrk(ModEntityType.ALLY_IRK.get(), victim.level);
-                        irk.setPos(victim.getX(), victim.getY(), victim.getZ());
-                        irk.setLimitedLife(MobUtil.getSummonLifespan(victim.level));
-                        irk.setTrueOwner(victim);
-                        if (victim.level.addFreshEntity(irk)) {
-                            SEHelper.decreaseSouls(player, ItemConfig.ItemsRepairAmount.get());
-                        }
-                    }
-                }
-            }
-        }
-        if (CuriosFinder.hasCurio(victim, ModItems.GRAND_ROBE.get())){
-            if (MobUtil.isSpellCasting(victim)){
-                event.setAmount(event.getAmount() / 2.0F);
-            }
-        }
-        if (CuriosFinder.hasWitchRobe(victim)){
-            if (victim instanceof Player player){
-                if (!(LichdomHelper.isLich(player) && MainConfig.LichMagicResist.get())){
-                    if (event.getSource().is(DamageTypeTags.WITCH_RESISTANT_TO)){
-                        float resistance = 1.0F - (ItemConfig.WitchRobeResistance.get() / 100.0F);
-                        event.setAmount(event.getAmount() * resistance);
-                    }
-                }
-            }
-        }
         if (ModDamageSource.shockAttacks(event.getSource())){
             if (victim.level instanceof ServerLevel serverLevel){
                 ServerParticleUtil.addParticlesAroundSelf(serverLevel, ModParticleTypes.BIG_ELECTRIC.get(), victim);
@@ -1561,6 +1300,9 @@ public class ModEvents {
                                     }
                                 }
                             }
+                            if (event.getDamageSource().is(ModDamageSource.LOOT_EXPLODE) || event.getDamageSource().is(ModDamageSource.LOOT_EXPLODE_OWNED)){
+                                event.setLootingLevel(looting);
+                            }
                         }
                     }
                 }
@@ -1675,6 +1417,30 @@ public class ModEvents {
         if (lastDamage != null) {
             if (lastDamage instanceof NoKnockBackDamageSource){
                 event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void OnLivingJump(LivingEvent.LivingJumpEvent event){
+        if (event.getEntity() instanceof Player player) {
+            if (CuriosFinder.hasCurio(player, itemStack -> itemStack.getItem() instanceof WayfarersBeltItem)){
+                float f = 0.625F;
+                if (player.hasEffect(MobEffects.JUMP)){
+                    f += 0.1F * (float)(player.getEffect(MobEffects.JUMP).getAmplifier() + 1);
+                }
+                Vec3 vector3d = player.getDeltaMovement();
+                player.setDeltaMovement(vector3d.x, f, vector3d.z);
+            }
+        }
+
+    }
+
+    @SubscribeEvent
+    public static void OnLivingFall(LivingFallEvent event){
+        if (event.getEntity() instanceof Player player) {
+            if (CuriosFinder.hasCurio(player, itemStack -> itemStack.getItem() instanceof WayfarersBeltItem)){
+                event.setDistance(event.getDistance() / 2);
             }
         }
     }

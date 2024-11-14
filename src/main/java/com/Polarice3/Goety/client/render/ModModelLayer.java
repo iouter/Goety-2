@@ -92,6 +92,7 @@ public class ModModelLayer {
     public static final ModelLayerLocation HAUNTED_SKULL = register("cursed_skull");
     public static final ModelLayerLocation HAUNTED_SKULL_FIRELESS = register("fireless_skull");
     public static final ModelLayerLocation SKULL_LORD = register("skull_lord");
+    public static final ModelLayerLocation SORCERER = register("sorcerer");
     public static final ModelLayerLocation TORMENTOR = register("tormentor");
     public static final ModelLayerLocation INQUILLAGER = register("inquillager");
     public static final ModelLayerLocation CONQUILLAGER = register("conquillager");

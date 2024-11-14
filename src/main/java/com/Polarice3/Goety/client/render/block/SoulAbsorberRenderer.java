@@ -21,8 +21,9 @@ public class SoulAbsorberRenderer implements BlockEntityRenderer<SoulAbsorberBlo
             pMatrixStack.pushPose();
             pMatrixStack.translate(0.5F, 0.5F, 0.5F);
             pMatrixStack.scale(1.0F, 1.0F, 1.0F);
-            assert minecraft.level != null;
-            pMatrixStack.mulPose(Axis.YP.rotationDegrees(3 * (minecraft.level.getGameTime() % 360 + pPartialTicks)));
+            if (minecraft.level != null){
+                pMatrixStack.mulPose(Axis.YP.rotationDegrees(3 * (minecraft.level.getGameTime() % 360 + pPartialTicks)));
+            }
             minecraft.getItemRenderer().renderStatic(itemStack, ItemDisplayContext.GROUND, pCombinedLight, pCombinedOverlay, pMatrixStack, pBuffer, pBlockEntity.getLevel(), 0);
             pMatrixStack.popPose();
         }

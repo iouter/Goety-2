@@ -1,6 +1,5 @@
 package com.Polarice3.Goety.common.items.curios;
 
-import com.Polarice3.Goety.Goety;
 import com.Polarice3.Goety.common.effects.GoetyEffects;
 import com.Polarice3.Goety.compat.iron.IronAttributes;
 import com.Polarice3.Goety.compat.iron.IronLoaded;
@@ -9,28 +8,23 @@ import com.Polarice3.Goety.utils.CuriosFinder;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.MobEffectEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.world.level.Level;
 import top.theillusivec4.curios.api.SlotContext;
 
 import java.util.UUID;
 
-@Mod.EventBusSubscriber(modid = Goety.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WildRobeItem extends SingleStackItem {
 
-    @SubscribeEvent
-    public static void LivingEffects(LivingEvent.LivingTickEvent event){
-        LivingEntity livingEntity = event.getEntity();
-        if (livingEntity != null){
-            if (CuriosFinder.hasWildRobe(livingEntity)){
-                if (!livingEntity.level.isClientSide) {
+    @Override
+    public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+        if (!worldIn.isClientSide) {
+            if (entityIn instanceof LivingEntity livingEntity) {
+                if (CuriosFinder.hasWildRobe(livingEntity)){
                     if (livingEntity.hasEffect(MobEffects.POISON)){
                         livingEntity.removeEffect(MobEffects.POISON);
                     }
@@ -40,17 +34,8 @@ public class WildRobeItem extends SingleStackItem {
                 }
             }
         }
-    }
 
-    @SubscribeEvent
-    public static void EffectApplyEvents(MobEffectEvent.Applicable event){
-        LivingEntity livingEntity = event.getEntity();
-        if (event.getEffectInstance().getEffect() == MobEffects.POISON
-        || event.getEffectInstance().getEffect() == GoetyEffects.ACID_VENOM.get()) {
-            if (CuriosFinder.hasWildRobe(livingEntity)) {
-                event.setResult(Event.Result.DENY);
-            }
-        }
+        super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
     }
 
     @Override

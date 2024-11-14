@@ -1,20 +1,33 @@
 package com.Polarice3.Goety.api.entities.ally;
 
 import com.Polarice3.Goety.api.entities.IOwned;
+import com.Polarice3.Goety.common.entities.ally.golem.AbstractGolemServant;
 import com.Polarice3.Goety.config.MobsConfig;
 import com.Polarice3.Goety.init.ModMobType;
 import com.Polarice3.Goety.utils.CuriosFinder;
+import com.Polarice3.Goety.utils.EntityFinder;
 import com.Polarice3.Goety.utils.MathHelper;
 import com.Polarice3.Goety.utils.SEHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobType;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 
 public interface IServant extends IOwned {
+    int PATROL_RANGE = MobsConfig.ServantPatrolRange.get();
+
     boolean isWandering();
 
     void setWandering(boolean wandering);
@@ -31,6 +44,10 @@ public interface IServant extends IOwned {
         return null;
     }
 
+    default Vec3 vec3BoundPos(){
+        return Vec3.atBottomCenterOf(this.getBoundPos());
+    }
+
     default void setBoundPos(BlockPos blockPos){
     }
 
@@ -38,19 +55,236 @@ public interface IServant extends IOwned {
         return !this.isWandering() && !this.isStaying() && !this.isPatrolling();
     }
 
+    default void spawnUpgraded(){
+        if (this instanceof Mob mob) {
+            if (mob.getMobType() == MobType.UNDEAD) {
+                this.setUpgraded(CuriosFinder.hasUndeadCape(this.getTrueOwner()));
+            } else if (mob.getMobType() == ModMobType.NATURAL) {
+                this.setUpgraded(CuriosFinder.hasWildRobe(this.getTrueOwner()));
+            } else if (mob.getMobType() == ModMobType.FROST) {
+                this.setUpgraded(CuriosFinder.hasFrostRobes(this.getTrueOwner()));
+            }
+        }
+    }
+
     boolean canUpdateMove();
 
-    void updateMoveMode(Player player);
+    default void updateMoveMode(Player player){
+        if (this instanceof LivingEntity living) {
+            if (!this.isWandering() && !this.isStaying() && !this.isPatrolling()) {
+                this.setBoundPos(null);
+                this.setWandering(true);
+                this.setStaying(false);
+                player.displayClientMessage(Component.translatable("info.goety.servant.wander", living.getDisplayName()), true);
+            } else if (!this.isStaying() && !this.isPatrolling()) {
+                this.setBoundPos(null);
+                this.setWandering(false);
+                this.setStaying(true);
+                player.displayClientMessage(Component.translatable("info.goety.servant.staying", living.getDisplayName()), true);
+            } else if (!this.isPatrolling()) {
+                this.setBoundPos(living.blockPosition());
+                this.setWandering(false);
+                this.setStaying(false);
+                player.displayClientMessage(Component.translatable("info.goety.servant.patrol", living.getDisplayName()), true);
+            } else {
+                this.setBoundPos(null);
+                this.setWandering(false);
+                this.setStaying(false);
+                player.displayClientMessage(Component.translatable("info.goety.servant.follow", living.getDisplayName()), true);
+            }
+            living.playSound(SoundEvents.ZOMBIE_VILLAGER_CONVERTED, 1.0f, 1.0f);
+        }
+    }
 
     boolean isCommanded();
 
-    void setCommandPos(BlockPos blockPos);
+    default void setCommandPos(BlockPos blockPos) {
+        this.setCommandPos(blockPos, true);
+    }
 
-    void setCommandPos(BlockPos blockPos, boolean removeEntity);
+    default BlockPos getCommandPos(){
+        return null;
+    }
+
+    default void setCommandPos(BlockPos blockPos, boolean removeEntity) {
+        if (removeEntity) {
+            this.setCommandPosEntity(null);
+        }
+        this.setCommandPos(blockPos);
+        this.setCommandTick(MathHelper.secondsToTicks(10));
+    }
 
     void setCommandPosEntity(LivingEntity living);
 
+    default LivingEntity getCommandPosEntity(){
+        return null;
+    }
+
+    default int getCommandTick(){
+        return 0;
+    }
+
+    default void setCommandTick(int time){
+    }
+
+    default int getNoHealTime(){
+        return 0;
+    }
+
+    default void setNoHealTime(int time){
+    }
+
+    default int getKillChance(){
+        return 0;
+    }
+
+    default void setKillChance(int time){
+    }
+
     void tryKill(Player player);
+
+    default boolean isUpgraded() {
+        return false;
+    }
+
+    default void setUpgraded(boolean upgraded){
+
+    }
+
+    default boolean isSunSensitive2() {
+        return false;
+    }
+
+    default boolean burnSunTick() {
+        if (this instanceof LivingEntity living) {
+            if (living.level.isDay() && !living.level.isClientSide) {
+                float f = living.getLightLevelDependentMagicValue();
+                BlockPos blockpos = BlockPos.containing(living.getX(), living.getEyeY(), living.getZ());
+                boolean flag = living.isInWaterRainOrBubble() || living.isInPowderSnow || living.wasInPowderSnow;
+                return f > 0.5F && living.getRandom().nextFloat() * 30.0F < (f - 0.4F) * 2.0F && !flag && living.level.canSeeSky(blockpos);
+            }
+        }
+
+        return false;
+    }
+
+    default boolean canRide(LivingEntity livingEntity){
+        if (!(this instanceof PlayerRideable)
+                && !(this instanceof AbstractGolemServant)
+                && livingEntity instanceof PlayerRideable
+                && livingEntity.getFirstPassenger() == null){
+            if (livingEntity instanceof AbstractHorse horse){
+                return horse.isTamed();
+            } else if (livingEntity instanceof OwnableEntity ownable && this.getTrueOwner() != null){
+                return ownable.getOwner() == this.getTrueOwner();
+            } else if (livingEntity instanceof IOwned owned && this.getTrueOwner() != null){
+                return owned.getTrueOwner() == this.getTrueOwner();
+            }
+        }
+        return false;
+    }
+
+    default void servantTick(){
+        if (this instanceof Mob owned){
+            this.stayingMode();
+            if (this.getKillChance() > 0){
+                this.setKillChance(this.getKillChance() - 1);
+            }
+            if (MobsConfig.StayingServantChunkLoad.get()) {
+                if (owned.level instanceof ServerLevel serverLevel) {
+                    if (this.isStaying()) {
+                        if (this.getTrueOwner() instanceof Player player) {
+                            if (player.tickCount % 10 == 0) {
+                                for (int i = -1; i <= 1; i++) {
+                                    for (int j = -1; j <= 1; j++) {
+                                        ChunkPos pos = new ChunkPos(owned.blockPosition().offset(i * 16, 0, j * 16));
+                                        serverLevel.setChunkForced(pos.x, pos.z, true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (this.isCommanded()){
+                if (owned.getNavigation().isStableDestination(this.getCommandPos()) || this.getCommandPosEntity() != null){
+                    this.setCommandTick(this.getCommandTick() - 1);
+                    if (this.getCommandPosEntity() != null){
+                        owned.getNavigation().moveTo(this.getCommandPosEntity(), 1.25D);
+                    } else {
+                        owned.getNavigation().moveTo(this.getCommandPos().getX() + 0.5D, this.getCommandPos().getY(), this.getCommandPos().getZ() + 0.5D, 1.25D);
+                    }
+
+                    if (owned.getNavigation().isStuck() || this.getCommandTick() <= 0){
+                        this.setCommandPosEntity(null);
+                        this.setCommandPos(null);
+                    } else if (this.getCommandPos().closerToCenterThan(
+                            owned.getControlledVehicle() != null ? owned.getControlledVehicle().position() : owned.position(),
+                            owned.getControlledVehicle() != null ? owned.getControlledVehicle().getBbWidth() + 1.0D : owned.getBbWidth() + 1.0D)){
+                        if (this.getCommandPosEntity() != null &&
+                                owned.getBoundingBox().inflate(1.25D).intersects(this.getCommandPosEntity().getBoundingBox())){
+                            if (this.canRide(this.getCommandPosEntity())) {
+                                if (owned.startRiding(this.getCommandPosEntity())) {
+                                    if (this.getTrueOwner() instanceof Player player){
+                                        player.displayClientMessage(Component.translatable("info.goety.servant.dismount"), true);
+                                    }
+                                }
+                            }
+                            this.setCommandPosEntity(null);
+                        }
+                        if (this.isPatrolling()){
+                            this.setBoundPos(this.getCommandPos());
+                        }
+                        owned.moveTo(this.getCommandPos(), owned.getYRot(), owned.getXRot());
+                        this.setCommandPos(null);
+                    }
+                } else {
+                    this.setCommandPos(null);
+                }
+            }
+            if (this.isWandering() || this.isPatrolling()){
+                if (this.isStaying()) {
+                    this.setStaying(false);
+                }
+            }
+            if (this.isPatrolling()){
+                if (owned.getTarget() != null){
+                    if (owned.getTarget().distanceToSqr(this.vec3BoundPos()) > Mth.square(PATROL_RANGE * 2)){
+                        owned.setTarget(null);
+                        if (!this.isCommanded()){
+                            owned.getNavigation().moveTo(this.getBoundPos().getX(), this.getBoundPos().getY(), this.getBoundPos().getZ(), 1.0F);
+                        }
+                    }
+                } else if (!this.isCommanded() && owned.distanceToSqr(this.vec3BoundPos()) > Mth.square(PATROL_RANGE)){
+                    owned.getNavigation().moveTo(this.getBoundPos().getX(), this.getBoundPos().getY(), this.getBoundPos().getZ(), 1.0F);
+                }
+            }
+            if (this.getNoHealTime() <= 0){
+                this.healServant(owned);
+            } else {
+                this.setNoHealTime(this.getNoHealTime() - 1);
+            }
+            boolean flag = this.isSunSensitive2() && this.burnSunTick() && MobsConfig.UndeadServantSunlightBurn.get();
+            if (flag) {
+                ItemStack itemstack = owned.getItemBySlot(EquipmentSlot.HEAD);
+                if (!itemstack.isEmpty()) {
+                    if (itemstack.isDamageableItem() && MobsConfig.UndeadServantSunlightHelmet.get()) {
+                        itemstack.setDamageValue(itemstack.getDamageValue() + owned.getRandom().nextInt(2));
+                        if (itemstack.getDamageValue() >= itemstack.getMaxDamage()) {
+                            owned.broadcastBreakEvent(EquipmentSlot.HEAD);
+                            owned.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
+                        }
+                    }
+
+                    flag = false;
+                }
+
+                if (flag) {
+                    owned.setSecondsOnFire(8);
+                }
+            }
+        }
+    }
 
     default void healServant(LivingEntity livingEntity){
         if (this.getTrueOwner() != null){
@@ -123,5 +357,85 @@ public interface IServant extends IOwned {
                 }
             }
         }
+    }
+
+    default void stayingMode(){
+        if (this instanceof Mob owned) {
+            AttributeInstance modifiableattributeinstance = owned.getAttribute(Attributes.MOVEMENT_SPEED);
+            if (modifiableattributeinstance != null) {
+                if (this.isStaying()) {
+                    if (owned.getNavigation().getPath() != null) {
+                        owned.getNavigation().stop();
+                    }
+                    if (owned.getAttribute(Attributes.MOVEMENT_SPEED) != null) {
+                        modifiableattributeinstance.removeModifier(SPEED_MODIFIER);
+                        modifiableattributeinstance.addTransientModifier(SPEED_MODIFIER);
+                    }
+                    this.stayingPosition();
+                    if (this.isWandering()) {
+                        this.setWandering(false);
+                    }
+                } else {
+                    if (modifiableattributeinstance.hasModifier(SPEED_MODIFIER)) {
+                        modifiableattributeinstance.removeModifier(SPEED_MODIFIER);
+                    }
+                }
+            }
+        }
+    }
+
+    default void stayingPosition(){
+        if (this instanceof Mob owned) {
+            if (owned.getTarget() != null) {
+                owned.getLookControl().setLookAt(owned.getTarget(), owned.getMaxHeadYRot(), owned.getMaxHeadXRot());
+                double d2 = owned.getTarget().getX() - owned.getX();
+                double d1 = owned.getTarget().getZ() - owned.getZ();
+                owned.setYRot(-((float) Mth.atan2(d2, d1)) * (180F / (float) Math.PI));
+                owned.yBodyRot = owned.getYRot();
+            }
+        }
+    }
+
+    default void readServantData(CompoundTag compound){
+        if (compound.contains("Upgraded")) {
+            this.setUpgraded(compound.getBoolean("Upgraded"));
+        }
+        if (compound.contains("wandering")) {
+            this.setWandering(compound.getBoolean("wandering"));
+        }
+        if (compound.contains("staying")) {
+            this.setStaying(compound.getBoolean("staying"));
+        }
+        if (compound.contains("commandPos")){
+            this.setCommandPos(NbtUtils.readBlockPos(compound.getCompound("commandPos")));
+        }
+        if (compound.contains("commandPosEntity")){
+            if (EntityFinder.getLivingEntityByUuiD(compound.getUUID("commandPosEntity")) != null) {
+                this.setCommandPosEntity(EntityFinder.getLivingEntityByUuiD(compound.getUUID("commandPosEntity")));
+            }
+        }
+        if (compound.contains("boundPos")){
+            this.setBoundPos(NbtUtils.readBlockPos(compound.getCompound("boundPos")));
+        }
+        if (compound.contains("noHealTime")){
+            this.setNoHealTime(compound.getInt("noHealTime"));
+        }
+    }
+
+    default void saveServantData(CompoundTag compound){
+        compound.putBoolean("Upgraded", this.isUpgraded());
+        compound.putBoolean("wandering", this.isWandering());
+        compound.putBoolean("staying", this.isStaying());
+        if (this.getCommandPos() != null){
+            compound.put("commandPos", NbtUtils.writeBlockPos(this.getCommandPos()));
+        }
+        if (this.getCommandPosEntity() != null) {
+            compound.putUUID("commandPosEntity", this.getCommandPosEntity().getUUID());
+        }
+        compound.putInt("commandTick", this.getCommandTick());
+        if (this.getBoundPos() != null){
+            compound.put("boundPos", NbtUtils.writeBlockPos(this.getBoundPos()));
+        }
+        compound.putInt("noHealTime", this.getNoHealTime());
     }
 }

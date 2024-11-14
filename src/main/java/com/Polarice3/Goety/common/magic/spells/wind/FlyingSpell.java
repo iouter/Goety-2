@@ -34,7 +34,7 @@ public class FlyingSpell extends EverChargeSpell {
     }
 
     @Override
-    public SoundEvent loopSound(LivingEntity livingEntity) {
+    public SoundEvent loopSound(LivingEntity caster) {
         return ModSounds.FLIGHT.get();
     }
 
@@ -52,16 +52,16 @@ public class FlyingSpell extends EverChargeSpell {
 
     public void CommonResult(ServerLevel worldIn, LivingEntity entityLiving, double power){
         if (entityLiving instanceof Player player){
-            int enchantment = 0;
+            int potency = 0;
             if (WandUtil.enchantedFocus(player)){
-                enchantment = WandUtil.getLevels(ModEnchantments.POTENCY.get(), player);
+                potency = WandUtil.getLevels(ModEnchantments.POTENCY.get(), player);
             }
             player.hurtMarked = true;
             if (!player.level.isClientSide){
                 player.setOnGround(false);
             }
             Vec3 vector3d = player.getLookAngle();
-            double d0 = power + (double) (enchantment / 2);
+            double d0 = power + (double) (potency / 2);
             player.setDeltaMovement(vector3d.x * d0, vector3d.y * d0, vector3d.z * d0);
             player.hasImpulse = true;
             player.fallDistance = 0;
@@ -71,11 +71,11 @@ public class FlyingSpell extends EverChargeSpell {
         }
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff){
         double d = 0.5D;
         if (rightStaff(staff)){
             d = 1.0D;
         }
-        this.CommonResult(worldIn, entityLiving, d);
+        this.CommonResult(worldIn, caster, d);
     }
 }

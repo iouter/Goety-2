@@ -1,5 +1,7 @@
 package com.Polarice3.Goety.utils;
 
+import com.Polarice3.Goety.Goety;
+
 public class ConstantPaths {
     public static String readScroll(){
         return "goety:readScroll";
@@ -35,6 +37,10 @@ public class ConstantPaths {
 
     public static String keepEffects(){
         return "goety:keepEffects";
+    }
+
+    public static String boltingDash(){
+        return Goety.location("textures/entity/bolting_dash.png").toString();
     }
 
 }

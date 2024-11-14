@@ -4,6 +4,7 @@ import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.projectiles.VineHook;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.SEHelper;
@@ -28,14 +29,14 @@ public class GrappleSpell extends Spell {
     }
 
     @Override
-    public int soulCost(LivingEntity entityLiving) {
-        if (entityLiving instanceof Player player){
+    public int soulCost(LivingEntity caster) {
+        if (caster instanceof Player player){
             Projectile projectile = SEHelper.getGrappling(player);
             if (projectile != null) {
                 return 0;
             }
         }
-        return super.soulCost(entityLiving);
+        return super.soulCost(caster);
     }
 
     @Override
@@ -67,12 +68,12 @@ public class GrappleSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        float velocity = 0;
-        if (WandUtil.enchantedFocus(entityLiving)) {
-            velocity = WandUtil.getLevels(ModEnchantments.VELOCITY.get(), entityLiving) / 2.0F;
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        float velocity = spellStat.getVelocity();
+        if (WandUtil.enchantedFocus(caster)) {
+            velocity = WandUtil.getLevels(ModEnchantments.VELOCITY.get(), caster) / 2.0F;
         }
-        if (entityLiving instanceof Player player){
+        if (caster instanceof Player player){
             Projectile projectile = SEHelper.getGrappling(player);
             if (projectile != null) {
                 projectile.discard();

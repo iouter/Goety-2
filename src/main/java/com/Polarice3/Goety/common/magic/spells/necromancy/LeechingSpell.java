@@ -4,6 +4,7 @@ import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.client.particles.GatherTrailParticle;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.EverChargeSpell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.ColorUtil;
@@ -25,6 +26,11 @@ import java.util.List;
 
 public class LeechingSpell extends EverChargeSpell {
 
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setRange(8);
+    }
+
     public int defaultSoulCost() {
         return SpellConfig.LeechingCost.get();
     }
@@ -32,6 +38,16 @@ public class LeechingSpell extends EverChargeSpell {
     @Override
     public int defaultCastUp() {
         return SpellConfig.LeechingChargeUp.get();
+    }
+
+    @Override
+    public int shotsNumber() {
+        return SpellConfig.LeechingDuration.get();
+    }
+
+    @Override
+    public int defaultSpellCooldown() {
+        return SpellConfig.LeechingCoolDown.get();
     }
 
     @Nullable
@@ -54,24 +70,25 @@ public class LeechingSpell extends EverChargeSpell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
         float potency = SpellConfig.LeechingDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
-        int range = 8;
-        if (WandUtil.enchantedFocus(entityLiving)){
-            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving) / 2.0F;
-            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
+        int range = spellStat.getRange();
+        if (WandUtil.enchantedFocus(caster)){
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster) / 2.0F;
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
         }
-        LivingEntity livingEntity = this.getTarget(entityLiving, range);
+        potency += spellStat.getPotency();
+        LivingEntity livingEntity = this.getTarget(caster, range);
         if (livingEntity != null){
             ColorUtil colorUtil = new ColorUtil(ChatFormatting.DARK_RED);
             Vec3 vector3d = new Vec3(livingEntity.getRandomX(1.0F), livingEntity.getRandomY(), livingEntity.getRandomZ(1.0F));
-            Vec3 vector3d1 = new Vec3(entityLiving.getRandomX(1.0F), entityLiving.getEyeY(), entityLiving.getRandomZ(1.0F));
+            Vec3 vector3d1 = new Vec3(caster.getRandomX(1.0F), caster.getEyeY(), caster.getRandomZ(1.0F));
             worldIn.sendParticles(new GatherTrailParticle.Option(colorUtil, vector3d1), vector3d.x, vector3d.y, vector3d.z, 0, 0.0F, 0.0F, 0.0F, 0.5F);
-            if (livingEntity.hurt(ModDamageSource.lifeLeech(entityLiving, entityLiving), potency)) {
+            if (livingEntity.hurt(ModDamageSource.lifeLeech(caster, caster), potency)) {
                 if (this.rightStaff(staff)){
                     livingEntity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0));
                 }
-                worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.SOUL_EAT.get(), this.getSoundSource(), 1.0F, 1.0F);
+                worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.SOUL_EAT.get(), this.getSoundSource(), 1.0F, 1.0F);
             }
         }
     }

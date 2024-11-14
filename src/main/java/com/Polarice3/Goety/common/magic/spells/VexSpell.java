@@ -6,6 +6,7 @@ import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.ally.AllyIrk;
 import com.Polarice3.Goety.common.entities.ally.AllyVex;
 import com.Polarice3.Goety.common.entities.neutral.Minion;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.common.magic.SummonSpell;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.utils.ColorUtil;
@@ -18,10 +19,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -71,69 +69,79 @@ public class VexSpell extends SummonSpell {
     }
 
     @Override
-    public ColorUtil particleColors(LivingEntity entityLiving) {
+    public ColorUtil particleColors(LivingEntity caster) {
         return new ColorUtil(0.7F, 0.7F, 0.8F);
     }
 
-    public void commonResult(ServerLevel worldIn, LivingEntity entityLiving){
-        if (WandUtil.enchantedFocus(entityLiving)){
-            enchantment = WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
-            duration = WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving) + 1;
+    @Override
+    public boolean conditionsMet(ServerLevel worldIn, LivingEntity caster) {
+        if (caster instanceof Mob){
+            return SpellConfig.WandVexLimit.get() > this.VexLimit(caster);
         }
-        if (isShifting(entityLiving)) {
+        return super.conditionsMet(worldIn, caster);
+    }
+
+    public void commonResult(ServerLevel worldIn, LivingEntity caster){
+        if (isShifting(caster)) {
             for (Entity entity : worldIn.getAllEntities()) {
                 if (entity instanceof Minion minion) {
                     if (minion instanceof AllyVex || minion instanceof AllyIrk) {
-                        if (minion.getTrueOwner() == entityLiving) {
+                        if (minion.getTrueOwner() == caster) {
                             if (minion instanceof AllyIrk){
-                                entityLiving.heal(2.0F);
+                                caster.heal(2.0F);
                             }
                             entity.kill();
                         }
                     }
                 }
             }
-            for (int i = 0; i < entityLiving.level.random.nextInt(35) + 10; ++i) {
-                worldIn.sendParticles(ParticleTypes.POOF, entityLiving.getX(), entityLiving.getEyeY(), entityLiving.getZ(), 1, 0.0F, 0.0F, 0.0F, 0);
+            for (int i = 0; i < caster.level.random.nextInt(35) + 10; ++i) {
+                worldIn.sendParticles(ParticleTypes.POOF, caster.getX(), caster.getEyeY(), caster.getZ(), 1, 0.0F, 0.0F, 0.0F, 0);
             }
-            worldIn.playSound((Player) null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.EVOKER_CAST_SPELL, this.getSoundSource(), 1.0F, 1.0F);
+            worldIn.playSound((Player) null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.EVOKER_CAST_SPELL, this.getSoundSource(), 1.0F, 1.0F);
         }
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        this.commonResult(worldIn, entityLiving);
-        if (!isShifting(entityLiving)) {
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        this.commonResult(worldIn, caster);
+        int potency = spellStat.getPotency();
+        int duration = spellStat.getDuration();
+        if (WandUtil.enchantedFocus(caster)){
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), caster) + 1;
+        }
+        if (!isShifting(caster)) {
             int i = 3;
             if (rightStaff(staff)){
                 i = 3 + worldIn.random.nextInt(3);
             }
             for (int i1 = 0; i1 < i; ++i1) {
-                BlockPos blockpos = entityLiving.blockPosition().offset(-2 + entityLiving.getRandom().nextInt(5), 1, -2 + entityLiving.getRandom().nextInt(5));
+                BlockPos blockpos = caster.blockPosition().offset(-2 + caster.getRandom().nextInt(5), 1, -2 + caster.getRandom().nextInt(5));
                 AllyVex vexentity = new AllyVex(ModEntityType.ALLY_VEX.get(), worldIn);
-                vexentity.setTrueOwner(entityLiving);
+                vexentity.setTrueOwner(caster);
                 vexentity.moveTo(blockpos, 0.0F, 0.0F);
-                vexentity.finalizeSpawn(worldIn, entityLiving.level.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, null, null);
+                vexentity.finalizeSpawn(worldIn, caster.level.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, null, null);
                 vexentity.setBoundOrigin(blockpos);
                 int limit = rightStaff(staff) ? SpellConfig.StaffVexLimit.get() : SpellConfig.WandVexLimit.get();
-                if (limit > VexLimit(entityLiving)) {
+                if (limit > VexLimit(caster)) {
                     vexentity.setLimitedLife(MobUtil.getSummonLifespan(worldIn) * duration);
                 } else {
                     vexentity.setLimitedLife(1);
                     vexentity.addEffect(new MobEffectInstance(MobEffects.WITHER, 800, 1));
                 }
-                if (enchantment > 0) {
+                if (potency > 0) {
                     Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(vexentity.getMainHandItem());
-                    map.putIfAbsent(Enchantments.SHARPNESS, enchantment);
+                    map.putIfAbsent(Enchantments.SHARPNESS, potency);
                     EnchantmentHelper.setEnchantments(map, vexentity.getMainHandItem());
                     vexentity.setItemSlot(EquipmentSlot.MAINHAND, vexentity.getMainHandItem());
                 }
-                this.SummonSap(entityLiving, vexentity);
-                this.setTarget(entityLiving, vexentity);
+                this.SummonSap(caster, vexentity);
+                this.setTarget(caster, vexentity);
                 worldIn.addFreshEntity(vexentity);
-                this.summonAdvancement(entityLiving, vexentity);
+                this.summonAdvancement(caster, vexentity);
             }
-            worldIn.playSound((Player) null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.EVOKER_CAST_SPELL, this.getSoundSource(), 1.0F, 1.0F);
-            this.SummonDown(entityLiving);
+            worldIn.playSound((Player) null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.EVOKER_CAST_SPELL, this.getSoundSource(), 1.0F, 1.0F);
+            this.SummonDown(caster);
         }
     }
 

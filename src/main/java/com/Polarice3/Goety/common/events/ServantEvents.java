@@ -11,6 +11,7 @@ import com.Polarice3.Goety.common.entities.projectiles.ThrowableFungus;
 import com.Polarice3.Goety.common.items.ModItems;
 import com.Polarice3.Goety.config.MobsConfig;
 import com.Polarice3.Goety.utils.CuriosFinder;
+import com.Polarice3.Goety.utils.ModDamageSource;
 import com.Polarice3.Goety.utils.NoKnockBackDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -209,14 +210,17 @@ public class ServantEvents {
                     }
                     if (event.getDamageSource().getEntity() != null) {
                         if (event.getDamageSource().getEntity() instanceof IOwned ownedEntity) {
-                            if (ownedEntity instanceof LivingEntity) {
+                            if (ownedEntity instanceof LivingEntity livingEntity) {
                                 if (ownedEntity.getTrueOwner() instanceof Player player) {
                                     if (CuriosFinder.findRing(player).getItem() == ModItems.RING_OF_WANT.get()) {
                                         if (CuriosFinder.findRing(player).isEnchanted()) {
                                             looting = CuriosFinder.findRing(player).getEnchantmentLevel(ModEnchantments.WANTING.get());
                                         }
                                     }
-                                    if (looting > EnchantmentHelper.getMobLooting((LivingEntity) ownedEntity)) {
+                                    if (looting > EnchantmentHelper.getMobLooting(livingEntity)) {
+                                        event.setLootingLevel(looting);
+                                    }
+                                    if (event.getDamageSource().is(ModDamageSource.LOOT_EXPLODE) || event.getDamageSource().is(ModDamageSource.LOOT_EXPLODE_OWNED)){
                                         event.setLootingLevel(looting);
                                     }
                                 }

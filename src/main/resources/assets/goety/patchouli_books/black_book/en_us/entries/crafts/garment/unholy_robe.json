@@ -6,7 +6,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Using the blood of the dark emissary, you've made replica of their garments. The Robes gives you immunity to fire and Burn Hexes, and both robe and hat empowers some spells with hellfire."
+      "text": "Using the $(l)purest$() blood of the dark emissary, $(l)which can only be obtained by slaying them within the Nether$(), you've made replica of their garments. The Robes gives you immunity to fire and Burn Hexes, and both robe and hat empowers some spells with hellfire."
     },
     {
       "type": "goety:ritual",

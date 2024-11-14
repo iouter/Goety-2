@@ -32,11 +32,13 @@ public class AllyVex extends Minion {
     }
 
     public void tick() {
-        for (Vex target : this.level.getEntitiesOfClass(Vex.class, this.getBoundingBox().inflate(this.getAttributeValue(Attributes.FOLLOW_RANGE)))) {
-            if (target.getType() == EntityType.VEX) {
-                if (target.isAlive() && !target.isDeadOrDying()) {
-                    this.setTarget(target);
-                    target.setTarget(this);
+        if (!this.isHostile()) {
+            for (Vex target : this.level.getEntitiesOfClass(Vex.class, this.getBoundingBox().inflate(this.getAttributeValue(Attributes.FOLLOW_RANGE)))) {
+                if (target.getType() == EntityType.VEX) {
+                    if (target.isAlive() && !target.isDeadOrDying()) {
+                        this.setTarget(target);
+                        target.setTarget(this);
+                    }
                 }
             }
         }

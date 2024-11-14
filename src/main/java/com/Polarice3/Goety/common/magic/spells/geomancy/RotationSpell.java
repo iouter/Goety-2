@@ -57,6 +57,9 @@ public class RotationSpell extends BlockSpell {
     public static boolean blockCanRotate(Level world, BlockPos pos, Direction side) {
         BlockState oldState = world.getBlockState(pos);
         BlockState newState = null;
+        if (oldState.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)){
+            return false;
+        }
         if (oldState.is(BlockTags.SLABS)) {
             final String key = "type";
             final String valueDupe = "double";

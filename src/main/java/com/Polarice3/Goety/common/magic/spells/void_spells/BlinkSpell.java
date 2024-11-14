@@ -3,7 +3,9 @@ package com.Polarice3.Goety.common.magic.spells.void_spells;
 import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
+import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.BlockFinder;
 import com.Polarice3.Goety.utils.MobUtil;
 import com.Polarice3.Goety.utils.WandUtil;
@@ -28,6 +30,11 @@ import java.util.List;
 public class BlinkSpell extends Spell {
 
     @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setRange(32);
+    }
+
+    @Override
     public int defaultSoulCost() {
         return SpellConfig.BlinkCost.get();
     }
@@ -39,7 +46,7 @@ public class BlinkSpell extends Spell {
 
     @Override
     public SoundEvent CastingSound() {
-        return SoundEvents.ENDERMAN_TELEPORT;
+        return ModSounds.VOID_PREPARE_SPELL.get();
     }
 
     @Override
@@ -60,29 +67,29 @@ public class BlinkSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        int enchantment = 0;
-        if (WandUtil.enchantedFocus(entityLiving)) {
-            enchantment = WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        int range = spellStat.getRange();
+        if (WandUtil.enchantedFocus(caster)) {
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
         }
-        EntityHitResult hitResult = this.entityResult(worldIn, entityLiving, 32 + enchantment, 3);
+        EntityHitResult hitResult = this.entityResult(worldIn, caster, range, 3);
         if (hitResult != null){
             Entity entity = hitResult.getEntity();
             for (int i = 0; i < 64; ++i) {
-                if (MobUtil.teleportTowards(entityLiving, entity)){
+                if (MobUtil.teleportTowards(caster, entity)){
                     break;
                 }
             }
         } else {
-            if (!this.isShifting(entityLiving)) {
-                Vec3 vec3 = findTeleportLocation(worldIn, entityLiving, 32 + enchantment);
+            if (!this.isShifting(caster)) {
+                Vec3 vec3 = findTeleportLocation(worldIn, caster, 32 + range);
                 BlockPos blockPos = BlockPos.containing(vec3);
-                enderTeleportEvent(entityLiving, worldIn, blockPos);
-                worldIn.broadcastEntityEvent(entityLiving, (byte) 46);
-                worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), this.CastingSound(), this.getSoundSource(), 2.0F, 1.0F);
+                enderTeleportEvent(caster, worldIn, blockPos);
+                worldIn.broadcastEntityEvent(caster, (byte) 46);
+                worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ENDERMAN_TELEPORT, this.getSoundSource(), 2.0F, 1.0F);
             } else {
                 for(int i = 0; i < 64; ++i) {
-                    if (MobUtil.teleport(entityLiving, enchantment)){
+                    if (MobUtil.teleport(caster, range)){
                         break;
                     }
                 }

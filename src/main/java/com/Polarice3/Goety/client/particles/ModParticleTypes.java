@@ -159,6 +159,9 @@ public class ModParticleTypes {
     public static final RegistryObject<SimpleParticleType> BIG_ELECTRIC = PARTICLE_TYPES.register("big_electric",
             () -> new SimpleParticleType(false));
 
+    public static final RegistryObject<SimpleParticleType> SPELL_ELECTRIC = PARTICLE_TYPES.register("spell_electric",
+            () -> new SimpleParticleType(false));
+
     public static final RegistryObject<SimpleParticleType> BREW_BUBBLE = PARTICLE_TYPES.register("brew_bubble",
             () -> new SimpleParticleType(false));
 

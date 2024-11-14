@@ -5,6 +5,7 @@ import com.Polarice3.Goety.common.items.ModItems;
 import com.Polarice3.Goety.common.items.curios.MagicHatItem;
 import com.Polarice3.Goety.common.items.curios.MagicRobeItem;
 import com.Polarice3.Goety.common.items.curios.NecroGarbs;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModTags;
 import com.Polarice3.Goety.utils.BlockFinder;
@@ -31,23 +32,28 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public interface ISpell {
-    int defaultSoulCost();
 
-    default int soulCost(LivingEntity entityLiving){
-        return SoulCalculation(entityLiving);
+    default SpellStat defaultStats(){
+        return new SpellStat(0, 0, 16, 2.0D, 0, 0.0F);
     }
 
-    default int SoulCalculation(LivingEntity entityLiving){
-        int cost = defaultSoulCost() * SoulCostUp(entityLiving);
-        BlockPos blockPos = entityLiving.blockPosition();
-        Level level = entityLiving.level;
+    int defaultSoulCost();
+
+    default int soulCost(LivingEntity caster){
+        return SoulCalculation(caster);
+    }
+
+    default int SoulCalculation(LivingEntity caster){
+        int cost = defaultSoulCost() * SoulCostUp(caster);
+        BlockPos blockPos = caster.blockPosition();
+        Level level = caster.level;
         Holder<Biome> biomeHolder = level.getBiome(blockPos);
         boolean enable = SpellConfig.EnvironmentalCost.get();
-        if (SoulDiscount(entityLiving)){
+        if (SoulDiscount(caster)){
             cost /= 1.15F;
         }
         if (this.getSpellType() == SpellType.FROST){
-            if (FrostSoulDiscount(entityLiving)){
+            if (FrostSoulDiscount(caster)){
                 cost /= 2;
             }
             if (enable) {
@@ -59,7 +65,7 @@ public interface ISpell {
             }
         }
         if (this.getSpellType() == SpellType.WIND){
-            if (WindSoulDiscount(entityLiving)){
+            if (WindSoulDiscount(caster)){
                 cost /= 2;
             }
             if (enable) {
@@ -71,7 +77,7 @@ public interface ISpell {
             }
         }
         if (this.getSpellType() == SpellType.STORM){
-            if (StormSoulDiscount(entityLiving)){
+            if (StormSoulDiscount(caster)){
                 cost /= 2;
             }
             if (enable) {
@@ -83,7 +89,7 @@ public interface ISpell {
             }
         }
         if (this.getSpellType() == SpellType.GEOMANCY){
-            if (GeoSoulDiscount(entityLiving)){
+            if (GeoSoulDiscount(caster)){
                 cost /= 2;
             }
             if (enable) {
@@ -95,7 +101,7 @@ public interface ISpell {
             }
         }
         if (this.getSpellType() == SpellType.NETHER){
-            if (NetherSoulDiscount(entityLiving)){
+            if (NetherSoulDiscount(caster)){
                 cost /= 2;
             }
             if (enable) {
@@ -107,7 +113,7 @@ public interface ISpell {
             }
         }
         if (this.getSpellType() == SpellType.NECROMANCY){
-            if (NecroSoulDiscount(entityLiving)){
+            if (NecroSoulDiscount(caster)){
                 cost /= 2;
             }
             if (enable) {
@@ -120,7 +126,7 @@ public interface ISpell {
             }
         }
         if (this.getSpellType() == SpellType.WILD){
-            if (WildSoulDiscount(entityLiving)){
+            if (WildSoulDiscount(caster)){
                 cost /= 2;
             }
             if (enable) {
@@ -132,7 +138,7 @@ public interface ISpell {
             }
         }
         if (this.getSpellType() == SpellType.ABYSS){
-            if (AbyssSoulDiscount(entityLiving)){
+            if (AbyssSoulDiscount(caster)){
                 cost /= 2;
             }
             if (enable) {
@@ -144,7 +150,7 @@ public interface ISpell {
             }
         }
         if (this.getSpellType() == SpellType.VOID){
-            if (VoidSoulDiscount(entityLiving)){
+            if (VoidSoulDiscount(caster)){
                 cost /= 2;
             }
             if (enable) {
@@ -161,8 +167,8 @@ public interface ISpell {
 
     int defaultCastDuration();
 
-    default int castDuration(LivingEntity entityLiving){
-        if (ReduceCastTime(entityLiving)){
+    default int castDuration(LivingEntity caster){
+        if (ReduceCastTime(caster)){
             return defaultCastDuration() / 2;
         } else {
             return defaultCastDuration();
@@ -186,43 +192,66 @@ public interface ISpell {
         return defaultSpellCooldown();
     }
 
-    default void startSpell(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
+    default void startSpell(ServerLevel worldIn, LivingEntity caster, ItemStack staff) {
+        this.startSpell(worldIn, caster, staff, this.defaultStats());
     }
 
-    default void useSpell(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff, int castTime) {
+    default void startSpell(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
     }
 
-    default void stopSpell(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff, int useTimeRemaining) {
+    default void useSpell(ServerLevel worldIn, LivingEntity caster, ItemStack staff, int castTime) {
+        this.useSpell(worldIn, caster, staff, castTime, this.defaultStats());
     }
 
-    void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff);
+    default void useSpell(ServerLevel worldIn, LivingEntity caster, ItemStack staff, int castTime, SpellStat spellStat) {
+    }
+
+    default void stopSpell(ServerLevel worldIn, LivingEntity caster, ItemStack staff, int useTimeRemaining) {
+    }
+
+    default void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff){
+        SpellResult(worldIn, caster, staff, this.defaultStats());
+    }
+
+    default void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat){
+    }
 
     SpellType getSpellType();
 
-    boolean conditionsMet(ServerLevel worldIn, LivingEntity entityLiving);
+    default boolean conditionsMet(ServerLevel worldIn, LivingEntity caster){
+        return conditionsMet(worldIn, caster, this.defaultStats());
+    }
+
+    default boolean conditionsMet(ServerLevel worldIn, LivingEntity caster, SpellStat spellStat){
+        return true;
+    }
 
     List<Enchantment> acceptedEnchantments();
 
-    default SoundEvent loopSound(LivingEntity entityLiving){
+    default SoundEvent loopSound(LivingEntity caster){
         return null;
     }
 
-    default ColorUtil particleColors(LivingEntity entityLiving){
+    default ColorUtil particleColors(LivingEntity caster){
         return new ColorUtil(0.2F, 0.2F, 0.2F);
     }
 
     @Nullable
-    default ParticleOptions getParticle(LivingEntity entityLiving){
+    default ParticleOptions getParticle(LivingEntity caster){
         return ParticleTypes.ENTITY_EFFECT;
     }
 
-    default void useParticle(Level worldIn, LivingEntity livingEntity, ItemStack stack){
-        double d0 = this.particleColors(livingEntity).red();
-        double d1 = this.particleColors(livingEntity).green();
-        double d2 = this.particleColors(livingEntity).blue();
-        ParticleOptions particle = this.getParticle(livingEntity);
+    default void useParticle(Level worldIn, LivingEntity caster, ItemStack stack){
+        double d0 = this.particleColors(caster).red();
+        double d1 = this.particleColors(caster).green();
+        double d2 = this.particleColors(caster).blue();
+        ParticleOptions particle = this.getParticle(caster);
         if (particle != null){
-            worldIn.addParticle(particle, livingEntity.getX(), livingEntity.getBoundingBox().maxY + 0.5D, livingEntity.getZ(), d0, d1, d2);
+            if (worldIn instanceof ServerLevel serverLevel){
+                serverLevel.sendParticles(particle, caster.getX(), caster.getBoundingBox().maxY + 0.5D, caster.getZ(), 0, d0, d1, d2, 0.5F);
+            } else {
+                worldIn.addParticle(particle, caster.getX(), caster.getBoundingBox().maxY + 0.5D, caster.getZ(), d0, d1, d2);
+            }
         }
     }
 
@@ -231,18 +260,18 @@ public interface ISpell {
         return null;
     }
 
-    default HitResult rayTrace(Level worldIn, LivingEntity livingEntity, int range, double radius) {
-        if (this.entityResult(worldIn, livingEntity, range, radius) == null){
-            return this.blockResult(worldIn, livingEntity, range);
+    default HitResult rayTrace(Level worldIn, LivingEntity caster, int range, double radius) {
+        if (this.entityResult(worldIn, caster, range, radius) == null){
+            return this.blockResult(worldIn, caster, range);
         } else {
-            return this.entityResult(worldIn, livingEntity, range, radius);
+            return this.entityResult(worldIn, caster, range, radius);
         }
     }
 
-    default BlockHitResult blockResult(Level worldIn, LivingEntity livingEntity, double range) {
-        float f = livingEntity.getXRot();
-        float f1 = livingEntity.getYRot();
-        Vec3 vector3d = livingEntity.getEyePosition(1.0F);
+    default BlockHitResult blockResult(Level worldIn, LivingEntity caster, double range) {
+        float f = caster.getXRot();
+        float f1 = caster.getYRot();
+        Vec3 vector3d = caster.getEyePosition(1.0F);
         float f2 = Mth.cos(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
         float f3 = Mth.sin(-f1 * ((float)Math.PI / 180F) - (float)Math.PI);
         float f4 = -Mth.cos(-f * ((float)Math.PI / 180F));
@@ -250,81 +279,81 @@ public interface ISpell {
         float f6 = f3 * f4;
         float f7 = f2 * f4;
         Vec3 vector3d1 = vector3d.add((double)f6 * range, (double)f5 * range, (double)f7 * range);
-        return worldIn.clip(new ClipContext(vector3d, vector3d1, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, livingEntity));
+        return worldIn.clip(new ClipContext(vector3d, vector3d1, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, caster));
     }
 
-    default EntityHitResult entityResult(Level worldIn, LivingEntity livingEntity, int range, double radius){
-        Vec3 srcVec = livingEntity.getEyePosition(1.0F);
-        Vec3 lookVec = livingEntity.getViewVector(1.0F);
+    default EntityHitResult entityResult(Level worldIn, LivingEntity caster, int range, double radius){
+        Vec3 srcVec = caster.getEyePosition(1.0F);
+        Vec3 lookVec = caster.getViewVector(1.0F);
         Vec3 destVec = srcVec.add(lookVec.x * range, lookVec.y * range, lookVec.z * range);
-        AABB axisalignedbb = livingEntity.getBoundingBox().expandTowards(lookVec.scale(range)).inflate(radius, radius, radius);
-        return ProjectileUtil.getEntityHitResult(worldIn, livingEntity, srcVec, destVec, axisalignedbb, entity -> entity instanceof LivingEntity && !entity.isSpectator() && entity.isPickable());
+        AABB axisalignedbb = caster.getBoundingBox().expandTowards(lookVec.scale(range)).inflate(radius, radius, radius);
+        return ProjectileUtil.getEntityHitResult(worldIn, caster, srcVec, destVec, axisalignedbb, entity -> entity instanceof LivingEntity && !entity.isSpectator() && entity.isPickable());
     }
 
-    default boolean ReduceCastTime(LivingEntity entityLiving){
+    default boolean ReduceCastTime(LivingEntity caster){
         if (this.getSpellType() == SpellType.FROST){
-            return CuriosFinder.hasFrostCrown(entityLiving) || CuriosFinder.hasMagicHat(entityLiving);
+            return CuriosFinder.hasFrostCrown(caster) || CuriosFinder.hasMagicHat(caster);
         } else if (this.getSpellType() == SpellType.WILD){
-            return CuriosFinder.hasWildCrown(entityLiving) || CuriosFinder.hasMagicHat(entityLiving);
+            return CuriosFinder.hasWildCrown(caster) || CuriosFinder.hasMagicHat(caster);
         } else if (this.getSpellType() == SpellType.NETHER){
-            return CuriosFinder.hasNetherCrown(entityLiving) || CuriosFinder.hasMagicHat(entityLiving);
+            return CuriosFinder.hasNetherCrown(caster) || CuriosFinder.hasMagicHat(caster);
         } else if (this.getSpellType() == SpellType.NECROMANCY){
-            return CuriosFinder.hasUndeadCrown(entityLiving) || CuriosFinder.hasMagicHat(entityLiving);
+            return CuriosFinder.hasUndeadCrown(caster) || CuriosFinder.hasMagicHat(caster);
         } else {
-            return CuriosFinder.hasCurio(entityLiving, itemStack -> (itemStack.getItem() instanceof MagicHatItem) || (itemStack.getItem() instanceof NecroGarbs.NecroCrownItem crown && crown.isNameless));
+            return CuriosFinder.hasCurio(caster, itemStack -> (itemStack.getItem() instanceof MagicHatItem) || (itemStack.getItem() instanceof NecroGarbs.NecroCrownItem crown && crown.isNameless));
         }
     }
 
     @Nullable
-    default MobEffectInstance summonDownEffect(LivingEntity livingEntity){
-        return livingEntity.getEffect(GoetyEffects.SUMMON_DOWN.get());
+    default MobEffectInstance summonDownEffect(LivingEntity caster){
+        return caster.getEffect(GoetyEffects.SUMMON_DOWN.get());
     }
 
-    default int SoulCostUp(LivingEntity entityLiving){
-        MobEffectInstance mobEffectInstance = summonDownEffect(entityLiving);
+    default int SoulCostUp(LivingEntity caster){
+        MobEffectInstance mobEffectInstance = summonDownEffect(caster);
         if (mobEffectInstance != null){
             return mobEffectInstance.getAmplifier() + 2;
         }
         return 1;
     }
 
-    default boolean SoulDiscount(LivingEntity entityLiving){
-        return CuriosFinder.hasCurio(entityLiving, itemStack -> itemStack.getItem() instanceof MagicRobeItem);
+    default boolean SoulDiscount(LivingEntity caster){
+        return CuriosFinder.hasCurio(caster, itemStack -> itemStack.getItem() instanceof MagicRobeItem);
     }
 
-    default boolean FrostSoulDiscount(LivingEntity entityLiving){
-        return CuriosFinder.hasFrostRobes(entityLiving);
+    default boolean FrostSoulDiscount(LivingEntity caster){
+        return CuriosFinder.hasFrostRobes(caster);
     }
 
-    default boolean WindSoulDiscount(LivingEntity entityLiving){
-        return CuriosFinder.hasCurio(entityLiving, ModItems.WIND_ROBE.get());
+    default boolean WindSoulDiscount(LivingEntity caster){
+        return CuriosFinder.hasCurio(caster, ModItems.WIND_ROBE.get());
     }
 
-    default boolean GeoSoulDiscount(LivingEntity entityLiving){
-        return CuriosFinder.hasCurio(entityLiving, ModItems.AMETHYST_NECKLACE.get());
+    default boolean GeoSoulDiscount(LivingEntity caster){
+        return CuriosFinder.hasCurio(caster, ModItems.AMETHYST_NECKLACE.get());
     }
 
-    default boolean StormSoulDiscount(LivingEntity entityLiving){
-        return CuriosFinder.hasCurio(entityLiving, ModItems.STORM_ROBE.get());
+    default boolean StormSoulDiscount(LivingEntity caster){
+        return CuriosFinder.hasCurio(caster, ModItems.STORM_ROBE.get());
     }
 
-    default boolean WildSoulDiscount(LivingEntity entityLiving){
-        return CuriosFinder.hasWildRobe(entityLiving);
+    default boolean WildSoulDiscount(LivingEntity caster){
+        return CuriosFinder.hasWildRobe(caster);
     }
 
-    default boolean NetherSoulDiscount(LivingEntity entityLiving){
-        return CuriosFinder.hasNetherRobe(entityLiving);
+    default boolean NetherSoulDiscount(LivingEntity caster){
+        return CuriosFinder.hasNetherRobe(caster);
     }
 
-    default boolean AbyssSoulDiscount(LivingEntity entityLiving){
+    default boolean AbyssSoulDiscount(LivingEntity caster){
         return false;
     }
 
-    default boolean NecroSoulDiscount(LivingEntity entityLiving){
+    default boolean NecroSoulDiscount(LivingEntity caster){
         return false;
     }
 
-    default boolean VoidSoulDiscount(LivingEntity entityLiving){
+    default boolean VoidSoulDiscount(LivingEntity caster){
         return false;
     }
 }

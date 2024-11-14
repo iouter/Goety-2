@@ -4,6 +4,7 @@ import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.projectiles.EntangleVines;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.CuriosFinder;
@@ -60,27 +61,27 @@ public class EntanglingSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        int range = 16;
-        int duration = 0;
-        if (WandUtil.enchantedFocus(entityLiving)) {
-            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
-            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        int range = spellStat.getRange();
+        int duration = spellStat.getDuration();
+        if (WandUtil.enchantedFocus(caster)) {
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
+            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), caster);
         }
-        HitResult rayTraceResult = this.rayTrace(worldIn, entityLiving, range, 3);
+        HitResult rayTraceResult = this.rayTrace(worldIn, caster, range, 3);
         if (rightStaff(staff)){
-            int i = (int) entityLiving.getX();
-            int j = (int) entityLiving.getY();
-            int k = (int) entityLiving.getZ();
+            int i = (int) caster.getX();
+            int j = (int) caster.getY();
+            int k = (int) caster.getZ();
             int amount = 0;
             List<LivingEntity> list = worldIn.getEntitiesOfClass(LivingEntity.class, (new AABB(i, j, k, i, j - 4, k)).inflate(16));
             if (!list.isEmpty()) {
                 for (LivingEntity entity : list) {
                     if (amount < 8) {
-                        if (entity != entityLiving && !MobUtil.areAllies(entity, entityLiving)) {
-                            EntangleVines entangleVines = new EntangleVines(worldIn, entityLiving, entity);
+                        if (entity != caster && !MobUtil.areAllies(entity, caster)) {
+                            EntangleVines entangleVines = new EntangleVines(worldIn, caster, entity);
                             entangleVines.setLifeSpan(entangleVines.getLifeSpan() + MathHelper.secondsToTicks(duration));
-                            if (CuriosFinder.hasWildRobe(entityLiving)){
+                            if (CuriosFinder.hasWildRobe(caster)){
                                 entangleVines.setDamaging(true);
                             }
                             if (worldIn.addFreshEntity(entangleVines)) {
@@ -91,22 +92,22 @@ public class EntanglingSpell extends Spell {
                 }
             } else if (rayTraceResult instanceof BlockHitResult){
                 BlockPos blockPos = ((BlockHitResult) rayTraceResult).getBlockPos();
-                EntangleVines entangleVines = new EntangleVines(worldIn, entityLiving, blockPos);
+                EntangleVines entangleVines = new EntangleVines(worldIn, caster, blockPos);
                 entangleVines.setLifeSpan(entangleVines.getLifeSpan() + MathHelper.secondsToTicks(duration));
                 worldIn.addFreshEntity(entangleVines);
             }
         } else {
-            LivingEntity target = this.getTarget(entityLiving, range);
+            LivingEntity target = this.getTarget(caster, range);
             if (target != null){
-                EntangleVines entangleVines = new EntangleVines(worldIn, entityLiving, target);
+                EntangleVines entangleVines = new EntangleVines(worldIn, caster, target);
                 entangleVines.setLifeSpan(entangleVines.getLifeSpan() + MathHelper.secondsToTicks(duration));
-                if (CuriosFinder.hasWildRobe(entityLiving)){
+                if (CuriosFinder.hasWildRobe(caster)){
                     entangleVines.setDamaging(true);
                 }
                 worldIn.addFreshEntity(entangleVines);
             } else if (rayTraceResult instanceof BlockHitResult){
                 BlockPos blockPos = ((BlockHitResult) rayTraceResult).getBlockPos();
-                EntangleVines entangleVines = new EntangleVines(worldIn, entityLiving, blockPos);
+                EntangleVines entangleVines = new EntangleVines(worldIn, caster, blockPos);
                 entangleVines.setLifeSpan(entangleVines.getLifeSpan() + MathHelper.secondsToTicks(duration));
                 worldIn.addFreshEntity(entangleVines);
             }

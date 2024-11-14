@@ -4,6 +4,7 @@ import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.projectiles.BlossomBall;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.WandUtil;
@@ -18,6 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlossomSpell extends Spell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setRadius(3.0D).setVelocity(1.5F);
+    }
+
     @Override
     public int defaultSoulCost() {
         return SpellConfig.BlossomCost.get();
@@ -55,20 +62,20 @@ public class BlossomSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        float radius = 3.0F;
-        float velocity = WandUtil.getLevels(ModEnchantments.VELOCITY.get(), entityLiving) / 3.0F;
-        float extraBlast = WandUtil.getLevels(ModEnchantments.RADIUS.get(), entityLiving) / 2.0F;
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat){
+        float radius = (float) spellStat.getRadius();
+        float velocity = WandUtil.getLevels(ModEnchantments.VELOCITY.get(), caster) / 3.0F;
+        float extraBlast = WandUtil.getLevels(ModEnchantments.RADIUS.get(), caster) / 2.0F;
         if (this.rightStaff(staff)){
-            radius = 4.5F;
+            radius += 1.5F;
         }
-        BlossomBall blast = new BlossomBall(entityLiving, worldIn);
-        blast.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
+        BlossomBall blast = new BlossomBall(caster, worldIn);
+        blast.setExtraDamage(spellStat.getPotency() + WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
         blast.setRadius(extraBlast + radius);
-        blast.setDuration(WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving));
+        blast.setDuration(spellStat.getDuration() + WandUtil.getLevels(ModEnchantments.DURATION.get(), caster));
         blast.setStaff(this.rightStaff(staff));
-        blast.shootFromRotation(entityLiving, entityLiving.getXRot(), entityLiving.getYRot(), 0.0F, 1.5F + velocity, 1.0F);
+        blast.shootFromRotation(caster, caster.getXRot(), caster.getYRot(), 0.0F, spellStat.getVelocity() + velocity, 1.0F);
         worldIn.addFreshEntity(blast);
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.BLAST_FUNGUS_THROW.get(), this.getSoundSource(), 1.0F, 0.75F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.BLAST_FUNGUS_THROW.get(), this.getSoundSource(), 1.0F, 0.75F);
     }
 }

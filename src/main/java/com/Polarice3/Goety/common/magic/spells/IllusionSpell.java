@@ -45,15 +45,15 @@ public class IllusionSpell extends Spell {
     }
 
     @Override
-    public ColorUtil particleColors(LivingEntity entityLiving) {
+    public ColorUtil particleColors(LivingEntity caster) {
         return new ColorUtil(0.3F, 0.3F, 0.8F);
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff) {
         for (Entity entity : worldIn.getAllEntities()) {
             if (entity instanceof Doppelganger doppelganger) {
-                if (doppelganger.getTrueOwner() == entityLiving && doppelganger.tickCount > 10) {
-                    doppelganger.die(entityLiving.damageSources().starve());
+                if (doppelganger.getTrueOwner() == caster && doppelganger.tickCount > 10) {
+                    doppelganger.die(caster.damageSources().starve());
                 }
             }
         }
@@ -61,25 +61,25 @@ public class IllusionSpell extends Spell {
         if (staff.is(ModItems.NAMELESS_STAFF.get())){
             i0 = 8;
         }
-        boolean undead = CuriosFinder.hasNamelessSet(entityLiving) && staff.is(ModItems.NAMELESS_STAFF.get());
+        boolean undead = CuriosFinder.hasNamelessSet(caster) && staff.is(ModItems.NAMELESS_STAFF.get());
         ParticleOptions particleOptions = ParticleTypes.POOF;
         if (undead){
             particleOptions = ModParticleTypes.LICH.get();
         }
         for (int i1 = 0; i1 < i0; ++i1) {
             Doppelganger summonedentity = new Doppelganger(ModEntityType.DOPPELGANGER.get(), worldIn);
-            summonedentity.setTrueOwner(entityLiving);
-            if (entityLiving instanceof Player player) {
+            summonedentity.setTrueOwner(caster);
+            if (caster instanceof Player player) {
                 ModNetwork.sendTo(player, new SSetPlayerOwnerPacket(summonedentity));
             }
-            Vec3 vec3 = BlockFinder.SummonRadius(entityLiving.blockPosition(), summonedentity, worldIn).getCenter();
+            Vec3 vec3 = BlockFinder.SummonRadius(caster.blockPosition(), summonedentity, worldIn).getCenter();
             summonedentity.setPos(vec3);
             summonedentity.setUndeadClone(undead);
             summonedentity.setLimitedLife(undead ? MathHelper.secondsToTicks(2.875F) : 1200);
             summonedentity.setPersistenceRequired();
-            summonedentity.setUpgraded(CuriosFinder.hasIllusionRobe(entityLiving));
-            summonedentity.finalizeSpawn(worldIn, entityLiving.level.getCurrentDifficultyAt(BlockFinder.SummonRadius(entityLiving.blockPosition(), summonedentity, worldIn)), MobSpawnType.MOB_SUMMONED, null, null);
-            LivingEntity target = this.getTarget(entityLiving);
+            summonedentity.setUpgraded(CuriosFinder.hasIllusionRobe(caster));
+            summonedentity.finalizeSpawn(worldIn, caster.level.getCurrentDifficultyAt(BlockFinder.SummonRadius(caster.blockPosition(), summonedentity, worldIn)), MobSpawnType.MOB_SUMMONED, null, null);
+            LivingEntity target = this.getTarget(caster);
             if (target != null) {
                 double d2 = target.getX() - summonedentity.getX();
                 double d1 = target.getZ() - summonedentity.getZ();
@@ -93,16 +93,16 @@ public class IllusionSpell extends Spell {
             }
             MobUtil.moveDownToGround(summonedentity);
             worldIn.addFreshEntity(summonedentity);
-            for (int i = 0; i < entityLiving.level.random.nextInt(10) + 10; ++i) {
+            for (int i = 0; i < caster.level.random.nextInt(10) + 10; ++i) {
                 ServerParticleUtil.smokeParticles(particleOptions, summonedentity.getX(), summonedentity.getY(), summonedentity.getZ(), worldIn);
             }
             if (undead){
                 worldIn.sendParticles(new ReverseShockwaveParticleOption(new ColorUtil(0x36e416), 2.0F, 0.5F, 1), summonedentity.getX(), summonedentity.getY() + 0.5F, summonedentity.getZ(), 0, 0, 0, 0, 0.5F);
             }
         }
-        if (CuriosFinder.hasIllusionRobe(entityLiving)){
-            entityLiving.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 1200));
-            LivingEntity target = this.getTarget(entityLiving);
+        if (CuriosFinder.hasIllusionRobe(caster)){
+            caster.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 1200));
+            LivingEntity target = this.getTarget(caster);
             if (target != null) {
                 target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 400));
             }
@@ -111,9 +111,9 @@ public class IllusionSpell extends Spell {
         if (undead){
             soundEvent = ModSounds.LICH_TELEPORT_IN.get();
         }
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), soundEvent, this.getSoundSource(), 1.0F, 1.0F);
-        for (int i = 0; i < entityLiving.level.random.nextInt(35) + 10; ++i) {
-            worldIn.sendParticles(particleOptions, entityLiving.getX(), entityLiving.getEyeY(), entityLiving.getZ(), 0, 0.0F, 0.0F, 0.0F, 0);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), soundEvent, this.getSoundSource(), 1.0F, 1.0F);
+        for (int i = 0; i < caster.level.random.nextInt(35) + 10; ++i) {
+            worldIn.sendParticles(particleOptions, caster.getX(), caster.getEyeY(), caster.getZ(), 0, 0.0F, 0.0F, 0.0F, 0);
         }
     }
 

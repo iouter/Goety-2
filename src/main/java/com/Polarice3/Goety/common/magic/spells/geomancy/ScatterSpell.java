@@ -4,6 +4,7 @@ import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.projectiles.ScatterMine;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.MathHelper;
@@ -21,6 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScatterSpell extends Spell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setDuration(10).setRadius(0.0D);
+    }
+
     @Override
     public int defaultSoulCost() {
         return SpellConfig.ScatterCost.get();
@@ -55,18 +62,18 @@ public class ScatterSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
         for (int i = 0; i < 3; ++i) {
-            BlockPos blockPos = entityLiving.blockPosition();
+            BlockPos blockPos = caster.blockPosition();
             blockPos = blockPos.offset(-4 + worldIn.random.nextInt(8), 0, -4 + worldIn.random.nextInt(8));
-            BlockPos blockPos2 = entityLiving.blockPosition().offset(-4 + worldIn.random.nextInt(8), 0, -4 + worldIn.random.nextInt(8));
+            BlockPos blockPos2 = caster.blockPosition().offset(-4 + worldIn.random.nextInt(8), 0, -4 + worldIn.random.nextInt(8));
             Vec3 vec3 = Vec3.atBottomCenterOf(blockPos);
             Vec3 vec31 = Vec3.atBottomCenterOf(blockPos2);
-            ScatterMine scatterMine = new ScatterMine(worldIn, entityLiving, vec3);
+            ScatterMine scatterMine = new ScatterMine(worldIn, caster, vec3);
             scatterMine.setIsSpell();
-            scatterMine.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
-            scatterMine.setExtraRadius(WandUtil.getLevels(ModEnchantments.RADIUS.get(), entityLiving) / 2.0F);
-            scatterMine.lifeTicks = MathHelper.secondsToTicks(10 + WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving));
+            scatterMine.setExtraDamage(spellStat.getPotency() + WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
+            scatterMine.setExtraRadius((float) (spellStat.getRadius() + WandUtil.getLevels(ModEnchantments.RADIUS.get(), caster) / 2.0F));
+            scatterMine.lifeTicks = MathHelper.secondsToTicks(spellStat.getDuration() + WandUtil.getLevels(ModEnchantments.DURATION.get(), caster));
             if (!worldIn.getEntitiesOfClass(ScatterMine.class, new AABB(blockPos)).isEmpty()) {
                 scatterMine.setPos(vec31.x(), vec31.y(), vec31.z());
             }

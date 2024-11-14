@@ -298,6 +298,7 @@ public class ClientInitEvents {
         event.registerLayerDefinition(ModModelLayer.BLACKGUARD, BlackguardModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.WIGHT, WightModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.MAGGOT, CarrionMaggotModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayer.SORCERER, SorcererModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.TORMENTOR, TormentorModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.INQUILLAGER, InquillagerModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.CONQUILLAGER, ConquillagerModel::createBodyLayer);
@@ -386,6 +387,7 @@ public class ClientInitEvents {
         event.registerBlockEntityRenderer(ModBlockEntities.NECRO_BRAZIER.get(), NecroBrazierRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.ANIMATOR.get(), AnimatorRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.BREWING_CAULDRON.get(), BrewCauldronRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.HAUNTED_MIRROR.get(), ModBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SPIDER_NEST.get(), TrainingBlockRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SHADE_GRAVESTONE.get(), TrainingBlockRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.BLAZING_CAGE.get(), TrainingBlockRenderer::new);
@@ -412,6 +414,7 @@ public class ClientInitEvents {
         event.registerEntityRenderer(ModEntityType.ICE_SPEAR.get(), IceSpearRenderer::new);
         event.registerEntityRenderer(ModEntityType.ICE_STORM.get(), IceStormRenderer::new);
         event.registerEntityRenderer(ModEntityType.GHOST_ARROW.get(), TippableArrowRenderer::new);
+        event.registerEntityRenderer(ModEntityType.RAIN_ARROW.get(), RainArrowRenderer::new);
         event.registerEntityRenderer(ModEntityType.DEATH_ARROW.get(), DeathArrowRenderer::new);
         event.registerEntityRenderer(ModEntityType.HARPOON.get(), HarpoonRenderer::new);
         event.registerEntityRenderer(ModEntityType.POISON_QUILL.get(), PoisonQuillRenderer::new);
@@ -533,6 +536,7 @@ public class ClientInitEvents {
         event.registerEntityRenderer(ModEntityType.WEB_SPIDER_SERVANT.get(), WebSpiderServantRenderer::new);
         event.registerEntityRenderer(ModEntityType.ICY_SPIDER_SERVANT.get(), IcySpiderServantRenderer::new);
         event.registerEntityRenderer(ModEntityType.BONE_SPIDER_SERVANT.get(), BoneSpiderServantRenderer::new);
+        event.registerEntityRenderer(ModEntityType.ALLY_TRAMPLER.get(), AllyTramplerRenderer::new);
         event.registerEntityRenderer(ModEntityType.RAVAGED.get(), RavagedRenderer::new);
         event.registerEntityRenderer(ModEntityType.MOD_RAVAGER.get(), ModRavagerRenderer::new);
         event.registerEntityRenderer(ModEntityType.ARMORED_RAVAGER.get(), ModRavagerRenderer::new);
@@ -552,6 +556,7 @@ public class ClientInitEvents {
         event.registerEntityRenderer(ModEntityType.HAUNT.get(), HauntRenderer::new);
         event.registerEntityRenderer(ModEntityType.REDSTONE_MONSTROSITY.get(), RedstoneMonstrosityRenderer::new);
         event.registerEntityRenderer(ModEntityType.REDSTONE_CUBE.get(), RedstoneCubeRenderer::new);
+        event.registerEntityRenderer(ModEntityType.SORCERER.get(), SorcererRenderer::new);
         event.registerEntityRenderer(ModEntityType.ENVIOKER.get(), EnviokerRenderer::new);
         event.registerEntityRenderer(ModEntityType.TORMENTOR.get(), TormentorRenderer::new);
         event.registerEntityRenderer(ModEntityType.INQUILLAGER.get(), InquillagerRenderer::new);
@@ -597,7 +602,6 @@ public class ClientInitEvents {
         event.registerEntityRenderer(ModEntityType.VINE_HOOK.get(), VineHookRenderer::new);
         event.registerEntityRenderer(ModEntityType.SURVEY_EYE.get(), TrapRenderer::new);
         event.registerEntityRenderer(ModEntityType.CAMERA_SHAKE.get(), TrapRenderer::new);
-        event.registerEntityRenderer(ModEntityType.TUNNELING_FANG.get(), TrapRenderer::new);
     }
 
     @SubscribeEvent
@@ -667,6 +671,7 @@ public class ClientInitEvents {
         event.registerSpriteSet(ModParticleTypes.CHANT.get(), FlameParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.ELECTRIC.get(), GlowParticle.ElectricSparkProvider::new);
         event.registerSpriteSet(ModParticleTypes.BIG_ELECTRIC.get(), BigElectricParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.SPELL_ELECTRIC.get(), GlowParticle.ElectricSparkProvider::new);
         event.registerSpriteSet(ModParticleTypes.BREW_BUBBLE.get(), BrewBubbleParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.WIND_BLAST.get(), SonicBoomParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.HEAL_EFFECT.get(), HeartParticle.Provider::new);

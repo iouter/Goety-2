@@ -132,7 +132,9 @@ public class SculkConverterBlockEntity extends ModBlockEntity implements IEnchan
     }
 
     private boolean checkCage() {
-        assert this.level != null;
+        if (this.level == null){
+            return false;
+        }
         BlockPos pos = new BlockPos(this.getBlockPos().getX(), this.getBlockPos().getY() + 1, this.getBlockPos().getZ());
         BlockState blockState = this.level.getBlockState(pos);
         if (blockState.is(ModBlocks.CURSED_CAGE_BLOCK.get())){

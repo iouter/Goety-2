@@ -8,7 +8,6 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -44,8 +43,8 @@ public abstract class AbstractCyclone extends SpellHurtingProjectile {
         this.lifespan = 0;
     }
 
-    public AbstractCyclone(EntityType<? extends SpellHurtingProjectile> pEntityType, double p_i1795_2_, double p_i1795_4_, double p_i1795_6_, double p_i1795_8_, double p_i1795_10_, double p_i1795_12_, Level level) {
-        super(pEntityType, p_i1795_2_, p_i1795_4_, p_i1795_6_, p_i1795_8_, p_i1795_10_, p_i1795_12_, level);
+    public AbstractCyclone(EntityType<? extends SpellHurtingProjectile> pEntityType, double p_i1795_2_, double p_i1795_4_, double p_i1795_6_, double xPower, double yPower, double zPower, Level level) {
+        super(pEntityType, p_i1795_2_, p_i1795_4_, p_i1795_6_, xPower, yPower, zPower, level);
         this.noPhysics = false;
         this.lifespan = 0;
     }
@@ -73,36 +72,12 @@ public abstract class AbstractCyclone extends SpellHurtingProjectile {
 
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        UUID uuid;
         if (compound.hasUUID("Owner")) {
-            uuid = compound.getUUID("Owner");
-        } else {
-            String s = compound.getString("Owner");
-            uuid = OldUsersConverter.convertMobOwnerIfNecessary(this.getServer(), s);
+            this.setOwnerId(compound.getUUID("Owner"));
         }
-
-        if (uuid != null) {
-            try {
-                this.setOwnerId(uuid);
-            } catch (Throwable ignored) {
-            }
-        }
-
-        UUID uuid2;
         if (compound.hasUUID("Target")) {
-            uuid2 = compound.getUUID("Target");
-        } else {
-            String s = compound.getString("Target");
-            uuid2 = OldUsersConverter.convertMobOwnerIfNecessary(this.getServer(), s);
+            this.setTargetId(compound.getUUID("Target"));
         }
-
-        if (uuid2 != null) {
-            try {
-                this.setTargetId(uuid2);
-            } catch (Throwable ignored) {
-            }
-        }
-
         if (compound.contains("Lifespan")) {
             this.setLifespan(compound.getInt("Lifespan"));
         }

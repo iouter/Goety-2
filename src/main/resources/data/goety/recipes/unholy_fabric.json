@@ -2,7 +2,9 @@
   "type": "goety:ritual",
   "ritual_type": "goety:craft",
   "activation_item": {
-    "item": "goety:unholy_blood"
+    "type": "forge:nbt",
+    "item": "goety:unholy_blood",
+    "nbt": "{\"Pure\": 1}"
   },
   "craftType": "expert_nether",
   "soulCost": 5,

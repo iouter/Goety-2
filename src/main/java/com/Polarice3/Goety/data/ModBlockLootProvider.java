@@ -1,9 +1,6 @@
 package com.Polarice3.Goety.data;
 
-import com.Polarice3.Goety.common.blocks.LampBlock;
-import com.Polarice3.Goety.common.blocks.ModBlocks;
-import com.Polarice3.Goety.common.blocks.SnapWartsBlock;
-import com.Polarice3.Goety.common.blocks.WitchPoleBlock;
+import com.Polarice3.Goety.common.blocks.*;
 import com.Polarice3.Goety.common.items.ModItems;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
@@ -19,6 +16,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -74,8 +72,8 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
                 this.add(block, createDoorTable(block));
             } else if (block instanceof SlabBlock){
                 this.add(block, createSlabItemTable(block));
-            } else if (block instanceof WitchPoleBlock) {
-                this.add(block, bl -> createSinglePropConditionTable(bl, WitchPoleBlock.HALF, DoubleBlockHalf.LOWER));
+            } else if (block instanceof WitchPoleBlock || block instanceof HauntedMirrorBlock) {
+                this.add(block, bl -> createSinglePropConditionTable(bl, BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER));
             } else if (block instanceof LampBlock) {
                 this.add(block, bl -> createSinglePropConditionTable(bl, LampBlock.HALF, DoubleBlockHalf.LOWER));
             } else {

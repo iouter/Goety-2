@@ -15,9 +15,9 @@ import java.util.EnumSet;
  * Based on ChargeAttackGoal codes made by @TeamTwilight: <a href="https://github.com/TeamTwilight/twilightforest/blob/1.19.x/src/main/java/twilightforest/entity/ai/goal/ChargeAttackGoal.java">...</a>
  */
 public class ChargeGoal extends Goal {
-    private final PathfinderMob charger;
-    private LivingEntity chargeTarget;
-    private Vec3 chargePos;
+    public PathfinderMob charger;
+    public LivingEntity chargeTarget;
+    public Vec3 chargePos;
     protected final float speed;
     protected double minRange;
     protected double maxRange;

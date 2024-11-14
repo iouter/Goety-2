@@ -80,6 +80,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> WITCH_POLE = register("witch_pole", WitchPoleBlock::new);
     public static final RegistryObject<Block> BREWING_CAULDRON = register("witch_cauldron", BrewCauldronBlock::new);
     public static final RegistryObject<Block> CRYSTAL_BALL = register("crystal_ball", CrystalBallBlock::new, true, LootTableType.EMPTY);
+    public static final RegistryObject<Block> HAUNTED_MIRROR = register("haunted_mirror", HauntedMirrorBlock::new);
     public static final RegistryObject<Block> MAGIC_THORN = register("magic_thorn", MagicThornBlock::new, true, LootTableType.EMPTY);
     public static final RegistryObject<Block> HARDENED_LEAVES = register("hardened_leaves", ()
             -> new LeavesBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).ignitedByLava().pushReaction(PushReaction.DESTROY).strength(2.0F).randomTicks().sound(SoundType.GRASS)

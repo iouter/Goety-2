@@ -5,6 +5,7 @@ import com.Polarice3.Goety.client.particles.ModParticleTypes;
 import com.Polarice3.Goety.common.effects.GoetyEffects;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.common.network.ModNetwork;
 import com.Polarice3.Goety.common.network.server.SPlayPlayerSoundPacket;
 import com.Polarice3.Goety.config.SpellConfig;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EndWalkSpell extends Spell {
+
     @Override
     public int defaultSoulCost() {
         return SpellConfig.EndWalkCost.get();
@@ -60,20 +62,20 @@ public class EndWalkSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        int enchantment = 0;
-        int duration = 0;
-        if (WandUtil.enchantedFocus(entityLiving)){
-            enchantment += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
-            duration = MathHelper.secondsToTicks(5) * WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        int potency = spellStat.getPotency();
+        int duration = spellStat.getDuration();
+        if (WandUtil.enchantedFocus(caster)){
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            duration = MathHelper.secondsToTicks(5) * WandUtil.getLevels(ModEnchantments.DURATION.get(), caster);
         }
-        if (entityLiving instanceof Player player){
-            player.addEffect(new MobEffectInstance(GoetyEffects.SHADOW_WALK.get(), SpellConfig.EndWalkEffectDuration.get() + duration, enchantment, false, false, true));
+        if (caster instanceof Player player){
+            player.addEffect(new MobEffectInstance(GoetyEffects.SHADOW_WALK.get(), SpellConfig.EndWalkEffectDuration.get() + duration, potency, false, false, true));
             for(int i = 0; i < 16; ++i) {
                 double d0 = MathHelper.rgbToSpeed(96.0D);
                 double d1 = MathHelper.rgbToSpeed(62.0D);
                 double d2 = MathHelper.rgbToSpeed(92.0D);
-                worldIn.sendParticles(ModParticleTypes.CULT_SPELL.get(), entityLiving.getRandomX(1.0D), entityLiving.getRandomY(), entityLiving.getRandomZ(1.0D), 0, d0, d1, d2, 0.5F);
+                worldIn.sendParticles(ModParticleTypes.CULT_SPELL.get(), caster.getRandomX(1.0D), caster.getRandomY(), caster.getRandomZ(1.0D), 0, d0, d1, d2, 0.5F);
             }
             SEHelper.setEndWalk(player, player.blockPosition(), player.level.dimension());
             ModNetwork.sendTo(player, new SPlayPlayerSoundPacket(ModSounds.END_WALK.get(), 1.0F, 1.0F));

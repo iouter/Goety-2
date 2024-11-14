@@ -1,36 +1,28 @@
 package com.Polarice3.Goety.common.entities.ally;
 
-import com.Polarice3.Goety.api.entities.IOwned;
 import com.Polarice3.Goety.api.entities.ally.IServant;
 import com.Polarice3.Goety.client.particles.ModParticleTypes;
 import com.Polarice3.Goety.common.entities.ai.SummonTargetGoal;
-import com.Polarice3.Goety.common.entities.ally.golem.AbstractGolemServant;
 import com.Polarice3.Goety.common.entities.neutral.Owned;
 import com.Polarice3.Goety.common.items.ModItems;
 import com.Polarice3.Goety.config.MobsConfig;
 import com.Polarice3.Goety.init.ModMobType;
 import com.Polarice3.Goety.utils.CuriosFinder;
-import com.Polarice3.Goety.utils.EntityFinder;
 import com.Polarice3.Goety.utils.ItemHelper;
 import com.Polarice3.Goety.utils.MathHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -41,11 +33,13 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.ai.util.GoalUtils;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -61,7 +55,6 @@ import java.util.function.Predicate;
 public class Summoned extends Owned implements IServant {
     protected static final EntityDataAccessor<Byte> SUMMONED_FLAGS = SynchedEntityData.defineId(Summoned.class, EntityDataSerializers.BYTE);
     protected static final EntityDataAccessor<Byte> UPGRADE_FLAGS = SynchedEntityData.defineId(Summoned.class, EntityDataSerializers.BYTE);
-    public static int PATROL_RANGE = MobsConfig.ServantPatrolRange.get();
     public LivingEntity commandPosEntity;
     public BlockPos commandPos;
     public BlockPos boundPos;
@@ -115,152 +108,21 @@ public class Summoned extends Owned implements IServant {
 
     public void tick(){
         super.tick();
-        this.stayingMode();
-        if (this.killChance > 0){
-            --this.killChance;
-        }
-        if (MobsConfig.StayingServantChunkLoad.get()) {
-            if (this.level instanceof ServerLevel serverLevel) {
-                if (this.isStaying()) {
-                    if (this.getTrueOwner() instanceof Player player) {
-                        if (player.tickCount % 10 == 0) {
-                            for (int i = -1; i <= 1; i++) {
-                                for (int j = -1; j <= 1; j++) {
-                                    ChunkPos pos = new ChunkPos(this.blockPosition().offset(i * 16, 0, j * 16));
-                                    serverLevel.setChunkForced(pos.x, pos.z, true);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (this.isCommanded()){
-            if (this.getNavigation().isStableDestination(this.commandPos) || this.commandPosEntity != null){
-                --this.commandTick;
-                if (this.commandPosEntity != null){
-                    this.getNavigation().moveTo(this.commandPosEntity, 1.25D);
-                } else {
-                    this.getNavigation().moveTo(this.commandPos.getX() + 0.5D, this.commandPos.getY(), this.commandPos.getZ() + 0.5D, 1.25D);
-                }
-
-                if (this.getNavigation().isStuck() || this.commandTick <= 0){
-                    this.commandPosEntity = null;
-                    this.commandPos = null;
-                } else if (this.commandPos.closerToCenterThan(
-                        this.getControlledVehicle() != null ? this.getControlledVehicle().position() : this.position(),
-                        this.getControlledVehicle() != null ? this.getControlledVehicle().getBbWidth() + 1.0D : this.getBbWidth() + 1.0D)){
-                    if (this.commandPosEntity != null &&
-                            this.getBoundingBox().inflate(1.25D).intersects(this.commandPosEntity.getBoundingBox())){
-                        if (this.canRide(this.commandPosEntity)) {
-                            if (this.startRiding(this.commandPosEntity)) {
-                                if (this.getTrueOwner() instanceof Player player){
-                                    player.displayClientMessage(Component.translatable("info.goety.servant.dismount"), true);
-                                }
-                            }
-                        }
-                        this.commandPosEntity = null;
-                    }
-                    if (this.isPatrolling()){
-                        this.setBoundPos(this.commandPos);
-                    }
-                    this.moveTo(this.commandPos, this.getYRot(), this.getXRot());
-                    this.commandPos = null;
-                }
-            } else {
-                this.commandPos = null;
-            }
-        }
-        if (this.isWandering() || this.isPatrolling()){
-            if (this.isStaying()) {
-                this.setStaying(false);
-            }
-        }
-        if (this.isPatrolling()){
-            if (this.getTarget() != null){
-                if (this.getTarget().distanceToSqr(this.vec3BoundPos()) > Mth.square(PATROL_RANGE * 2)){
-                    this.setTarget(null);
-                    if (!this.isCommanded()){
-                        this.getNavigation().moveTo(this.boundPos.getX(), this.boundPos.getY(), this.boundPos.getZ(), 1.0F);
-                    }
-                }
-            } else if (!this.isCommanded() && this.distanceToSqr(this.vec3BoundPos()) > Mth.square(PATROL_RANGE)){
-                this.getNavigation().moveTo(this.boundPos.getX(), this.boundPos.getY(), this.boundPos.getZ(), 1.0F);
-            }
-        }
-        if (this.noHealTime <= 0){
-            this.healServant(this);
-        } else {
-            --this.noHealTime;
-        }
-        boolean flag = this.isSunSensitive() && this.isSunBurnTick() && MobsConfig.UndeadServantSunlightBurn.get();
-        if (flag) {
-            ItemStack itemstack = this.getItemBySlot(EquipmentSlot.HEAD);
-            if (!itemstack.isEmpty()) {
-                if (itemstack.isDamageableItem() && MobsConfig.UndeadServantSunlightHelmet.get()) {
-                    itemstack.setDamageValue(itemstack.getDamageValue() + this.random.nextInt(2));
-                    if (itemstack.getDamageValue() >= itemstack.getMaxDamage()) {
-                        this.broadcastBreakEvent(EquipmentSlot.HEAD);
-                        this.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
-                    }
-                }
-
-                flag = false;
-            }
-
-            if (flag) {
-                this.setSecondsOnFire(8);
-            }
-        }
+        this.servantTick();
     }
 
-    public void stayingMode(){
-        AttributeInstance modifiableattributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (modifiableattributeinstance != null) {
-            if (this.isStaying()){
-                if (this.navigation.getPath() != null) {
-                    this.navigation.stop();
-                }
-                if (this.getAttribute(Attributes.MOVEMENT_SPEED) != null) {
-                    modifiableattributeinstance.removeModifier(SPEED_MODIFIER);
-                    modifiableattributeinstance.addTransientModifier(SPEED_MODIFIER);
-                }
-                this.stayingPosition();
-                if (this.isWandering()) {
-                    this.setWandering(false);
-                }
-            } else {
-                if (modifiableattributeinstance.hasModifier(SPEED_MODIFIER)) {
-                    modifiableattributeinstance.removeModifier(SPEED_MODIFIER);
-                }
-            }
-        }
-    }
-
-    public boolean canRide(LivingEntity livingEntity){
-        if (!(this instanceof PlayerRideable)
-                && !(this instanceof AbstractGolemServant)
-                && livingEntity instanceof PlayerRideable
-                && livingEntity.getFirstPassenger() == null){
-            if (livingEntity instanceof AbstractHorse horse){
-                return horse.isTamed();
-            } else if (livingEntity instanceof OwnableEntity ownable && this.getTrueOwner() != null){
-                return ownable.getOwner() == this.getTrueOwner();
-            } else if (livingEntity instanceof IOwned owned && this.getTrueOwner() != null){
-                return owned.getTrueOwner() == this.getTrueOwner();
-            }
-        }
+    protected boolean isSunSensitive() {
         return false;
     }
 
-    public void stayingPosition(){
-        if (this.getTarget() != null){
-            this.getLookControl().setLookAt(this.getTarget(), this.getMaxHeadYRot(), this.getMaxHeadXRot());
-            double d2 = this.getTarget().getX() - this.getX();
-            double d1 = this.getTarget().getZ() - this.getZ();
-            this.setYRot(-((float) Mth.atan2(d2, d1)) * (180F / (float) Math.PI));
-            this.yBodyRot = this.getYRot();
-        }
+    @Override
+    public boolean isSunSensitive2() {
+        return this.isSunSensitive();
+    }
+
+    @Override
+    public boolean burnSunTick() {
+        return this.isSunBurnTick();
     }
 
     public void setTarget(@Nullable LivingEntity p_21544_) {
@@ -275,10 +137,6 @@ public class Summoned extends Owned implements IServant {
         } else {
             super.setTarget(p_21544_);
         }
-    }
-
-    protected boolean isSunSensitive() {
-        return false;
     }
 
     @Nullable
@@ -297,16 +155,6 @@ public class Summoned extends Owned implements IServant {
         this.setStaying(false);
         this.setBoundPos(null);
         return pSpawnData;
-    }
-
-    public void spawnUpgraded(){
-        if (this.getMobType() == MobType.UNDEAD){
-            this.setUpgraded(CuriosFinder.hasUndeadCape(this.getTrueOwner()));
-        } else if (this.getMobType() == ModMobType.NATURAL){
-            this.setUpgraded(CuriosFinder.hasWildRobe(this.getTrueOwner()));
-        } else if (this.getMobType() == ModMobType.FROST){
-            this.setUpgraded(CuriosFinder.hasFrostRobes(this.getTrueOwner()));
-        }
     }
 
     public boolean canSpawnArmor(){
@@ -452,77 +300,16 @@ public class Summoned extends Owned implements IServant {
 
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        if (compound.contains("Upgraded")) {
-            this.setUpgraded(compound.getBoolean("Upgraded"));
-        }
-        if (compound.contains("wandering")) {
-            this.setWandering(compound.getBoolean("wandering"));
-        }
-        if (compound.contains("staying")) {
-            this.setStaying(compound.getBoolean("staying"));
-        }
-        if (compound.contains("commandPos")){
-            this.commandPos = NbtUtils.readBlockPos(compound.getCompound("commandPos"));
-        }
-        if (compound.contains("commandPosEntity")){
-            if (EntityFinder.getLivingEntityByUuiD(compound.getUUID("commandPosEntity")) != null) {
-                this.commandPosEntity = EntityFinder.getLivingEntityByUuiD(compound.getUUID("commandPosEntity"));
-            }
-        }
-        if (compound.contains("boundPos")){
-            this.boundPos = NbtUtils.readBlockPos(compound.getCompound("boundPos"));
-        }
-        if (compound.contains("noHealTime")){
-            this.noHealTime = compound.getInt("noHealTime");
-        }
+        this.readServantData(compound);
     }
 
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putBoolean("Upgraded", this.isUpgraded());
-        compound.putBoolean("wandering", this.isWandering());
-        compound.putBoolean("staying", this.isStaying());
-        if (this.commandPos != null){
-            compound.put("commandPos", NbtUtils.writeBlockPos(this.commandPos));
-        }
-        if (this.commandPosEntity != null) {
-            compound.putUUID("commandPosEntity", this.commandPosEntity.getUUID());
-        }
-        compound.putInt("commandTick", this.commandTick);
-        if (this.boundPos != null){
-            compound.put("boundPos", NbtUtils.writeBlockPos(this.boundPos));
-        }
-        compound.putInt("noHealTime", this.noHealTime);
+        this.saveServantData(compound);
     }
 
     public boolean canUpdateMove(){
         return this.getMobType() == MobType.UNDEAD || this.getMobType() == ModMobType.NATURAL;
-    }
-
-    public void updateMoveMode(Player player){
-        if (!this.isWandering() && !this.isStaying() && !this.isPatrolling()){
-            this.setBoundPos(null);
-            this.setWandering(true);
-            this.setStaying(false);
-            player.displayClientMessage(Component.translatable("info.goety.servant.wander", this.getDisplayName()), true);
-        } else if (!this.isStaying() && !this.isPatrolling()){
-            this.setBoundPos(null);
-            this.setWandering(false);
-            this.setStaying(true);
-            player.displayClientMessage(Component.translatable("info.goety.servant.staying", this.getDisplayName()), true);
-        } else if (!this.isPatrolling()){
-            this.setBoundPos(this.blockPosition());
-            this.setWandering(false);
-            this.setStaying(false);
-            player.displayClientMessage(Component.translatable("info.goety.servant.patrol", this.getDisplayName()), true);
-        } else {
-            this.setBoundPos(null);
-            this.setWandering(false);
-            this.setStaying(false);
-            player.displayClientMessage(Component.translatable("info.goety.servant.follow", this.getDisplayName()), true);
-        }
-        this.playSound(SoundEvents.ZOMBIE_VILLAGER_CONVERTED, 1.0f, 1.0f);
-
     }
 
     public boolean isUpgraded() {
@@ -546,21 +333,26 @@ public class Summoned extends Owned implements IServant {
         this.setUpgraded(false);
     }
 
-    public void setCommandPos(BlockPos blockPos){
-        this.setCommandPos(blockPos, true);
-    }
-
-    public void setCommandPos(BlockPos blockPos, boolean removeEntity){
-        if (removeEntity) {
-            this.commandPosEntity = null;
-        }
-        this.commandPos = blockPos;
-        this.commandTick = MathHelper.secondsToTicks(10);
+    public BlockPos getCommandPos(){
+        return this.commandPos;
     }
 
     public void setCommandPosEntity(LivingEntity living){
         this.commandPosEntity = living;
         this.setCommandPos(living.blockPosition(), false);
+    }
+
+    public LivingEntity getCommandPosEntity(){
+        return this.commandPosEntity;
+    }
+
+    public int getCommandTick(){
+        return this.commandTick;
+    }
+
+    @Override
+    public void setCommandTick(int commandTick) {
+        this.commandTick = commandTick;
     }
 
     public boolean isCommanded(){
@@ -587,6 +379,25 @@ public class Summoned extends Owned implements IServant {
 
     public boolean isMoving() {
         return !(this.walkAnimation.speed() < 0.01F);
+    }
+
+    public int getNoHealTime() {
+        return this.noHealTime;
+    }
+
+    @Override
+    public void setNoHealTime(int time) {
+        this.noHealTime = time;
+    }
+
+    @Override
+    public int getKillChance() {
+        return this.killChance;
+    }
+
+    @Override
+    public void setKillChance(int killChance) {
+        this.killChance = killChance;
     }
 
     public void warnKill(Player player){

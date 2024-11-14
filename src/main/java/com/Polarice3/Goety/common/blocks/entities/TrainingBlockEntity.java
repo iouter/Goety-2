@@ -45,6 +45,7 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
     public int updateVariant;
     public boolean showArea;
     public boolean sensorSensitive;
+    public boolean guarding;
     public boolean reachedLimit;
     public ItemStack itemStack = ItemStack.EMPTY;
     public CompoundTag entityToSpawn = new CompoundTag();
@@ -103,6 +104,9 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
                                         level.gameEvent(entity, GameEvent.ENTITY_PLACE, blockpos);
                                         if (entity instanceof IOwned owned && blockEntity.getTrueOwner() != null) {
                                             owned.setTrueOwner(blockEntity.getTrueOwner());
+                                            if (owned instanceof LivingEntity living && blockEntity.isGrounding() && blockEntity.getTrueOwner() instanceof Player player){
+                                                SEHelper.addGroundedEntity(player, living);
+                                            }
                                         }
                                         if (entity instanceof Mob mob) {
                                             mob.spawnAnim();
@@ -325,6 +329,9 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
         if (tag.contains("sensorSensitive")) {
             this.sensorSensitive = tag.getBoolean("sensorSensitive");
         }
+        if (tag.contains("guarding")) {
+            this.guarding = tag.getBoolean("guarding");
+        }
         if (tag.contains("reachedLimit")) {
             this.reachedLimit = tag.getBoolean("reachedLimit");
         }
@@ -339,6 +346,7 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
         tag1.put("EntityToSpawn", this.entityToSpawn);
         tag1.putBoolean("showArea", this.showArea);
         tag1.putBoolean("sensorSensitive", this.sensorSensitive);
+        tag1.putBoolean("guarding", this.guarding);
         tag1.putBoolean("reachedLimit", this.reachedLimit);
         return tag1;
     }
@@ -358,6 +366,15 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
 
     public void setSensorSensitive(boolean sensorSensitive){
         this.sensorSensitive = sensorSensitive;
+        this.markUpdated();
+    }
+
+    public boolean isGrounding(){
+        return this.guarding;
+    }
+
+    public void setGrounding(boolean guarding){
+        this.guarding = guarding;
         this.markUpdated();
     }
 

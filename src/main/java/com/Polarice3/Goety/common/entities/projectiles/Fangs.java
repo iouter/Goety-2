@@ -1,10 +1,8 @@
 package com.Polarice3.Goety.common.entities.projectiles;
 
-import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.utils.SEHelper;
-import com.Polarice3.Goety.utils.WandUtil;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -89,6 +87,18 @@ public class Fangs extends Entity {
         return this.soulEater;
     }
 
+    public void setSoulEater(int soulEater) {
+        this.soulEater = soulEater;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
+    public void setBurning(int burning) {
+        this.burning = burning;
+    }
+
     public void setOwner(@Nullable LivingEntity p_36939_) {
         this.owner = p_36939_;
         this.ownerUUID = p_36939_ == null ? null : p_36939_.getUUID();
@@ -128,8 +138,10 @@ public class Fangs extends Entity {
 
     protected void addAdditionalSaveData(CompoundTag pCompound) {
         pCompound.putInt("Warmup", this.warmupDelayTicks);
-        if (this.isTotemSpawned()){
+        if (this.damage > 0){
             pCompound.putInt("Damage", this.damage);
+        }
+        if (this.burning > 0){
             pCompound.putInt("Burning", this.burning);
         }
         if (this.soulEater > 0){
@@ -184,7 +196,7 @@ public class Fangs extends Entity {
         float baseDamage = SpellConfig.FangDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
         if (target.isAlive() && !target.isInvulnerable() && target != livingentity) {
             if (livingentity == null) {
-                target.hurt(this.damageSources().magic(), 6.0F);
+                target.hurt(this.damageSources().magic(), baseDamage);
             } else {
                 if (target.isAlliedTo(livingentity)){
                     return;
@@ -194,22 +206,16 @@ public class Fangs extends Entity {
                 }
                 if (livingentity instanceof Player player){
                     if (this.isTotemSpawned()){
-                        target.hurt(target.damageSources().indirectMagic(this, livingentity), baseDamage + damage);
-                        if (burning > 0){
-                            target.setSecondsOnFire(5 * burning);
+                        target.hurt(target.damageSources().indirectMagic(this, livingentity), baseDamage + this.damage);
+                        if (this.burning > 0){
+                            target.setSecondsOnFire(5 * this.burning);
                         }
                     } else {
-                        float enchantment = 0;
-                        int burning = 0;
-                        if (WandUtil.enchantedFocus(player)) {
-                            enchantment = WandUtil.getLevels(ModEnchantments.POTENCY.get(), player);
-                            burning = WandUtil.getLevels(ModEnchantments.BURNING.get(), player);
-                        }
-                        if (target.hurt(this.damageSources().indirectMagic(this, livingentity), baseDamage + enchantment)){
+                        if (target.hurt(this.damageSources().indirectMagic(this, livingentity), baseDamage + this.damage)){
                             int soulEater = Mth.clamp(this.getSoulEater(), 0, 10);
                             SEHelper.increaseSouls(player, SpellConfig.FangGainSouls.get() * soulEater);
-                            if (burning > 0){
-                                target.setSecondsOnFire(5 * burning);
+                            if (this.burning > 0){
+                                target.setSecondsOnFire(5 * this.burning);
                             }
                         }
                     }

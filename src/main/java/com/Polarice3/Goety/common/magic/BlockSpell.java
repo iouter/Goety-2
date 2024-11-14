@@ -12,6 +12,6 @@ public abstract class BlockSpell extends Spell implements IBlockSpell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff) {
     }
 }

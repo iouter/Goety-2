@@ -33,6 +33,9 @@ public class ModSpawnEggs {
     public static final RegistryObject<ModSpawnEggItem> CRONE_SPAWN_EGG = ITEMS.register("crone_spawn_egg",
             () -> new ModSpawnEggItem(ModEntityType.CRONE, 0x732424, 0x916b1a, egg()));
 
+    public static final RegistryObject<ModSpawnEggItem> SORCERER_SPAWN_EGG = ITEMS.register("sorcerer_spawn_egg",
+            () -> new ModSpawnEggItem(ModEntityType.SORCERER, 0x180b20, 0x99112f, egg()));
+
     public static final RegistryObject<ModSpawnEggItem> ENVIOKER_SPAWN_EGG = ITEMS.register("envioker_spawn_egg",
             () -> new ModSpawnEggItem(ModEntityType.ENVIOKER, 0x1e1c1a, 0xca272a, egg()));
 

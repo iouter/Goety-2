@@ -1,9 +1,11 @@
 package com.Polarice3.Goety.common.entities.hostile.cultists;
 
 import com.Polarice3.Goety.common.entities.ai.AvoidTargetGoal;
+import com.Polarice3.Goety.config.AttributesConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.init.ModTags;
 import com.Polarice3.Goety.utils.MathHelper;
+import com.Polarice3.Goety.utils.MobUtil;
 import com.Polarice3.Goety.utils.ModLootTables;
 import com.Polarice3.Goety.utils.WitchBarterHelper;
 import net.minecraft.core.particles.ParticleOptions;
@@ -92,8 +94,16 @@ public class Maverick extends Cultist{
 
     public static AttributeSupplier.Builder setCustomAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 26.0D)
+                .add(Attributes.MAX_HEALTH, AttributesConfig.MaverickHealth.get())
+                .add(Attributes.ARMOR, AttributesConfig.MaverickArmor.get())
+                .add(Attributes.ATTACK_DAMAGE, AttributesConfig.MaverickDamage.get())
                 .add(Attributes.MOVEMENT_SPEED, 0.25D);
+    }
+
+    public void setConfigurableAttributes(){
+        MobUtil.setBaseAttributes(this.getAttribute(Attributes.MAX_HEALTH), AttributesConfig.MaverickHealth.get());
+        MobUtil.setBaseAttributes(this.getAttribute(Attributes.ARMOR), AttributesConfig.MaverickArmor.get());
+        MobUtil.setBaseAttributes(this.getAttribute(Attributes.ATTACK_DAMAGE), AttributesConfig.MaverickDamage.get());
     }
 
     protected void defineSynchedData() {

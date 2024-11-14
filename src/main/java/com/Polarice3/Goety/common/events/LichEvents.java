@@ -57,7 +57,7 @@ public class LichEvents {
                 ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
                 if (!helmet.isEmpty()) {
                     if (!player.isCreative()) {
-                        if (!player.hasEffect(MobEffects.FIRE_RESISTANCE)) {
+                        if (!player.hasEffect(MobEffects.FIRE_RESISTANCE) && !player.fireImmune()) {
                             if (MainConfig.LichDamageHelmet.get()) {
                                 if (helmet.isDamageableItem()) {
                                     helmet.setDamageValue(helmet.getDamageValue() + world.random.nextInt(2));

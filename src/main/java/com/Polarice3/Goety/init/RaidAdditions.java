@@ -15,44 +15,47 @@ public class RaidAdditions {
 
     public static void addRaiders(){
         if (MobsConfig.WarlockRaid.get()) {
-            addWaves("WARLOCK", ModEntityType.WARLOCK.get(), MobsConfig.WarlockRaidCount.get());
+            addWaves("GOETY_WARLOCK", ModEntityType.WARLOCK.get(), MobsConfig.WarlockRaidCount.get());
         }
         if (MobsConfig.MaverickRaid.get()) {
-            addWaves("MAVERICK", ModEntityType.MAVERICK.get(), MobsConfig.MaverickRaidCount.get());
+            addWaves("GOETY_MAVERICK", ModEntityType.MAVERICK.get(), MobsConfig.MaverickRaidCount.get());
         }
         if (MobsConfig.IllagerRaid.get()) {
             if (MobsConfig.PikerRaid.get()) {
-                addWaves("PIKER", ModEntityType.PIKER.get(), MobsConfig.PikerRaidCount.get());
+                addWaves("GOETY_PIKER", ModEntityType.PIKER.get(), MobsConfig.PikerRaidCount.get());
             }
             if (MobsConfig.RipperRaid.get()) {
-                addWaves("RIPPER", ModEntityType.RIPPER.get(), MobsConfig.RipperRaidCount.get());
+                addWaves("GOETY_RIPPER", ModEntityType.RIPPER.get(), MobsConfig.RipperRaidCount.get());
             }
             if (MobsConfig.CrusherRaid.get()) {
-                addWaves("CRUSHER", ModEntityType.CRUSHER.get(), MobsConfig.CrusherRaidCount.get());
+                addWaves("GOETY_CRUSHER", ModEntityType.CRUSHER.get(), MobsConfig.CrusherRaidCount.get());
             }
             if (MobsConfig.StormCasterRaid.get()) {
-                addWaves("STORM_CASTER", ModEntityType.STORM_CASTER.get(), MobsConfig.StormCasterRaidCount.get());
+                addWaves("GOETY_STORM_CASTER", ModEntityType.STORM_CASTER.get(), MobsConfig.StormCasterRaidCount.get());
             }
             if (MobsConfig.CryologerRaid.get()) {
-                addWaves("CRYOLOGER", ModEntityType.CRYOLOGER.get(), MobsConfig.CryologerRaidCount.get());
+                addWaves("GOETY_CRYOLOGER", ModEntityType.CRYOLOGER.get(), MobsConfig.CryologerRaidCount.get());
             }
             if (MobsConfig.ConquillagerRaid.get()) {
-                addWaves("CONQUILLAGER", ModEntityType.CONQUILLAGER.get(), MobsConfig.ConquillagerRaidCount.get());
+                addWaves("GOETY_CONQUILLAGER", ModEntityType.CONQUILLAGER.get(), MobsConfig.ConquillagerRaidCount.get());
             }
             if (MobsConfig.InquillagerRaid.get()) {
-                addWaves("INQUILLAGER", ModEntityType.INQUILLAGER.get(), MobsConfig.InquillagerRaidCount.get());
+                addWaves("GOETY_INQUILLAGER", ModEntityType.INQUILLAGER.get(), MobsConfig.InquillagerRaidCount.get());
             }
             if (MobsConfig.EnviokerRaid.get()) {
-                addWaves("ENVIOKER", ModEntityType.ENVIOKER.get(), MobsConfig.EnviokerRaidCount.get());
+                addWaves("GOETY_ENVIOKER", ModEntityType.ENVIOKER.get(), MobsConfig.EnviokerRaidCount.get());
+            }
+            if (MobsConfig.SorcererRaid.get()) {
+                addWaves("GOETY_SORCERER", ModEntityType.SORCERER.get(), MobsConfig.SorcererRaidCount.get());
             }
             if (MobsConfig.HostileRedstoneGolemRaid.get()){
-                addWaves("HOSTILE_RED_GOLEM", ModEntityType.HOSTILE_REDSTONE_GOLEM.get(), MobsConfig.HostileRedstoneGolemRaidCount.get());
+                addWaves("GOETY_HOSTILE_RED_GOLEM", ModEntityType.HOSTILE_REDSTONE_GOLEM.get(), MobsConfig.HostileRedstoneGolemRaidCount.get());
             }
             if (MobsConfig.HostileRedstoneMonstrosityRaid.get()){
-                addWaves("HOSTILE_RED_MONSTER", ModEntityType.HOSTILE_REDSTONE_MONSTROSITY.get(), MobsConfig.HostileRedstoneMonstrosityRaidCount.get());
+                addWaves("GOETY_HOSTILE_RED_MONSTER", ModEntityType.HOSTILE_REDSTONE_MONSTROSITY.get(), MobsConfig.HostileRedstoneMonstrosityRaidCount.get());
             }
             if (MobsConfig.MinisterRaid.get()) {
-                addWaves("MINISTER", ModEntityType.MINISTER.get(), MobsConfig.MinisterRaidCount.get());
+                addWaves("GOETY_MINISTER", ModEntityType.MINISTER.get(), MobsConfig.MinisterRaidCount.get());
             }
         }
     }

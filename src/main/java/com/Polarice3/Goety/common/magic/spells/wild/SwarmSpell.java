@@ -6,6 +6,7 @@ import com.Polarice3.Goety.common.effects.GoetyEffects;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.neutral.InsectSwarm;
 import com.Polarice3.Goety.common.magic.BreathingSpell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.*;
@@ -28,6 +29,11 @@ public class SwarmSpell extends BreathingSpell {
     public float damage = SpellConfig.SwarmDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
 
     @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setDuration(1).setRange(8);
+    }
+
+    @Override
     public int defaultSoulCost() {
         return SpellConfig.SwarmCost.get();
     }
@@ -35,6 +41,16 @@ public class SwarmSpell extends BreathingSpell {
     @Override
     public int defaultCastUp() {
         return SpellConfig.SwarmChargeUp.get();
+    }
+
+    @Override
+    public int shotsNumber() {
+        return SpellConfig.SwarmDuration.get();
+    }
+
+    @Override
+    public int defaultSpellCooldown() {
+        return SpellConfig.SwarmCoolDown.get();
     }
 
     @Nullable
@@ -58,34 +74,34 @@ public class SwarmSpell extends BreathingSpell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        int enchantment = 0;
-        int duration = 1;
-        int range = 0;
-        if (WandUtil.enchantedFocus(entityLiving)) {
-            enchantment = WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
-            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving);
-            range = WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        int potency = spellStat.getPotency();
+        int duration = spellStat.getDuration();
+        int range = spellStat.getRange();
+        if (WandUtil.enchantedFocus(caster)) {
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), caster);
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
         }
-        float damage = this.damage + enchantment;
+        float damage = this.damage + potency;
         if (!worldIn.isClientSide) {
-            for (Entity target : getBreathTarget(entityLiving, range + 15)) {
+            for (Entity target : getBreathTarget(caster, range)) {
                 if (target != null) {
-                    if (target.hurt(ModDamageSource.swarm(entityLiving, entityLiving), damage)){
+                    if (target.hurt(ModDamageSource.swarm(caster, caster), damage)){
                         if (rightStaff(staff)) {
                             if (target instanceof LivingEntity livingTarget) {
                                 MobEffect mobEffect = MobEffects.POISON;
-                                if (CuriosFinder.hasWildRobe(entityLiving)) {
+                                if (CuriosFinder.hasWildRobe(caster)) {
                                     mobEffect = GoetyEffects.ACID_VENOM.get();
                                 }
                                 livingTarget.addEffect(new MobEffectInstance(mobEffect, MathHelper.secondsToTicks(5) * duration));
                             }
                         }
                         if (!target.isAlive()){
-                            InsectSwarm insectSwarm = new InsectSwarm(worldIn, entityLiving, target.position());
+                            InsectSwarm insectSwarm = new InsectSwarm(worldIn, caster, target.position());
                             insectSwarm.setLimitedLife(200 * duration);
-                            if (enchantment > 0){
-                                insectSwarm.addEffect(new MobEffectInstance(GoetyEffects.BUFF.get(), EffectsUtil.infiniteEffect(), enchantment - 1, false, false));
+                            if (potency > 0){
+                                insectSwarm.addEffect(new MobEffectInstance(GoetyEffects.BUFF.get(), EffectsUtil.infiniteEffect(), potency - 1, false, false));
                             }
                             worldIn.addFreshEntity(insectSwarm);
                         }
@@ -93,7 +109,7 @@ public class SwarmSpell extends BreathingSpell {
                 }
             }
         }
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.INSECT_SWARM.get(), this.getSoundSource(), worldIn.random.nextFloat() * 0.5F, worldIn.random.nextFloat() * 0.5F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.INSECT_SWARM.get(), this.getSoundSource(), worldIn.random.nextFloat() * 0.5F, worldIn.random.nextFloat() * 0.5F);
     }
 
     @Override
@@ -101,7 +117,7 @@ public class SwarmSpell extends BreathingSpell {
         int range = 0;
         if (entityLiving instanceof Player player){
             if (WandUtil.enchantedFocus(player)){
-                range = WandUtil.getLevels(ModEnchantments.RANGE.get(), player);
+                range += WandUtil.getLevels(ModEnchantments.RANGE.get(), player);
             }
         }
         this.breathAttack(ModParticleTypes.FLY.get(), entityLiving, true, 0.3F + ((double) range / 10), 5);

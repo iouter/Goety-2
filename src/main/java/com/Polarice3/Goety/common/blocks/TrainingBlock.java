@@ -2,6 +2,7 @@ package com.Polarice3.Goety.common.blocks;
 
 import com.Polarice3.Goety.api.items.magic.IWand;
 import com.Polarice3.Goety.common.blocks.entities.TrainingBlockEntity;
+import com.Polarice3.Goety.common.items.magic.GroundGrimoire;
 import com.Polarice3.Goety.init.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -45,6 +46,10 @@ public abstract class TrainingBlock extends BaseEntityBlock {
             } else if (itemstack.getItem() instanceof IWand){
                 blockEntity.setSensorSensitive(!blockEntity.isSensorSensitive());
                 pLevel.playSound(null, pPos, ModSounds.SUMMON_SPELL_FIERY.get(), SoundSource.BLOCKS, 0.25F, 2.0F);
+                pLevel.playSound(null, pPos, ModSounds.CAST_SPELL.get(), SoundSource.BLOCKS, 0.25F, 2.0F);
+                return InteractionResult.SUCCESS;
+            } else if (itemstack.getItem() instanceof GroundGrimoire){
+                blockEntity.setGrounding(!blockEntity.isGrounding());
                 pLevel.playSound(null, pPos, ModSounds.CAST_SPELL.get(), SoundSource.BLOCKS, 0.25F, 2.0F);
                 return InteractionResult.SUCCESS;
             } else if (itemstack.isEmpty() && pPlayer.isCrouching()){

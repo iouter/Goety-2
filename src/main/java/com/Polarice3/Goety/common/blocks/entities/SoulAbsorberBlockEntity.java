@@ -37,7 +37,9 @@ public class SoulAbsorberBlockEntity extends ModBlockEntity implements Clearable
 
     public void tick() {
         boolean flag = this.getArcaOwner() != null;
-        assert this.level != null;
+        if (this.level == null){
+            return;
+        }
         if (!this.level.isClientSide) {
             if (flag) {
                 if (!this.itemStack.isEmpty()) {
@@ -56,8 +58,10 @@ public class SoulAbsorberBlockEntity extends ModBlockEntity implements Clearable
     }
 
     private void work() {
+        if (this.level == null){
+            return;
+        }
         if (!this.itemStack.isEmpty()) {
-            assert this.level != null;
             if (this.itemStack.getItem() instanceof ITotem){
                 if (ITotem.currentSouls(this.itemStack) != 0){
                     this.cookingProgress++;
@@ -96,11 +100,13 @@ public class SoulAbsorberBlockEntity extends ModBlockEntity implements Clearable
     }
 
     public boolean placeItem(ItemStack pStack, int pCookTime) {
+        if (this.level == null){
+            return false;
+        }
         if (this.itemStack.isEmpty()) {
             this.cookingTime = pCookTime;
             this.cookingProgress = 0;
             this.itemStack = pStack.split(1);
-            assert this.level != null;
             this.level.playSound(null, this.getBlockPos(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.BLOCKS, 1.0F, 0.5F);
             this.markUpdated();
             return true;
@@ -203,7 +209,9 @@ public class SoulAbsorberBlockEntity extends ModBlockEntity implements Clearable
     }
 
     private boolean checkArca() {
-        assert this.level != null;
+        if (this.level == null){
+            return false;
+        }
         return this.level.getBlockState(new BlockPos(this.getBlockPos().getX(), this.getBlockPos().getY() - 1, this.getBlockPos().getZ())).is(ModBlocks.ARCA_BLOCK.get());
     }
 
@@ -234,10 +242,12 @@ public class SoulAbsorberBlockEntity extends ModBlockEntity implements Clearable
 
     @Override
     public boolean canPlaceItemThroughFace(int pIndex, ItemStack pItemStack, @Nullable Direction pDirection) {
+        if (this.level == null){
+            return false;
+        }
         Optional<SoulAbsorberRecipes> optional = this.getRecipes(pItemStack);
         if (!optional.isPresent()) return false;
         if (this.getArcaOwner() == null) return false;
-        assert this.level != null;
         return !this.level.isClientSide && this.placeItem(pItemStack, optional.get().getCookingTime());
     }
 

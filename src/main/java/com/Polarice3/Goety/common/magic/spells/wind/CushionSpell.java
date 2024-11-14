@@ -5,6 +5,7 @@ import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.util.Cushion;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.WandUtil;
@@ -22,6 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CushionSpell extends Spell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setRange(64).setRadius(0.0D);
+    }
+
     @Override
     public int defaultSoulCost() {
         return SpellConfig.CushionCost.get();
@@ -57,17 +64,17 @@ public class CushionSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        int range = 64;
-        int duration = 0;
-        int radius = 0;
-        if (WandUtil.enchantedFocus(entityLiving)) {
-            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
-            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving);
-            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        int range = spellStat.getRange();
+        int duration = spellStat.getDuration();
+        int radius = (int) spellStat.getRadius();
+        if (WandUtil.enchantedFocus(caster)) {
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
+            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), caster);
+            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), caster);
         }
-        HitResult rayTraceResult = this.rayTrace(worldIn, entityLiving, range, 3.0D);
-        LivingEntity target = this.getTarget(entityLiving, range);
+        HitResult rayTraceResult = this.rayTrace(worldIn, caster, range, 3.0D);
+        LivingEntity target = this.getTarget(caster, range);
         if (target != null){
             Cushion cushion = new Cushion(ModEntityType.CUSHION.get(), worldIn);
             cushion.setRadius(radius);
@@ -82,6 +89,6 @@ public class CushionSpell extends Spell {
             cushion.setPos(blockPos.getX() + 0.5F, blockPos.getY() + 1.0F, blockPos.getZ() + 0.5F);
             worldIn.addFreshEntity(cushion);
         }
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.EVOKER_CAST_SPELL, this.getSoundSource(), 1.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.EVOKER_CAST_SPELL, this.getSoundSource(), 1.0F, 1.0F);
     }
 }

@@ -42,42 +42,42 @@ public class WandUtil {
         return itemStack.getItem() instanceof IWand;
     }
 
-    public static ItemStack findWandOnHand(LivingEntity playerEntity, InteractionHand hand) {
+    public static ItemStack findWandOnHand(LivingEntity livingEntity, InteractionHand hand) {
         ItemStack foundStack = ItemStack.EMPTY;
-        if (isMatchingItem(playerEntity.getItemInHand(hand))){
-            foundStack = playerEntity.getItemInHand(hand);
+        if (isMatchingItem(livingEntity.getItemInHand(hand))){
+            foundStack = livingEntity.getItemInHand(hand);
         }
 
         return foundStack;
     }
 
-    public static ItemStack findWand(LivingEntity playerEntity) {
+    public static ItemStack findWand(LivingEntity livingEntity) {
         ItemStack foundStack = ItemStack.EMPTY;
-        if (isMatchingItem(playerEntity.getMainHandItem())){
-            foundStack = playerEntity.getMainHandItem();
-        } else if (isMatchingItem(playerEntity.getOffhandItem())){
-            foundStack = playerEntity.getOffhandItem();
+        if (isMatchingItem(livingEntity.getMainHandItem())){
+            foundStack = livingEntity.getMainHandItem();
+        } else if (isMatchingItem(livingEntity.getOffhandItem())){
+            foundStack = livingEntity.getOffhandItem();
         }
 
         return foundStack;
     }
 
-    public static ItemStack findFocusOnHand(LivingEntity playerEntity, InteractionHand hand){
+    public static ItemStack findFocusOnHand(LivingEntity livingEntity, InteractionHand hand){
         ItemStack foundStack = ItemStack.EMPTY;
-        if (!findWandOnHand(playerEntity, hand).isEmpty()){
-            if (!IWand.getFocus(findWandOnHand(playerEntity, hand)).isEmpty()) {
-                foundStack = IWand.getFocus(findWandOnHand(playerEntity, hand));
+        if (!findWandOnHand(livingEntity, hand).isEmpty()){
+            if (!IWand.getFocus(findWandOnHand(livingEntity, hand)).isEmpty()) {
+                foundStack = IWand.getFocus(findWandOnHand(livingEntity, hand));
             }
         }
 
         return foundStack;
     }
 
-    public static ItemStack findFocus(LivingEntity playerEntity){
+    public static ItemStack findFocus(LivingEntity livingEntity){
         ItemStack foundStack = ItemStack.EMPTY;
-        if (!findWand(playerEntity).isEmpty()){
-            if (!IWand.getFocus(findWand(playerEntity)).isEmpty()) {
-                foundStack = IWand.getFocus(findWand(playerEntity));
+        if (!findWand(livingEntity).isEmpty()){
+            if (!IWand.getFocus(findWand(livingEntity)).isEmpty()) {
+                foundStack = IWand.getFocus(findWand(livingEntity));
             }
         }
 
@@ -115,17 +115,24 @@ public class WandUtil {
         return null;
     }
 
+    public static int getShots(LivingEntity livingEntity){
+        if (livingEntity.isUsingItem() && livingEntity.getUseItem().getItem() instanceof IWand wand){
+            return wand.ShotsFired(livingEntity.getUseItem());
+        }
+        return 0;
+    }
+
     public static boolean hasFocusInInv(@Nullable Player player){
         return !findFocusInInv(player).isEmpty();
     }
 
-    public static boolean enchantedFocus(LivingEntity playerEntity){
-        return !findFocus(playerEntity).isEmpty() && findFocus(playerEntity).isEnchanted();
+    public static boolean enchantedFocus(LivingEntity livingEntity){
+        return !findFocus(livingEntity).isEmpty() && findFocus(livingEntity).isEnchanted();
     }
 
-    public static int getLevels(Enchantment enchantment, LivingEntity playerEntity){
-        if (enchantedFocus(playerEntity)) {
-            return findFocus(playerEntity).getEnchantmentLevel(enchantment);
+    public static int getLevels(Enchantment enchantment, LivingEntity livingEntity){
+        if (enchantedFocus(livingEntity)) {
+            return findFocus(livingEntity).getEnchantmentLevel(enchantment);
         } else {
             return 0;
         }
@@ -177,6 +184,10 @@ public class WandUtil {
     }
 
     public static void spawnFangs(LivingEntity livingEntity, double pPosX, double pPosZ, double PPPosY, double pOPosY, float pYRot, int pWarmUp) {
+        spawnFangs(livingEntity, pPosX, pPosZ, PPPosY, pOPosY, pYRot, pWarmUp, 0, 0);
+    }
+
+    public static void spawnFangs(LivingEntity livingEntity, double pPosX, double pPosZ, double PPPosY, double pOPosY, float pYRot, int pWarmUp, int pPotency, int pBurning) {
         BlockPos blockpos = BlockPos.containing(pPosX, pOPosY, pPosZ);
         boolean flag = false;
         double d0 = 0.0D;
@@ -207,8 +218,13 @@ public class WandUtil {
                     if (WandUtil.getLevels(ModEnchantments.ABSORB.get(), player) != 0){
                         fangEntity.setAbsorbing(true);
                     }
+                    if (WandUtil.getLevels(ModEnchantments.SOUL_EATER.get(), player) > 0){
+                        fangEntity.setSoulEater(WandUtil.getLevels(ModEnchantments.SOUL_EATER.get(), player));
+                    }
                 }
             }
+            fangEntity.setDamage(pPotency);
+            fangEntity.setBurning(pBurning);
             livingEntity.level.addFreshEntity(fangEntity);
         }
 

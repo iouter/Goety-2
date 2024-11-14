@@ -28,6 +28,16 @@ public class CorruptedBeamSpell extends EverChargeSpell {
     }
 
     @Override
+    public int shotsNumber() {
+        return SpellConfig.CorruptionDuration.get();
+    }
+
+    @Override
+    public int defaultSpellCooldown() {
+        return SpellConfig.CorruptionCoolDown.get();
+    }
+
+    @Override
     public SoundEvent CastingSound() {
         return ModSounds.CORRUPT_BEAM_START.get();
     }
@@ -39,17 +49,17 @@ public class CorruptedBeamSpell extends EverChargeSpell {
         return list;
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        List<CorruptedBeam> entities = worldIn.getEntitiesOfClass(CorruptedBeam.class, entityLiving.getBoundingBox().inflate(2.0F),
-                corruptedBeam -> corruptedBeam.getOwner() == entityLiving);
-        Vec3 vector3d = entityLiving.getViewVector( 1.0F);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff){
+        List<CorruptedBeam> entities = worldIn.getEntitiesOfClass(CorruptedBeam.class, caster.getBoundingBox().inflate(2.0F),
+                corruptedBeam -> corruptedBeam.getOwner() == caster);
+        Vec3 vector3d = caster.getViewVector( 1.0F);
         if (entities.isEmpty()) {
-            CorruptedBeam corruptedBeam = new CorruptedBeam(ModEntityType.CORRUPTED_BEAM.get(), worldIn, entityLiving);
+            CorruptedBeam corruptedBeam = new CorruptedBeam(ModEntityType.CORRUPTED_BEAM.get(), worldIn, caster);
             corruptedBeam.moveTo(
-                    entityLiving.getX() + vector3d.x / 2,
-                    entityLiving.getEyeY() - 0.2,
-                    entityLiving.getZ() + vector3d.z / 2, entityLiving.getYRot(), entityLiving.getXRot());
-            corruptedBeam.setOwner(entityLiving);
+                    caster.getX() + vector3d.x / 2,
+                    caster.getEyeY() - 0.2,
+                    caster.getZ() + vector3d.z / 2, caster.getYRot(), caster.getXRot());
+            corruptedBeam.setOwner(caster);
             corruptedBeam.setItemBase(true);
             worldIn.addFreshEntity(corruptedBeam);
         }

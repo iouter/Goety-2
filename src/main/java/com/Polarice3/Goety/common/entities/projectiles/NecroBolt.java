@@ -2,17 +2,18 @@ package com.Polarice3.Goety.common.entities.projectiles;
 
 import com.Polarice3.Goety.client.particles.ModParticleTypes;
 import com.Polarice3.Goety.common.entities.ModEntityType;
+import com.Polarice3.Goety.common.entities.ally.undead.skeleton.AbstractSkeletonServant;
+import com.Polarice3.Goety.common.entities.ally.undead.zombie.ZombieServant;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.utils.MathHelper;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.*;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -74,6 +75,44 @@ public class NecroBolt extends SpellHurtingProjectile {
                 if (flag) {
                     if (entity.isAlive()) {
                         this.doEnchantDamageEffects(livingentity, entity);
+                    } else {
+                        if (entity instanceof Zombie zombieEntity && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(zombieEntity, ModEntityType.ZOMBIE_SERVANT.get(), (timer) -> {})) {
+                            EntityType<? extends Mob> entityType = ModEntityType.ZOMBIE_SERVANT.get();
+                            if (zombieEntity instanceof Husk){
+                                entityType = ModEntityType.HUSK_SERVANT.get();
+                            } else if (zombieEntity instanceof Drowned){
+                                entityType = ModEntityType.DROWNED_SERVANT.get();
+                            }
+                            ZombieServant zombieMinionEntity = (ZombieServant) zombieEntity.convertTo(entityType, false);
+                            if (zombieMinionEntity != null) {
+                                if (this.level instanceof ServerLevel serverLevel) {
+                                    zombieMinionEntity.finalizeSpawn(serverLevel, this.level.getCurrentDifficultyAt(zombieMinionEntity.blockPosition()), MobSpawnType.CONVERSION, null, null);
+                                }
+                                zombieMinionEntity.setLimitedLife(10 * (15 + this.level.random.nextInt(45)));
+                                zombieMinionEntity.setTrueOwner(livingentity);
+                                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(zombieEntity, zombieMinionEntity);
+                                if (!this.isSilent()) {
+                                    this.level.levelEvent((Player) null, 1026, this.blockPosition(), 0);
+                                }
+                            }
+                        } else if (entity instanceof AbstractSkeleton skeleton && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(skeleton, ModEntityType.SKELETON_SERVANT.get(), (timer) -> {})) {
+                            EntityType<? extends Mob> entityType = ModEntityType.SKELETON_SERVANT.get();
+                            if (skeleton instanceof Stray){
+                                entityType = ModEntityType.STRAY_SERVANT.get();
+                            }
+                            AbstractSkeletonServant skeletonServant = (AbstractSkeletonServant) skeleton.convertTo(entityType, false);
+                            if (skeletonServant != null) {
+                                if (this.level instanceof ServerLevel serverLevel) {
+                                    skeletonServant.finalizeSpawn(serverLevel, this.level.getCurrentDifficultyAt(skeletonServant.blockPosition()), MobSpawnType.CONVERSION, null, null);
+                                }
+                                skeletonServant.setLimitedLife(10 * (15 + this.level.random.nextInt(45)));
+                                skeletonServant.setTrueOwner(livingentity);
+                                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(skeleton, skeletonServant);
+                                if (!this.isSilent()) {
+                                    this.level.levelEvent((Player) null, 1026, this.blockPosition(), 0);
+                                }
+                            }
+                        }
                     }
                 }
             } else {

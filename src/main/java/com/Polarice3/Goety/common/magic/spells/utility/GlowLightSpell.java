@@ -31,11 +31,11 @@ public class GlowLightSpell extends Spell {
         return SoundEvents.EGG_THROW;
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        GlowLight soulLightEntity = new GlowLight(worldIn, entityLiving);
-        soulLightEntity.setOwner(entityLiving);
-        soulLightEntity.shootFromRotation(entityLiving, entityLiving.getXRot(), entityLiving.getYRot(), 0.0F, 1.5F, 1.0F);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff){
+        GlowLight soulLightEntity = new GlowLight(worldIn, caster);
+        soulLightEntity.setOwner(caster);
+        soulLightEntity.shootFromRotation(caster, caster.getXRot(), caster.getYRot(), 0.0F, 1.5F, 1.0F);
         worldIn.addFreshEntity(soulLightEntity);
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), CastingSound(), this.getSoundSource(), 1.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), CastingSound(), this.getSoundSource(), 1.0F, 1.0F);
     }
 }

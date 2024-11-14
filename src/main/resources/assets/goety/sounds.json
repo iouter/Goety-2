@@ -877,6 +877,48 @@
     ],
     "subtitle": "subtitle.goety.skull_lord_death"
   },
+  "sorcerer_ambient": {
+    "sounds": [
+      {
+        "name": "goety:sorcerer/idle1"
+      },
+      {
+        "name": "goety:sorcerer/idle2"
+      },
+      {
+        "name": "goety:sorcerer/idle3"
+      }
+    ],
+    "subtitle": "subtitle.goety.sorcerer_ambient"
+  },
+  "sorcerer_hurt": {
+    "sounds": [
+      {
+        "name": "goety:sorcerer/hurt1"
+      },
+      {
+        "name": "goety:sorcerer/hurt2"
+      },
+      {
+        "name": "goety:sorcerer/hurt3"
+      }
+    ],
+    "subtitle": "subtitle.goety.sorcerer_hurt"
+  },
+  "sorcerer_death": {
+    "sounds": [
+      {
+        "name": "goety:sorcerer/death1"
+      },
+      {
+        "name": "goety:sorcerer/death2"
+      },
+      {
+        "name": "goety:sorcerer/death3"
+      }
+    ],
+    "subtitle": "subtitle.goety.sorcerer_death"
+  },
   "tormentor_ambient": {
     "sounds": [
       {
@@ -5060,6 +5102,25 @@
       },
       {
         "name": "goety:random/swing2"
+      }
+    ]
+  },
+  "heavy_woosh": {
+    "sounds": [
+      {
+        "name": "goety:random/heavy_woosh1"
+      },
+      {
+        "name": "goety:random/heavy_woosh2"
+      },
+      {
+        "name": "goety:random/heavy_woosh3"
+      },
+      {
+        "name": "goety:random/heavy_woosh4"
+      },
+      {
+        "name": "goety:random/heavy_woosh5"
       }
     ]
   },

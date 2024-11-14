@@ -6,6 +6,7 @@ import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.ally.GhastServant;
 import com.Polarice3.Goety.common.entities.ally.MiniGhast;
 import com.Polarice3.Goety.common.entities.hostile.servants.Malghast;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.common.magic.SummonSpell;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
@@ -73,61 +74,63 @@ public class GhastSpell extends SummonSpell {
         return list;
     }
 
-    public void commonResult(ServerLevel worldIn, LivingEntity entityLiving){
-        if (WandUtil.enchantedFocus(entityLiving)){
-            enchantment = WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
-            duration = WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving) + 1;
-        }
-        if (isShifting(entityLiving)) {
+    public void commonResult(ServerLevel worldIn, LivingEntity caster){
+        if (isShifting(caster)) {
             for (Entity entity : worldIn.getAllEntities()) {
                 if (entity instanceof Malghast malghast) {
-                    if (malghast.getTrueOwner() == entityLiving && malghast.limitedLifeTicks > 0) {
+                    if (malghast.getTrueOwner() == caster && malghast.limitedLifeTicks > 0) {
                         malghast.lifeSpanDamage();
                     }
                 }
             }
-            for (int i = 0; i < entityLiving.level.random.nextInt(35) + 10; ++i) {
-                worldIn.sendParticles(ParticleTypes.POOF, entityLiving.getX(), entityLiving.getEyeY(), entityLiving.getZ(), 1, 0.0F, 0.0F, 0.0F, 0);
+            for (int i = 0; i < caster.level.random.nextInt(35) + 10; ++i) {
+                worldIn.sendParticles(ParticleTypes.POOF, caster.getX(), caster.getEyeY(), caster.getZ(), 1, 0.0F, 0.0F, 0.0F, 0);
             }
-            worldIn.playSound((Player) null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.SUMMON_SPELL.get(), this.getSoundSource(), 1.0F, 1.0F);
+            worldIn.playSound((Player) null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.SUMMON_SPELL.get(), this.getSoundSource(), 1.0F, 1.0F);
         }
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        this.commonResult(worldIn, entityLiving);
-        if (!isShifting(entityLiving)) {
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        this.commonResult(worldIn, caster);
+        int potency = spellStat.getPotency();
+        int duration = spellStat.getDuration();
+        if (WandUtil.enchantedFocus(caster)){
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), caster) + 1;
+        }
+        if (!isShifting(caster)) {
             int i = 3;
             if (rightStaff(staff)){
                 i = 3 + worldIn.random.nextInt(3);
             }
-            if (this.NetherPower(entityLiving)){
+            if (this.NetherPower(caster)){
                 i -= 2;
             }
             for (int i1 = 0; i1 < i; ++i1) {
-                BlockPos blockpos = entityLiving.blockPosition().offset(-2 + entityLiving.getRandom().nextInt(5), 1, -2 + entityLiving.getRandom().nextInt(5));
+                BlockPos blockpos = caster.blockPosition().offset(-2 + caster.getRandom().nextInt(5), 1, -2 + caster.getRandom().nextInt(5));
                 Malghast ghast = new MiniGhast(ModEntityType.MINI_GHAST.get(), worldIn);
-                if (this.NetherPower(entityLiving)){
+                if (this.NetherPower(caster)){
                     ghast = new GhastServant(ModEntityType.GHAST_SERVANT.get(), worldIn);
-                    if (CuriosFinder.hasUnholySet(entityLiving)){
+                    if (CuriosFinder.hasUnholySet(caster)){
                         ghast = new Malghast(ModEntityType.MALGHAST.get(), worldIn);
                     }
-                    blockpos = BlockFinder.SummonFlyingRadius(entityLiving.blockPosition().above(2), ghast, worldIn, 12);
+                    blockpos = BlockFinder.SummonFlyingRadius(caster.blockPosition().above(2), ghast, worldIn, 12);
                 }
-                ghast.setTrueOwner(entityLiving);
-                ghast.moveTo(blockpos, entityLiving.getYRot(), 0.0F);
-                ghast.finalizeSpawn(worldIn, entityLiving.level.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, null, null);
+                ghast.setTrueOwner(caster);
+                ghast.moveTo(blockpos, caster.getYRot(), 0.0F);
+                ghast.finalizeSpawn(worldIn, caster.level.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, null, null);
                 ghast.setLimitedLife(MobUtil.getSummonLifespan(worldIn) * duration);
-                this.SummonSap(entityLiving, ghast);
-                int boost = Mth.clamp(enchantment, 0, 10);
-                ghast.setFireBallDamage(boost - EffectsUtil.getAmplifierPlus(entityLiving, MobEffects.WEAKNESS));
-                float extraBlast = Mth.clamp(enchantment, 0, SpellConfig.MaxRadiusLevel.get()) / 2.5F;
+                this.SummonSap(caster, ghast);
+                int boost = Mth.clamp(potency, 0, 10);
+                ghast.setFireBallDamage(boost - EffectsUtil.getAmplifierPlus(caster, MobEffects.WEAKNESS));
+                float extraBlast = Mth.clamp(potency, 0, SpellConfig.MaxRadiusLevel.get()) / 2.5F;
                 ghast.setExplosionPower(ghast.getExplosionPower() + extraBlast);
-                this.setTarget(entityLiving, ghast);
+                this.setTarget(caster, ghast);
                 worldIn.addFreshEntity(ghast);
-                this.summonAdvancement(entityLiving, ghast);
+                this.summonAdvancement(caster, ghast);
             }
-            this.SummonDown(entityLiving);
-            worldIn.playSound((Player) null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.SUMMON_SPELL.get(), this.getSoundSource(), 1.0F, 1.0F);
+            this.SummonDown(caster);
+            worldIn.playSound((Player) null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.SUMMON_SPELL.get(), this.getSoundSource(), 1.0F, 1.0F);
         }
     }
 }

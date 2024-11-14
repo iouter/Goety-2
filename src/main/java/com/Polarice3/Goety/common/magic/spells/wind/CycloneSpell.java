@@ -6,6 +6,7 @@ import com.Polarice3.Goety.common.entities.projectiles.AbstractCyclone;
 import com.Polarice3.Goety.common.entities.projectiles.Cyclone;
 import com.Polarice3.Goety.common.entities.projectiles.FireTornado;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.CuriosFinder;
@@ -58,29 +59,31 @@ public class CycloneSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        Vec3 vector3d = entityLiving.getViewVector( 1.0F);
-        AbstractCyclone cyclone = new Cyclone(worldIn,
-                entityLiving.getX() + vector3d.x / 2,
-                entityLiving.getEyeY() - 0.2,
-                entityLiving.getZ() + vector3d.z / 2,
-                vector3d.x,
-                vector3d.y,
-                vector3d.z);
-        if (CuriosFinder.hasUnholySet(entityLiving)){
-            cyclone = new FireTornado(worldIn,
-                    entityLiving.getX() + vector3d.x / 2,
-                    entityLiving.getEyeY() - 0.2,
-                    entityLiving.getZ() + vector3d.z / 2,
-                    vector3d.x,
-                    vector3d.y,
-                    vector3d.z);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        Vec3 vector3d = caster.getViewVector( 1.0F);
+        Vec3 vec3 = vector3d;
+        LivingEntity livingEntity = this.getTarget(caster);
+        if (livingEntity != null) {
+            double d1 = livingEntity.getX() - caster.getX();
+            double d2 = livingEntity.getY(0.5D) - caster.getY(0.5D);
+            double d3 = livingEntity.getZ() - caster.getZ();
+            vec3 = new Vec3(d1, d2, d3);
         }
-        cyclone.setOwnerId(entityLiving.getUUID());
-        if (this.getTarget(entityLiving) != null) {
-            cyclone.setTarget(this.getTarget(entityLiving));
-        } else {
-            cyclone.shootFromRotation(entityLiving, entityLiving.getXRot(), entityLiving.getYRot(), 0.0F, 1.0F + (WandUtil.getLevels(ModEnchantments.VELOCITY.get(), entityLiving) / 3.0F), 1.0F);
+        AbstractCyclone cyclone = new Cyclone(worldIn,
+                caster,
+                vec3.x,
+                vec3.y,
+                vec3.z);
+        if (CuriosFinder.hasUnholySet(caster)){
+            cyclone = new FireTornado(worldIn,
+                    caster,
+                    vec3.x,
+                    vec3.y,
+                    vec3.z);
+        }
+        cyclone.setOwner(caster);
+        if (livingEntity != null) {
+            cyclone.setTarget(livingEntity);
         }
         float size = 1.0F;
         float damage = 0.0F;
@@ -88,11 +91,14 @@ public class CycloneSpell extends Spell {
             size += 1.0F;
             damage += 1.0F;
         }
-        cyclone.setDamage(damage * (WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving) + 1));
-        cyclone.setTotalLife(600 * (WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving) + 1));
-        cyclone.setBoltSpeed(WandUtil.getLevels(ModEnchantments.VELOCITY.get(), entityLiving));
-        cyclone.setSize(size + (WandUtil.getLevels(ModEnchantments.RADIUS.get(), entityLiving) / 10.0F));
+        cyclone.setDamage(damage * (WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster) + 1));
+        cyclone.setTotalLife(600 * (WandUtil.getLevels(ModEnchantments.DURATION.get(), caster) + 1));
+        cyclone.setBoltSpeed(WandUtil.getLevels(ModEnchantments.VELOCITY.get(), caster));
+        cyclone.setSize(size + (WandUtil.getLevels(ModEnchantments.RADIUS.get(), caster) / 10.0F));
+        cyclone.setPos(caster.getX() + vector3d.x / 2,
+                caster.getEyeY() - 0.2,
+                caster.getZ() + vector3d.z / 2);
         worldIn.addFreshEntity(cyclone);
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), CastingSound(), this.getSoundSource(), 1.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), CastingSound(), this.getSoundSource(), 1.0F, 1.0F);
     }
 }

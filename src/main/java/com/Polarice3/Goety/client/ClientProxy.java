@@ -38,37 +38,25 @@ public class ClientProxy implements ModProxy {
         spawnSoulExplosion(Minecraft.getInstance().level, blockPos, radius);
     }
 
-    public void shock(Vec3 vectorStart, Vec3 vectorEnd, int lifespan) {
-        shock(Minecraft.getInstance().level, vectorStart, vectorEnd, lifespan);
-    }
-
-    public void shock(Level level, Vec3 vectorStart, Vec3 vectorEnd, int lifespan){
-        if (!(level instanceof ClientLevel)){
+    public void shock(Vec3 vectorStart, Vec3 vectorEnd, ColorUtil colorUtil, int lifespan) {
+        if (Minecraft.getInstance().level == null){
             return;
         }
-        LightningEffect.INSTANCE.add(level, new LightningParticleOptions(vectorStart, vectorEnd, lifespan).size(0.04F), ClientEvents.PARTIAL_TICK);
+        LightningEffect.INSTANCE.add(Minecraft.getInstance().level, new LightningParticleOptions(LightningParticleOptions.BoltRenderInfo.shock(colorUtil), vectorStart, vectorEnd, lifespan).size(0.04F), ClientEvents.PARTIAL_TICK);
     }
 
-    public void thunderBolt(Vec3 vectorStart, Vec3 vectorEnd, int lifespan) {
-        thunderBolt(Minecraft.getInstance().level, vectorStart, vectorEnd, lifespan);
-    }
-
-    public void thunderBolt(Level level, Vec3 vectorStart, Vec3 vectorEnd, int lifespan){
-        if (!(level instanceof ClientLevel)){
+    public void thunderBolt(Vec3 vectorStart, Vec3 vectorEnd, ColorUtil colorUtil, int lifespan) {
+        if (Minecraft.getInstance().level == null){
             return;
         }
-        LightningEffect.INSTANCE.add(level, new LightningParticleOptions(LightningParticleOptions.BoltRenderInfo.thunderBolt(new ColorUtil(177, 235, 220, 1.0F)), vectorStart, vectorEnd, lifespan).size(0.25F), ClientEvents.PARTIAL_TICK);
+        LightningEffect.INSTANCE.add(Minecraft.getInstance().level, new LightningParticleOptions(LightningParticleOptions.BoltRenderInfo.thunderBolt(colorUtil), vectorStart, vectorEnd, lifespan).size(0.25F), ClientEvents.PARTIAL_TICK);
     }
 
-    public void lightningBolt(Vec3 vectorStart, Vec3 vectorEnd, int lifespan) {
-        lightningBolt(Minecraft.getInstance().level, vectorStart, vectorEnd, lifespan);
-    }
-
-    public void lightningBolt(Level level, Vec3 vectorStart, Vec3 vectorEnd, int lifespan){
-        if (!(level instanceof ClientLevel)){
+    public void lightningBolt(Vec3 vectorStart, Vec3 vectorEnd, ColorUtil colorUtil, int lifespan){
+        if (Minecraft.getInstance().level == null){
             return;
         }
-        LightningEffect.INSTANCE.add(level, new LightningParticleOptions(LightningParticleOptions.BoltRenderInfo.thunderBolt(new ColorUtil(100, 100, 220, 1.0F)).noise(1.0F, 0.001F), vectorStart, vectorEnd, lifespan).size(0.5F), ClientEvents.PARTIAL_TICK);
+        LightningEffect.INSTANCE.add(Minecraft.getInstance().level, new LightningParticleOptions(LightningParticleOptions.BoltRenderInfo.thunderBolt(new ColorUtil(100, 100, 220, 1.0F)).noise(1.0F, 0.001F), vectorStart, vectorEnd, lifespan).size(0.5F), ClientEvents.PARTIAL_TICK);
     }
 
     public void spawnSoulExplosion(Level level, BlockPos blockPos, int radius){

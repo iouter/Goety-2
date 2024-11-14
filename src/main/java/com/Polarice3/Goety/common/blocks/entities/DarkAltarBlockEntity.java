@@ -70,14 +70,15 @@ public class DarkAltarBlockEntity extends PedestalBlockEntity implements GameEve
 
                 @Override
                 protected void onContentsChanged(int slot) {
-                    assert DarkAltarBlockEntity.this.level != null;
-                    if (!DarkAltarBlockEntity.this.level.isClientSide) {
-                        DarkAltarBlockEntity.this.lastChangeTime = DarkAltarBlockEntity.this.level
-                                .getGameTime();
-                        boolean flag = !this.stacks.get(0).isEmpty();
-                        DarkAltarBlockEntity.this.level.setBlockAndUpdate(DarkAltarBlockEntity.this.getBlockPos(),
-                                DarkAltarBlockEntity.this.getBlockState().setValue(DarkAltarBlock.OCCUPIED, flag));
-                        DarkAltarBlockEntity.this.markNetworkDirty();
+                    if (DarkAltarBlockEntity.this.level != null) {
+                        if (!DarkAltarBlockEntity.this.level.isClientSide) {
+                            DarkAltarBlockEntity.this.lastChangeTime = DarkAltarBlockEntity.this.level
+                                    .getGameTime();
+                            boolean flag = !this.stacks.get(0).isEmpty();
+                            DarkAltarBlockEntity.this.level.setBlockAndUpdate(DarkAltarBlockEntity.this.getBlockPos(),
+                                    DarkAltarBlockEntity.this.getBlockState().setValue(DarkAltarBlock.OCCUPIED, flag));
+                            DarkAltarBlockEntity.this.markNetworkDirty();
+                        }
                     }
                 }
             });
@@ -201,7 +202,9 @@ public class DarkAltarBlockEntity extends PedestalBlockEntity implements GameEve
 
     public void tick() {
         boolean flag = this.checkCage();
-        assert this.level != null;
+        if (this.level == null){
+            return;
+        }
         if (flag) {
             if (this.cursedCageTile.getSouls() > 0){
                 RitualRecipe recipe = this.getCurrentRitualRecipe();
@@ -589,7 +592,9 @@ public class DarkAltarBlockEntity extends PedestalBlockEntity implements GameEve
     }
 
     private boolean checkCage() {
-        assert this.level != null;
+        if (this.level == null){
+            return false;
+        }
         BlockPos pos = new BlockPos(this.getBlockPos().getX(), this.getBlockPos().getY() - 1, this.getBlockPos().getZ());
         BlockState blockState = this.level.getBlockState(pos);
         if (blockState.is(ModBlocks.CURSED_CAGE_BLOCK.get())){

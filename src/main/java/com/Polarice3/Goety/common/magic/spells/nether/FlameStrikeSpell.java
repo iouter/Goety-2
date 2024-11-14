@@ -4,6 +4,7 @@ import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.util.FirePillar;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.BlockFinder;
@@ -22,6 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlameStrikeSpell extends Spell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setDuration(180).setRadius(3.0D);
+    }
+
     @Override
     public int defaultSoulCost() {
         return SpellConfig.FlameStrikeCost.get();
@@ -58,47 +65,47 @@ public class FlameStrikeSpell extends Spell {
     }
 
     @Override
-    public void startSpell(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        int warmUp = this.castDuration(entityLiving) - 10;
-        int duration = 180 * (WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving) + 1);
-        int range = 16 + WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
-        LivingEntity target = this.getTarget(entityLiving, range);
-        if (target != null && !this.isShifting(entityLiving)){
-            double radius = 3.0D;
+    public void startSpell(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        int warmUp = this.castDuration(caster) - 10;
+        int duration = spellStat.getDuration() * (WandUtil.getLevels(ModEnchantments.DURATION.get(), caster) + 1);
+        int range = spellStat.getRange() + WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
+        LivingEntity target = this.getTarget(caster, range);
+        if (target != null && !this.isShifting(caster)){
+            double radius = spellStat.getRadius();
             if (rightStaff(staff)){
                 radius *= 2.0D;
             }
             List<Vec3> vec3s = BlockFinder.buildOuterBlockCircle(target.position(), radius);
             for (Vec3 vec3 : vec3s) {
                 FirePillar flames = new FirePillar(worldIn, vec3.x, vec3.y, vec3.z);
-                flames.setOwner(entityLiving);
+                flames.setOwner(caster);
                 flames.setDuration(duration);
                 flames.setWarmUp(warmUp);
-                flames.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
+                flames.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
                 MobUtil.moveDownToGround(flames);
                 worldIn.addFreshEntity(flames);
             }
         } else {
-            Vec3 vector3d = entityLiving.getViewVector(1.0F);
-            float f = (float) Mth.atan2(vector3d.z - entityLiving.getZ(), vector3d.x - entityLiving.getX());
+            Vec3 vector3d = caster.getViewVector(1.0F);
+            float f = (float) Mth.atan2(vector3d.z - caster.getZ(), vector3d.x - caster.getX());
             for (int k = 0; k < 8; ++k) {
                 float f2 = f + (float) k * (float) Math.PI * 0.25F + 1.0F;
-                FirePillar flames = new FirePillar(worldIn, entityLiving.getX() + (double) Mth.cos(f2), entityLiving.getY(), entityLiving.getZ() + (double) Mth.sin(f2));
-                flames.setOwner(entityLiving);
+                FirePillar flames = new FirePillar(worldIn, caster.getX() + (double) Mth.cos(f2), caster.getY(), caster.getZ() + (double) Mth.sin(f2));
+                flames.setOwner(caster);
                 flames.setDuration(duration);
                 flames.setWarmUp(warmUp);
-                flames.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
+                flames.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
                 MobUtil.moveDownToGround(flames);
                 worldIn.addFreshEntity(flames);
             }
 
             for (int k = 0; k < 8; ++k) {
                 float f2 = f + (float) k * (float) Math.PI * 0.25F + 3.0F;
-                FirePillar flames = new FirePillar(worldIn, entityLiving.getX() + (double) Mth.cos(f2) * 3.0D, entityLiving.getY(), entityLiving.getZ() + (double) Mth.sin(f2) * 3.0D);
-                flames.setOwner(entityLiving);
+                FirePillar flames = new FirePillar(worldIn, caster.getX() + (double) Mth.cos(f2) * 3.0D, caster.getY(), caster.getZ() + (double) Mth.sin(f2) * 3.0D);
+                flames.setOwner(caster);
                 flames.setDuration(duration);
                 flames.setWarmUp(warmUp);
-                flames.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
+                flames.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
                 MobUtil.moveDownToGround(flames);
                 worldIn.addFreshEntity(flames);
             }
@@ -106,22 +113,22 @@ public class FlameStrikeSpell extends Spell {
             if (rightStaff(staff)) {
                 for (int k = 0; k < 8; ++k) {
                     float f2 = f + (float) k * (float) Math.PI * 0.25F + 6.0F;
-                    FirePillar flames = new FirePillar(worldIn, entityLiving.getX() + (double) Mth.cos(f2) * 6.0D, entityLiving.getY(), entityLiving.getZ() + (double) Mth.sin(f2) * 6.0D);
-                    flames.setOwner(entityLiving);
+                    FirePillar flames = new FirePillar(worldIn, caster.getX() + (double) Mth.cos(f2) * 6.0D, caster.getY(), caster.getZ() + (double) Mth.sin(f2) * 6.0D);
+                    flames.setOwner(caster);
                     flames.setDuration(duration);
                     flames.setWarmUp(warmUp);
-                    flames.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
+                    flames.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
                     MobUtil.moveDownToGround(flames);
                     worldIn.addFreshEntity(flames);
                 }
 
                 for (int k = 0; k < 16; ++k) {
                     float f2 = f + (float) k * (float) Math.PI * 0.25F + 9.0F;
-                    FirePillar flames = new FirePillar(worldIn, entityLiving.getX() + (double) Mth.cos(f2) * 9.0F, entityLiving.getY(), entityLiving.getZ() + (double) Mth.sin(f2) * 9.0F);
-                    flames.setOwner(entityLiving);
+                    FirePillar flames = new FirePillar(worldIn, caster.getX() + (double) Mth.cos(f2) * 9.0F, caster.getY(), caster.getZ() + (double) Mth.sin(f2) * 9.0F);
+                    flames.setOwner(caster);
                     flames.setDuration(duration);
                     flames.setWarmUp(warmUp);
-                    flames.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
+                    flames.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
                     MobUtil.moveDownToGround(flames);
                     worldIn.addFreshEntity(flames);
                 }
@@ -130,6 +137,6 @@ public class FlameStrikeSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff){
     }
 }

@@ -27,6 +27,8 @@
     "EntityRenderersMixin",
     "GuiGraphicsMixin",
     "LevelRendererMixin",
-    "PlayerRendererAccessor"
+    "MinecraftMixin",
+    "PlayerRendererAccessor",
+    "SpinAttackEffectLayerMixin"
   ]
 }

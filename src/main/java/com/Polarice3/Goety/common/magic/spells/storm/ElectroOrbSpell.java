@@ -4,6 +4,7 @@ import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.projectiles.ElectroOrb;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.WandUtil;
@@ -19,6 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ElectroOrbSpell extends Spell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setRange(32);
+    }
 
     @Override
     public int defaultSoulCost() {
@@ -55,28 +61,28 @@ public class ElectroOrbSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        int range = 32 + WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
-        LivingEntity livingEntity = this.getTarget(entityLiving, range);
-        ElectroOrb blast = new ElectroOrb(worldIn, entityLiving, livingEntity);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat){
+        int range = spellStat.getRange() + WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
+        LivingEntity livingEntity = this.getTarget(caster, range);
+        ElectroOrb blast = new ElectroOrb(worldIn, caster, livingEntity);
         Vec3 vector3d;
         if (livingEntity != null){
             vector3d = livingEntity.position().add(livingEntity.getDeltaMovement().multiply(10.0F, 10.0F, 10.0F)).subtract(livingEntity.position()).normalize();
             blast.setPos(blast.getX() + vector3d.x,
-                    entityLiving.getEyeY() - 0.2,
+                    caster.getEyeY() - 0.2,
                     blast.getZ() + vector3d.z);
         } else {
-            vector3d = entityLiving.getViewVector( 1.0F);
-            blast.setPos(entityLiving.getX() + vector3d.x / 2,
-                    entityLiving.getEyeY() - 0.2,
-                    entityLiving.getZ() + vector3d.z / 2);
+            vector3d = caster.getViewVector( 1.0F);
+            blast.setPos(caster.getX() + vector3d.x / 2,
+                    caster.getEyeY() - 0.2,
+                    caster.getZ() + vector3d.z / 2);
         }
-        blast.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
+        blast.setExtraDamage(spellStat.getPotency() + WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
         blast.setStaff(this.rightStaff(staff));
         blast.shoot(vector3d.x,
                 vector3d.y,
                 vector3d.z, 0.66F, 3.0F);
         worldIn.addFreshEntity(blast);
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.SHOCK_CAST.get(), this.getSoundSource(), 1.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.SHOCK_CAST.get(), this.getSoundSource(), 1.0F, 1.0F);
     }
 }

@@ -5,6 +5,7 @@ import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.projectiles.ViciousTooth;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.WandUtil;
@@ -16,7 +17,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.phys.*;
@@ -56,29 +56,28 @@ public class TeethSpell extends Spell {
         return list;
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        Player playerEntity = (Player) entityLiving;
-        int range = 16;
-        double radius = 2.0D;
-        float damage = 0.0F;
-        if (WandUtil.enchantedFocus(entityLiving)){
-            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
-            damage += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat){
+        int range = spellStat.getRange();
+        double radius = spellStat.getRadius();
+        float potency = spellStat.getPotency();
+        if (WandUtil.enchantedFocus(caster)){
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
         }
-        HitResult rayTraceResult = this.rayTrace(worldIn, playerEntity, range, radius);
-        BlockPos blockPos = entityLiving.blockPosition();
+        HitResult rayTraceResult = this.rayTrace(worldIn, caster, range, radius);
+        BlockPos blockPos = caster.blockPosition();
         if (rightStaff(staff)) {
-            if (this.isShifting(entityLiving)) {
-                this.surroundTeeth(entityLiving, blockPos, damage, true);
+            if (this.isShifting(caster)) {
+                this.surroundTeeth(caster, blockPos, potency, true);
             } else {
-                LivingEntity target = this.getTarget(entityLiving, range);
+                LivingEntity target = this.getTarget(caster, range);
                 if (target != null) {
                     blockPos = target.blockPosition();
                 } else if (rayTraceResult instanceof BlockHitResult) {
                     blockPos = ((BlockHitResult) rayTraceResult).getBlockPos().above();
                 }
                 for (int length = 0; length < 16; length++) {
-                    blockPos = blockPos.offset(-2 + entityLiving.getRandom().nextInt(4), 0, -2 + entityLiving.getRandom().nextInt(4));
+                    blockPos = blockPos.offset(-2 + caster.getRandom().nextInt(4), 0, -2 + caster.getRandom().nextInt(4));
                     BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
 
                     while (blockpos$mutable.getY() < blockPos.getY() + 8.0D && !worldIn.getBlockState(blockpos$mutable).blocksMotion()) {
@@ -88,8 +87,8 @@ public class TeethSpell extends Spell {
                     if (worldIn.noCollision(new AABB(blockpos$mutable))) {
                         ViciousTooth viciousTooth = new ViciousTooth(ModEntityType.VICIOUS_TOOTH.get(), worldIn);
                         viciousTooth.setPos(Vec3.atCenterOf(blockpos$mutable));
-                        viciousTooth.setOwner(entityLiving);
-                        viciousTooth.setExtraDamage(damage);
+                        viciousTooth.setOwner(caster);
+                        viciousTooth.setExtraDamage(potency);
                         if (worldIn.addFreshEntity(viciousTooth)) {
                             viciousTooth.playSound(ModSounds.TOOTH_SPAWN.get());
                         }
@@ -97,8 +96,8 @@ public class TeethSpell extends Spell {
                 }
             }
         } else {
-            if (this.isShifting(entityLiving)){
-                blockPos = entityLiving.blockPosition();
+            if (this.isShifting(caster)){
+                blockPos = caster.blockPosition();
             } else if (rayTraceResult instanceof EntityHitResult){
                 Entity target = ((EntityHitResult) rayTraceResult).getEntity();
                 blockPos = target.blockPosition();
@@ -113,14 +112,14 @@ public class TeethSpell extends Spell {
             if (worldIn.noCollision(new AABB(blockpos$mutable))){
                 ViciousTooth viciousTooth = new ViciousTooth(ModEntityType.VICIOUS_TOOTH.get(), worldIn);
                 viciousTooth.setPos(Vec3.atCenterOf(blockpos$mutable));
-                viciousTooth.setOwner(entityLiving);
-                viciousTooth.setExtraDamage(damage);
+                viciousTooth.setOwner(caster);
+                viciousTooth.setExtraDamage(potency);
                 if (worldIn.addFreshEntity(viciousTooth)) {
                     viciousTooth.playSound(ModSounds.TOOTH_SPAWN.get());
                 }
             }
         }
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.EVOKER_CAST_SPELL, this.getSoundSource(), 1.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.EVOKER_CAST_SPELL, this.getSoundSource(), 1.0F, 1.0F);
     }
 
     public void surroundTeeth(LivingEntity livingEntity, BlockPos blockPos, float damage, boolean isStaff){

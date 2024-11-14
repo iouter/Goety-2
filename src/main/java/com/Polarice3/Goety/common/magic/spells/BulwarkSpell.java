@@ -2,6 +2,7 @@ package com.Polarice3.Goety.common.magic.spells;
 
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.MiscCapHelper;
@@ -38,8 +39,8 @@ public class BulwarkSpell extends Spell {
     }
 
     @Override
-    public boolean conditionsMet(ServerLevel worldIn, LivingEntity entityLiving) {
-        return MiscCapHelper.getShields(entityLiving) <= 0;
+    public boolean conditionsMet(ServerLevel worldIn, LivingEntity caster) {
+        return MiscCapHelper.getShields(caster) <= 0;
     }
 
     @Override
@@ -51,23 +52,27 @@ public class BulwarkSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
         int amount = SpellConfig.BulwarkShieldAmount.get();
         int duration = SpellConfig.BulwarkShieldTime.get();
-        if (WandUtil.enchantedFocus(entityLiving)) {
-            amount += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
-            duration *= Math.min(4, WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving) + 1);
+        if (WandUtil.enchantedFocus(caster)) {
+            amount += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            duration *= Math.min(4, WandUtil.getLevels(ModEnchantments.DURATION.get(), caster) + 1);
         }
-        LivingEntity target = this.getTarget(entityLiving);
-        if (isShifting(entityLiving) && target != null){
-            if (MobUtil.areAllies(target, entityLiving)){
+        amount += spellStat.getPotency();
+        if (spellStat.getDuration() > 0){
+            duration = spellStat.getDuration();
+        }
+        LivingEntity target = this.getTarget(caster);
+        if (isShifting(caster) && target != null){
+            if (MobUtil.areAllies(target, caster)){
                 MiscCapHelper.setShields(target, amount);
                 MiscCapHelper.setShieldTime(target, duration);
             }
         } else {
-            MiscCapHelper.setShields(entityLiving, amount);
-            MiscCapHelper.setShieldTime(entityLiving, duration);
+            MiscCapHelper.setShields(caster, amount);
+            MiscCapHelper.setShieldTime(caster, duration);
         }
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.SHIELD_UP.get(), this.getSoundSource(), 3.0F, entityLiving.getVoicePitch());
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.SHIELD_UP.get(), this.getSoundSource(), 3.0F, caster.getVoicePitch());
     }
 }

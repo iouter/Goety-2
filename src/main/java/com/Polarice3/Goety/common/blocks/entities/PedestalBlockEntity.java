@@ -25,14 +25,15 @@ public class PedestalBlockEntity extends RitualBlockEntity {
 
                 @Override
                 protected void onContentsChanged(int slot) {
-                    assert PedestalBlockEntity.this.level != null;
-                    if (!PedestalBlockEntity.this.level.isClientSide) {
-                        PedestalBlockEntity.this.lastChangeTime = PedestalBlockEntity.this.level
-                                .getGameTime();
-                        boolean flag = !this.stacks.get(0).isEmpty();
-                        PedestalBlockEntity.this.level.setBlockAndUpdate(PedestalBlockEntity.this.getBlockPos(),
-                                PedestalBlockEntity.this.getBlockState().setValue(PedestalBlock.OCCUPIED, flag));
-                        PedestalBlockEntity.this.markNetworkDirty();
+                    if (PedestalBlockEntity.this.level != null) {
+                        if (!PedestalBlockEntity.this.level.isClientSide) {
+                            PedestalBlockEntity.this.lastChangeTime = PedestalBlockEntity.this.level
+                                    .getGameTime();
+                            boolean flag = !this.stacks.get(0).isEmpty();
+                            PedestalBlockEntity.this.level.setBlockAndUpdate(PedestalBlockEntity.this.getBlockPos(),
+                                    PedestalBlockEntity.this.getBlockState().setValue(PedestalBlock.OCCUPIED, flag));
+                            PedestalBlockEntity.this.markNetworkDirty();
+                        }
                     }
                 }
             });

@@ -3,6 +3,7 @@ package com.Polarice3.Goety.common.magic.spells.geomancy;
 import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.EverChargeSpell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.SEHelper;
@@ -76,7 +77,7 @@ public class BurrowingSpell extends EverChargeSpell {
     }
 
     @Override
-    public SoundEvent loopSound(LivingEntity entityLiving) {
+    public SoundEvent loopSound(LivingEntity caster) {
         return ModSounds.BURROW.get();
     }
 
@@ -92,46 +93,46 @@ public class BurrowingSpell extends EverChargeSpell {
     }
 
     @Override
-    public void startSpell(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        if (entityLiving instanceof Player player){
+    public void startSpell(ServerLevel worldIn, LivingEntity caster, ItemStack staff) {
+        if (caster instanceof Player player){
             resetMiningProgress(worldIn, player);
         }
-        super.startSpell(worldIn, entityLiving, staff);
+        super.startSpell(worldIn, caster, staff);
     }
 
     @Override
-    public void stopSpell(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff, int useTimeRemaining) {
-        if (entityLiving instanceof Player player){
+    public void stopSpell(ServerLevel worldIn, LivingEntity caster, ItemStack staff, int useTimeRemaining) {
+        if (caster instanceof Player player){
             resetMiningProgress(worldIn, player);
         }
-        super.stopSpell(worldIn, entityLiving, staff, useTimeRemaining);
+        super.stopSpell(worldIn, caster, staff, useTimeRemaining);
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        int range = 16;
-        int efficiency = 0;
-        int burning = 0;
-        if (WandUtil.enchantedFocus(entityLiving)){
-            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
-            efficiency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
-            burning += WandUtil.getLevels(ModEnchantments.BURNING.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        int range = spellStat.getRange();
+        int potency = spellStat.getPotency();
+        int burning = spellStat.getBurning();
+        if (WandUtil.enchantedFocus(caster)){
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            burning += WandUtil.getLevels(ModEnchantments.BURNING.get(), caster);
         }
 
-        BlockHitResult blockHitResult = this.blockResult(worldIn, entityLiving, range);
+        BlockHitResult blockHitResult = this.blockResult(worldIn, caster, range);
         BlockPos blockPos = blockHitResult.getBlockPos();
         BlockState blockState = worldIn.getBlockState(blockPos);
         if (blockState.isAir()){
             return;
         }
-        float hardness = getHardness(blockPos, entityLiving, efficiency);
+        float hardness = getHardness(blockPos, caster, potency);
         hardness = (float) Math.floor(hardness);
 
         if (hardness == 0) {
             hardness = 1;
         }
 
-        if (entityLiving instanceof Player player) {
+        if (caster instanceof Player player) {
             if (canMineBlock(worldIn, player, blockPos, blockState)) {
                 int miningLevel = 1 + WandUtil.getLevels(ModEnchantments.POTENCY.get(), player);
                 Tier tier = miningLevel < 3 ? Tiers.IRON : miningLevel == 3 ? Tiers.DIAMOND : Tiers.NETHERITE;
@@ -176,7 +177,7 @@ public class BurrowingSpell extends EverChargeSpell {
                         List<ItemStack> drops = Block.getDrops(blockState, worldIn, blockPos, null, player, tempTool);
 
                         int exp = blockState.getExpDrop(worldIn, worldIn.random, blockPos, fortune, silk);
-                        boolean magnetMode = WandUtil.getLevels(ModEnchantments.MAGNET.get(), entityLiving) > 0;
+                        boolean magnetMode = WandUtil.getLevels(ModEnchantments.MAGNET.get(), caster) > 0;
                         for (ItemStack drop : drops) {
                             if (drop != null) {
                                 if (burning > 0){

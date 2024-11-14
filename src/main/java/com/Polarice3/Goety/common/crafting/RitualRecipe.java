@@ -24,6 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class RitualRecipe extends ModShapelessRecipe {
     public static Serializer SERIALIZER = new Serializer();
@@ -255,9 +256,13 @@ public class RitualRecipe extends ModShapelessRecipe {
             return nonnulllist;
         }
 
+        @Nullable
         @Override
         public RitualRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
             ModShapelessRecipe recipe = serializer.fromNetwork(recipeId, buffer);
+            if (recipe == null){
+                return null;
+            }
             String craftType = buffer.readUtf(32767);
 
             ResourceLocation ritualType = buffer.readResourceLocation();
@@ -305,7 +310,6 @@ public class RitualRecipe extends ModShapelessRecipe {
                 research = buffer.readUtf(32767);
             }
 
-            assert recipe != null;
             return new RitualRecipe(recipe.getId(), recipe.getGroup(), craftType, ritualType, recipe.getResultItem(null), entityToSummon, entityToConvertInto,
                     activationItem, recipe.getIngredients(), duration, summonLife, soulCost, entityToSacrifice, entityToSacrificeDisplayName, entityToConvert, entityToConvertDisplayName, enchantment, xpLevelCost, research);
         }

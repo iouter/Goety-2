@@ -8,6 +8,7 @@ import com.Polarice3.Goety.common.network.server.SPlayPlayerSoundPacket;
 import com.Polarice3.Goety.common.network.server.SPlayWorldSoundPacket;
 import com.Polarice3.Goety.utils.BlockFinder;
 import com.Polarice3.Goety.utils.MobUtil;
+import com.Polarice3.Goety.utils.SEHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -90,7 +91,7 @@ public class TroopFocus extends MagicFocus{
                         for (Entity entity : serverLevel.getAllEntities()) {
                             if (entity instanceof LivingEntity livingEntity1 && entity.getType() == entityType) {
                                 if (livingEntity1 instanceof OwnableEntity ownable){
-                                    if (ownable.getOwner() == player){
+                                    if (ownable.getOwner() == player && !SEHelper.getGroundedEntities(player).contains(livingEntity1)){
                                         list.add(livingEntity1);
                                     }
                                 }
@@ -154,6 +155,17 @@ public class TroopFocus extends MagicFocus{
                 }
             }
         }
+    }
+
+    public static EntityType<?> getSummonType(ItemStack stack){
+        CompoundTag compoundTag = stack.getTag();
+        if (compoundTag != null) {
+            boolean flag = compoundTag.contains(TAG_ENTITY_TYPE);
+            if (flag) {
+                return ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(compoundTag.getString(TAG_ENTITY_TYPE)));
+            }
+        }
+        return null;
     }
 
     public static EntityType<?> getSummonType(CompoundTag compoundTag){

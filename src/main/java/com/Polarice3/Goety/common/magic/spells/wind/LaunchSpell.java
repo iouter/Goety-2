@@ -3,6 +3,7 @@ package com.Polarice3.Goety.common.magic.spells.wind;
 import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.WandUtil;
@@ -52,11 +53,11 @@ public class LaunchSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        if (entityLiving instanceof Player player){
-            int enchantment = 0;
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        if (caster instanceof Player player){
+            int potency = spellStat.getPotency();
             if (WandUtil.enchantedFocus(player)){
-                enchantment = WandUtil.getLevels(ModEnchantments.POTENCY.get(), player);
+                potency = WandUtil.getLevels(ModEnchantments.POTENCY.get(), player);
             }
             player.hurtMarked = true;
             if (!player.level.isClientSide){
@@ -64,11 +65,11 @@ public class LaunchSpell extends Spell {
             }
             Vec3 vector3d = player.getLookAngle();
             double power = rightStaff(staff) ? 2.5D : 1.5D;
-            double d0 = power + (double) (enchantment / 4);
+            double d0 = power + (double) (potency / 4);
             player.setDeltaMovement(vector3d.x * d0, vector3d.y * d0, vector3d.z * d0);
             player.hasImpulse = true;
             player.fallDistance = 0;
         }
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), CastingSound(), this.getSoundSource(), 2.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), CastingSound(), this.getSoundSource(), 2.0F, 1.0F);
     }
 }

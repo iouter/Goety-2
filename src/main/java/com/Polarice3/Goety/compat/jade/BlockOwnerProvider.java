@@ -50,7 +50,7 @@ public enum BlockOwnerProvider implements IBlockComponentProvider, IServerDataPr
         }
         BlockEntity blockEntity = blockAccessor.getBlockEntity();
         UUID ownerUUID = null;
-        if (blockEntity instanceof IOwnedBlock ownedBlock) {
+        if (blockEntity instanceof IOwnedBlock ownedBlock && ownedBlock.getPlayer() != null) {
             ownerUUID = ownedBlock.getPlayer().getUUID();
         }
         if (ownerUUID != null) {

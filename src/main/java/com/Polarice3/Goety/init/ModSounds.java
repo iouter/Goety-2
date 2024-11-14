@@ -88,6 +88,10 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> SKULL_LORD_FLY = create("skull_lord_fly");
     public static final RegistryObject<SoundEvent> SKULL_LORD_DEATH = create("skull_lord_death");
 
+    public static final RegistryObject<SoundEvent> SORCERER_AMBIENT = create("sorcerer_ambient");
+    public static final RegistryObject<SoundEvent> SORCERER_HURT = create("sorcerer_hurt");
+    public static final RegistryObject<SoundEvent> SORCERER_DEATH = create("sorcerer_death");
+
     public static final RegistryObject<SoundEvent> TORMENTOR_AMBIENT = create("tormentor_ambient");
     public static final RegistryObject<SoundEvent> TORMENTOR_HURT = create("tormentor_hurt");
     public static final RegistryObject<SoundEvent> TORMENTOR_CHARGE = create("tormentor_charge");
@@ -443,6 +447,7 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> VANGUARD_SUMMON = create("vanguard_summon");
     public static final RegistryObject<SoundEvent> BOSS_SUMMON = create("boss_summon");
     public static final RegistryObject<SoundEvent> SWING = create("swing");
+    public static final RegistryObject<SoundEvent> HEAVY_WOOSH = create("heavy_woosh");
     public static final RegistryObject<SoundEvent> PROJECTILE_SPELL = create("projectile_spell");
     public static final RegistryObject<SoundEvent> COMMAND = create("command");
     public static final RegistryObject<SoundEvent> SHIELD_UP = create("shield_up");

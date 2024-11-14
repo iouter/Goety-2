@@ -38,13 +38,13 @@ public class SEUpdatePacket {
 
     public static void consume(SEUpdatePacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            assert ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT;
-
-            Player player = Goety.PROXY.getPlayer();
-            if (player != null) {
-                player.getCapability(SEProvider.CAPABILITY).ifPresent((soulEnergy) -> {
-                    SEHelper.load(packet.tag, soulEnergy);
-                });
+            if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                Player player = Goety.PROXY.getPlayer();
+                if (player != null) {
+                    player.getCapability(SEProvider.CAPABILITY).ifPresent((soulEnergy) -> {
+                        SEHelper.load(packet.tag, soulEnergy);
+                    });
+                }
             }
         });
         ctx.get().setPacketHandled(true);

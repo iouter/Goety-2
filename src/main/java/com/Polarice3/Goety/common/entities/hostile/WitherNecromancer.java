@@ -285,8 +285,8 @@ public class WitherNecromancer extends AbstractNecromancer implements Enemy {
                     summoned.setTrueOwner(WitherNecromancer.this);
                     summoned.moveTo(blockPos, 0.0F, 0.0F);
                     MobUtil.moveDownToGround(summoned);
-                    summoned.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(WitherNecromancer.this.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
                     summoned.setPersistenceRequired();
+                    summoned.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(WitherNecromancer.this.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
                     if (serverLevel.addFreshEntity(summoned)){
                         summoned.playSound(ModSounds.SUMMON_SPELL.get(), 1.0F, 0.75F);
                     }

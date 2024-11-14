@@ -4,6 +4,7 @@ import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.client.particles.CircleExplodeParticleOption;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.*;
@@ -20,6 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WindHornSpell extends Spell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setDuration(3).setRadius(3.0D);
+    }
 
     @Override
     public int defaultSoulCost() {
@@ -57,27 +63,31 @@ public class WindHornSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        int radius = 3;
-        if (WandUtil.enchantedFocus(entityLiving)){
-            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        int potency = spellStat.getPotency();
+        int radius = (int) spellStat.getRadius();
+        int duration = spellStat.getDuration();
+        if (WandUtil.enchantedFocus(caster)){
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), caster);
+            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), caster);
         }
         if (rightStaff(staff)){
             radius *= 2;
         }
         ColorUtil colorUtil = new ColorUtil(0xffffff);
-        worldIn.sendParticles(new CircleExplodeParticleOption(colorUtil.red(), colorUtil.green(), colorUtil.blue(), radius * 2, radius), entityLiving.getX(), entityLiving.getY() + 0.5F, entityLiving.getZ(), 0, 0, 0, 0, 0);
-        ServerParticleUtil.windShockwaveParticle(worldIn, colorUtil, radius, 0, -1, entityLiving.position().add(0.0D, 1.0D, 0.0D));
-        for (LivingEntity livingEntity : worldIn.getEntitiesOfClass(LivingEntity.class, entityLiving.getBoundingBox().inflate(radius))){
-            if (!MobUtil.areAllies(entityLiving, livingEntity)) {
-                double d0 = livingEntity.getX() - entityLiving.getX();
-                double d1 = livingEntity.getZ() - entityLiving.getZ();
+        worldIn.sendParticles(new CircleExplodeParticleOption(colorUtil.red(), colorUtil.green(), colorUtil.blue(), (float) (radius * 2), radius), caster.getX(), caster.getY() + 0.5F, caster.getZ(), 0, 0, 0, 0, 0);
+        ServerParticleUtil.windShockwaveParticle(worldIn, colorUtil, (float) radius, 0, -1, caster.position().add(0.0D, 1.0D, 0.0D));
+        for (LivingEntity livingEntity : worldIn.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(radius))){
+            if (!MobUtil.areAllies(caster, livingEntity)) {
+                double d0 = livingEntity.getX() - caster.getX();
+                double d1 = livingEntity.getZ() - caster.getZ();
                 double d2 = Math.max(d0 * d0 + d1 * d1, 0.001D);
                 MobUtil.push(livingEntity, d0 / d2 * 4.0D, 0.2D, d1 / d2 * 4.0D);
-                livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, MathHelper.secondsToTicks(3 + WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving)), WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving)));
-                livingEntity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, MathHelper.secondsToTicks(3 + WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving)), WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving)));
+                livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, MathHelper.secondsToTicks(duration), potency));
+                livingEntity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, MathHelper.secondsToTicks(duration), potency));
             }
         }
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.WIND_HORN.get(), this.getSoundSource(), 3.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.WIND_HORN.get(), this.getSoundSource(), 3.0F, 1.0F);
     }
 }

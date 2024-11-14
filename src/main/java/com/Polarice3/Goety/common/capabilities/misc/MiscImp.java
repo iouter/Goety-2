@@ -1,11 +1,14 @@
 package com.Polarice3.Goety.common.capabilities.misc;
 
+import javax.annotation.Nullable;
+
 public class MiscImp implements IMisc{
     private int freeze = 0;
     private int shields = 0;
     private int shieldTime = 0;
     private int shieldCool = 0;
     private int ambientSoundTime = 0;
+    private String customSpinTexture = "textures/entity/trident_riptide.png";
 
     @Override
     public int freezeLevel() {
@@ -75,5 +78,16 @@ public class MiscImp implements IMisc{
     @Override
     public void setAmbientSoundTime(int soundTime) {
         this.ambientSoundTime = soundTime;
+    }
+
+    @Override
+    @Nullable
+    public String customSpinTexture() {
+        return this.customSpinTexture;
+    }
+
+    @Override
+    public void setCustomSpinTexture(@Nullable String texture) {
+        this.customSpinTexture = texture;
     }
 }

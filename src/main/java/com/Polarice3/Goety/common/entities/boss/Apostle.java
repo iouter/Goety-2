@@ -17,6 +17,7 @@ import com.Polarice3.Goety.common.entities.neutral.ZPiglinServant;
 import com.Polarice3.Goety.common.entities.projectiles.*;
 import com.Polarice3.Goety.common.entities.util.*;
 import com.Polarice3.Goety.common.items.ModItems;
+import com.Polarice3.Goety.common.items.UnholyBloodItem;
 import com.Polarice3.Goety.common.network.ModNetwork;
 import com.Polarice3.Goety.common.network.ModServerBossInfo;
 import com.Polarice3.Goety.common.network.server.SApostleSmitePacket;
@@ -505,7 +506,11 @@ public class Apostle extends SpellCastingCultist implements RangedAttackMob {
 
     protected void dropCustomDeathLoot(DamageSource pSource, int pLooting, boolean pRecentlyHit) {
         super.dropCustomDeathLoot(pSource, pLooting, pRecentlyHit);
-        ItemEntity itementity = this.spawnAtLocation(ModItems.UNHOLY_BLOOD.get());
+        ItemStack itemStack = new ItemStack(ModItems.UNHOLY_BLOOD.get());
+        if (this.isInNether()){
+            UnholyBloodItem.addPure(itemStack);
+        }
+        ItemEntity itementity = this.spawnAtLocation(itemStack);
         if (itementity != null) {
             itementity.setExtendedLifetime();
         }

@@ -31,11 +31,11 @@ public class EntityUpdatePacket {
 
     public static void consume(EntityUpdatePacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            assert ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT;
-
-            Entity entity = EntityFinder.getEntityByUuiDGlobal(packet.LivingEntityUUID).get();
-            if (entity instanceof LivingEntity livingEntity){
-                livingEntity.readAdditionalSaveData(packet.tag);
+            if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                Entity entity = EntityFinder.getEntityByUuiDGlobal(packet.LivingEntityUUID).get();
+                if (entity instanceof LivingEntity livingEntity) {
+                    livingEntity.readAdditionalSaveData(packet.tag);
+                }
             }
         });
         ctx.get().setPacketHandled(true);

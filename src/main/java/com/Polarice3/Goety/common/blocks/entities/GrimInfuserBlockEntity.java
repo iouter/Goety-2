@@ -59,23 +59,24 @@ public class GrimInfuserBlockEntity extends ModBlockEntity implements Clearable,
                 ItemStack itemstack = this.items.get(i);
                 if (!itemstack.isEmpty()) {
                     Container iinventory = new SimpleContainer(itemstack);
-                    assert this.level != null;
-                    ItemStack itemstack1 = this.level.getRecipeManager()
-                            .getRecipeFor(ModRecipeSerializer.CURSED_INFUSER.get(), iinventory, this.level)
-                            .map((recipes) -> recipes.assemble(iinventory, this.level.registryAccess())).orElse(itemstack);
-                    if (itemstack != itemstack1){
-                        this.cookingProgress[i]++;
-                    }
-                    if (this.cookingProgress[i] % 20 == 0){
-                        this.level.playSound(null, this.getBlockPos(), SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    }
-                    if (this.cookingProgress[i] >= this.cookingTime[i]) {
-                        this.items.set(i, ItemStack.EMPTY);
-                        BlockPos blockpos = this.getBlockPos();
-                        Containers.dropItemStack(this.level, blockpos.getX(), blockpos.getY(), blockpos.getZ(), itemstack1);
-                        this.level.playSound(null, this.getBlockPos(), SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0F, 1.0F);
-                        this.markUpdated();
-                        this.cookingProgress[i] = 0;
+                    if (this.level != null) {
+                        ItemStack itemstack1 = this.level.getRecipeManager()
+                                .getRecipeFor(ModRecipeSerializer.CURSED_INFUSER.get(), iinventory, this.level)
+                                .map((recipes) -> recipes.assemble(iinventory, this.level.registryAccess())).orElse(itemstack);
+                        if (itemstack != itemstack1) {
+                            this.cookingProgress[i]++;
+                        }
+                        if (this.cookingProgress[i] % 20 == 0) {
+                            this.level.playSound(null, this.getBlockPos(), SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                        }
+                        if (this.cookingProgress[i] >= this.cookingTime[i]) {
+                            this.items.set(i, ItemStack.EMPTY);
+                            BlockPos blockpos = this.getBlockPos();
+                            Containers.dropItemStack(this.level, blockpos.getX(), blockpos.getY(), blockpos.getZ(), itemstack1);
+                            this.level.playSound(null, this.getBlockPos(), SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                            this.markUpdated();
+                            this.cookingProgress[i] = 0;
+                        }
                     }
                 }
             }

@@ -44,7 +44,7 @@ public class AllyVexRenderer extends MobRenderer<AllyVex, MinionModel<AllyVex>> 
 
         @Override
         public void render(PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight, AllyVex pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
-            if (MobsConfig.VexTexture.get()) {
+            if (MobsConfig.VexTexture.get() && !pLivingEntity.isHostile()) {
                 coloredCutoutModelCopyLayerRender(this.getParentModel(), this.layerModel, TEXTURES, pMatrixStack, pBuffer, pPackedLight, pLivingEntity, pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch, pPartialTicks, 1.0F, 1.0F, 1.0F);
             }
         }

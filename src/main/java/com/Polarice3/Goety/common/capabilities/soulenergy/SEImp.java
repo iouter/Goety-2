@@ -23,6 +23,8 @@ public class SEImp implements ISoulEnergy{
     private List<EntityType<?>> grudgeTypeList = new ArrayList<>();
     private Set<UUID> allyList = new HashSet<>();
     private List<EntityType<?>> allyTypeList = new ArrayList<>();
+    private Set<UUID> groundedList = new HashSet<>();
+    private List<EntityType<?>> groundedTypeList = new ArrayList<>();
     private List<Research> researchList = new ArrayList<>();
     private FocusCooldown cooldowns = new FocusCooldown();
     @Nullable
@@ -199,6 +201,36 @@ public class SEImp implements ISoulEnergy{
     @Override
     public void removeAllyType(EntityType<?> entityType) {
         this.allyTypeList.remove(entityType);
+    }
+
+    @Override
+    public Set<UUID> groundedList() {
+        return this.groundedList;
+    }
+
+    @Override
+    public void addGrounded(UUID uuid) {
+        this.groundedList.add(uuid);
+    }
+
+    @Override
+    public void removeGrounded(UUID uuid) {
+        this.groundedList.remove(uuid);
+    }
+
+    @Override
+    public List<EntityType<?>> groundedTypeList() {
+        return this.groundedTypeList;
+    }
+
+    @Override
+    public void addGroundedType(EntityType<?> entityType) {
+        this.groundedTypeList.add(entityType);
+    }
+
+    @Override
+    public void removeGroundedType(EntityType<?> entityType) {
+        this.groundedTypeList.remove(entityType);
     }
 
     @Override

@@ -39,15 +39,15 @@ public class MiscCapUpdatePacket {
 
     public static void consume(MiscCapUpdatePacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            assert ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT;
-
-            ClientLevel clientLevel = Minecraft.getInstance().level;
-            if (clientLevel != null){
-                Entity entity = clientLevel.getEntity(packet.entityID);
-                if (entity != null) {
-                    entity.getCapability(MiscProvider.CAPABILITY).ifPresent((misc) -> {
-                        MiscCapHelper.load(packet.tag, misc);
-                    });
+            if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                ClientLevel clientLevel = Minecraft.getInstance().level;
+                if (clientLevel != null) {
+                    Entity entity = clientLevel.getEntity(packet.entityID);
+                    if (entity != null) {
+                        entity.getCapability(MiscProvider.CAPABILITY).ifPresent((misc) -> {
+                            MiscCapHelper.load(packet.tag, misc);
+                        });
+                    }
                 }
             }
         });

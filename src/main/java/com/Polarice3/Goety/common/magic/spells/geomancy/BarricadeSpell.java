@@ -4,6 +4,7 @@ import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.utils.MathHelper;
 import com.Polarice3.Goety.utils.WandUtil;
@@ -63,36 +64,36 @@ public class BarricadeSpell extends Spell {
         return list;
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        int range = 16;
-        int potency = 0;
-        int duration = 0;
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat){
+        int range = spellStat.getRange();
+        int potency = spellStat.getPotency();
+        int duration = spellStat.getDuration();
         float chance = 0.05F;
-        if (WandUtil.enchantedFocus(entityLiving)) {
-            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
-            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
-            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving);
+        if (WandUtil.enchantedFocus(caster)) {
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), caster);
         }
-        if (GeoPower(entityLiving)){
+        if (GeoPower(caster)){
             chance += 0.2F;
         }
-        HitResult rayTraceResult = this.rayTrace(worldIn, entityLiving, range, 3);
-        LivingEntity target = this.getTarget(entityLiving, range);
+        HitResult rayTraceResult = this.rayTrace(worldIn, caster, range, 3);
+        LivingEntity target = this.getTarget(caster, range);
         if (target != null){
-            if (this.isShifting(entityLiving)){
+            if (this.isShifting(caster)){
                 if (worldIn.random.nextFloat() <= chance){
-                    WandUtil.summonQuadOffensiveTrap(entityLiving, target, ModEntityType.TOTEMIC_BOMB.get(), potency);
+                    WandUtil.summonQuadOffensiveTrap(caster, target, ModEntityType.TOTEMIC_BOMB.get(), potency);
                     this.trueCooldown += MathHelper.secondsToTicks(3);
                 } else {
                     int xShift = worldIn.getRandom().nextInt(-1, 1);
                     int zShift = worldIn.getRandom().nextInt(-1, 1);
-                    WandUtil.summonMonolith(entityLiving, target, ModEntityType.TOTEMIC_BOMB.get(), xShift, zShift, potency);
+                    WandUtil.summonMonolith(caster, target, ModEntityType.TOTEMIC_BOMB.get(), xShift, zShift, potency);
                     this.trueCooldown += MathHelper.secondsToTicks(2);
                 }
             } else {
                 int random = worldIn.random.nextInt(3);
                 if (random == 0) {
-                    int[] rowToRemove = Util.getRandom(WandUtil.CONFIG_1_ROWS, entityLiving.getRandom());
+                    int[] rowToRemove = Util.getRandom(WandUtil.CONFIG_1_ROWS, caster.getRandom());
                     Direction direction = Direction.fromYRot(target.getYHeadRot());
                     switch (direction){
                         case NORTH -> rowToRemove = WandUtil.CONFIG_1_NORTH_ROW;
@@ -100,25 +101,25 @@ public class BarricadeSpell extends Spell {
                         case WEST -> rowToRemove = WandUtil.CONFIG_1_WEST_ROW;
                         case EAST -> rowToRemove = WandUtil.CONFIG_1_EAST_ROW;
                     }
-                    WandUtil.summonSquareTrap(entityLiving, target, ModEntityType.TOTEMIC_WALL.get(), rowToRemove, duration);
+                    WandUtil.summonSquareTrap(caster, target, ModEntityType.TOTEMIC_WALL.get(), rowToRemove, duration);
                 } else if (random == 1){
-                    WandUtil.summonWallTrap(entityLiving, target, ModEntityType.TOTEMIC_WALL.get(), duration);
+                    WandUtil.summonWallTrap(caster, target, ModEntityType.TOTEMIC_WALL.get(), duration);
                 } else {
-                    WandUtil.summonRandomPillarsTrap(entityLiving, target, ModEntityType.TOTEMIC_WALL.get(), duration);
+                    WandUtil.summonRandomPillarsTrap(caster, target, ModEntityType.TOTEMIC_WALL.get(), duration);
                 }
             }
         } else if (rayTraceResult instanceof BlockHitResult){
             BlockPos blockPos = ((BlockHitResult) rayTraceResult).getBlockPos();
-            if (this.isShifting(entityLiving)){
+            if (this.isShifting(caster)){
                 if (worldIn.random.nextFloat() <= chance){
-                    WandUtil.summonQuadOffensiveTrap(entityLiving, blockPos, ModEntityType.TOTEMIC_BOMB.get(), potency);
+                    WandUtil.summonQuadOffensiveTrap(caster, blockPos, ModEntityType.TOTEMIC_BOMB.get(), potency);
                     this.trueCooldown += MathHelper.secondsToTicks(3);
                 } else {
-                    WandUtil.summonMonolith(entityLiving, blockPos, ModEntityType.TOTEMIC_BOMB.get(), 0, 0, potency);
+                    WandUtil.summonMonolith(caster, blockPos, ModEntityType.TOTEMIC_BOMB.get(), 0, 0, potency);
                     this.trueCooldown += MathHelper.secondsToTicks(2);
                 }
             } else {
-                WandUtil.summonWallTrap(entityLiving, blockPos, ModEntityType.TOTEMIC_WALL.get(), duration);
+                WandUtil.summonWallTrap(caster, blockPos, ModEntityType.TOTEMIC_WALL.get(), duration);
             }
         }
     }

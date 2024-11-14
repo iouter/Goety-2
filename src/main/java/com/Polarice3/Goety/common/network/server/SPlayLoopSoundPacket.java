@@ -43,14 +43,14 @@ public class SPlayLoopSoundPacket {
 
     public static void consume(SPlayLoopSoundPacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            assert ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT;
-
-            ClientLevel clientWorld = Minecraft.getInstance().level;
-            if (clientWorld != null){
-                if (packet.entity >= 0) {
-                    Entity entity = clientWorld.getEntity(packet.entity);
-                    if (entity != null) {
-                        LoopSoundPlayer.playSound(entity, packet.soundEvent, packet.volume);
+            if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                ClientLevel clientWorld = Minecraft.getInstance().level;
+                if (clientWorld != null) {
+                    if (packet.entity >= 0) {
+                        Entity entity = clientWorld.getEntity(packet.entity);
+                        if (entity != null) {
+                            LoopSoundPlayer.playSound(entity, packet.soundEvent, packet.volume);
+                        }
                     }
                 }
             }

@@ -34,12 +34,12 @@ public class RecallSpell extends Spell {
     }
 
     @Override
-    public SoundEvent loopSound(LivingEntity entityLiving) {
+    public SoundEvent loopSound(LivingEntity caster) {
         return SoundEvents.PORTAL_TRIGGER;
     }
 
-    public boolean conditionsMet(ServerLevel worldIn, LivingEntity entityLiving){
-        if (entityLiving instanceof ServerPlayer player) {
+    public boolean conditionsMet(ServerLevel worldIn, LivingEntity caster){
+        if (caster instanceof ServerPlayer player) {
             if (RecallFocus.isValid(worldIn, WandUtil.findFocus(player))) {
                 return true;
             } else if (!RecallFocus.hasRecall(WandUtil.findFocus(player))){
@@ -51,8 +51,8 @@ public class RecallSpell extends Spell {
         return false;
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        if (entityLiving instanceof ServerPlayer player) {
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff){
+        if (caster instanceof ServerPlayer player) {
             if (RecallFocus.isValid(worldIn, WandUtil.findFocus(player))) {
                 RecallFocus.recall(player, WandUtil.findFocus(player));
             }

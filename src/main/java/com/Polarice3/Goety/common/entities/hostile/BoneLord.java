@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -275,6 +276,18 @@ public class BoneLord extends AbstractSkeleton implements ICustomAttributes {
     public void setSkullLord(SkullLord skullLord){
         this.setSkullLordUUID(skullLord.getUUID());
         this.setSkullLordClientId(skullLord.getId());
+    }
+
+    @Override
+    public void die(DamageSource p_21014_) {
+        if (this.level instanceof ServerLevel){
+            if (this.getSkullLord() != null){
+                if (p_21014_.getEntity() instanceof Mob mob && mob.getTarget() == this){
+                    mob.setTarget(this.getSkullLord());
+                }
+            }
+        }
+        super.die(p_21014_);
     }
 
     public static class FollowHeadGoal extends Goal {

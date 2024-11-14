@@ -2,6 +2,7 @@ package com.Polarice3.Goety.common.magic.spells;
 
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.utils.MobUtil;
 import com.Polarice3.Goety.utils.WandUtil;
@@ -20,6 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SonicBoomSpell extends Spell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setRange(15);
+    }
 
     public int defaultSoulCost() {
         return SpellConfig.SonicBoomCost.get();
@@ -42,16 +48,21 @@ public class SonicBoomSpell extends Spell {
     public List<Enchantment> acceptedEnchantments() {
         List<Enchantment> list = new ArrayList<>();
         list.add(ModEnchantments.POTENCY.get());
+        list.add(ModEnchantments.RANGE.get());
         return list;
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat){
         float damage = SpellConfig.SonicBoomDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
-        if (WandUtil.enchantedFocus(entityLiving)){
-            damage += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
+        int range = spellStat.getRange();
+        if (WandUtil.enchantedFocus(caster)){
+            damage += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
         }
-        if (MobUtil.getSingleTarget(worldIn, entityLiving, 15, 3) instanceof LivingEntity livingEntity){
-            Vec3 vec3 = entityLiving.position().add(0.0D, (double) 1.6F, 0.0D);
+        damage += spellStat.getPotency();
+        LivingEntity livingEntity = this.getTarget(caster, range);
+        if (livingEntity != null){
+            Vec3 vec3 = caster.position().add(0.0D, (double) 1.6F, 0.0D);
             Vec3 vec31 = livingEntity.getEyePosition().subtract(vec3);
             Vec3 vec32 = vec31.normalize();
 
@@ -60,29 +71,27 @@ public class SonicBoomSpell extends Spell {
                 worldIn.sendParticles(ParticleTypes.SONIC_BOOM, vec33.x, vec33.y, vec33.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
             }
 
-            worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.WARDEN_SONIC_BOOM, this.getSoundSource(), 3.0F, 1.0F);
-            livingEntity.hurt(entityLiving.damageSources().sonicBoom(entityLiving), damage);
+            worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.WARDEN_SONIC_BOOM, this.getSoundSource(), 3.0F, 1.0F);
+            livingEntity.hurt(caster.damageSources().sonicBoom(caster), damage);
             double d1 = 0.5D * (1.0D - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
             double d0 = 2.5D * (1.0D - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
             livingEntity.push(vec32.x() * d0, vec32.y() * d1, vec32.z() * d0);
         } else {
-            Vec3 srcVec = new Vec3(entityLiving.getX(), entityLiving.getEyeY(), entityLiving.getZ());
-            Vec3 lookVec = entityLiving.getViewVector(1.0F);
-            Vec3 destVec = srcVec.add(lookVec.x * 15, lookVec.y * 15, lookVec.z * 15);
+            Vec3 srcVec = new Vec3(caster.getX(), caster.getEyeY(), caster.getZ());
+            Vec3 lookVec = caster.getViewVector(1.0F);
+            Vec3 destVec = srcVec.add(lookVec.x * range, lookVec.y * range, lookVec.z * range);
             for(int i = 1; i < Math.floor(destVec.length()) + 7; ++i) {
-                Vec3 vector3d2 = srcVec.add(lookVec.scale((double)i));
+                Vec3 vector3d2 = srcVec.add(lookVec.scale(i));
                 worldIn.sendParticles(ParticleTypes.SONIC_BOOM, vector3d2.x, vector3d2.y, vector3d2.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
             }
-            if (MobUtil.getSingleTarget(worldIn, entityLiving, 15.0D, 3.0D) != null){
-                if (MobUtil.getSingleTarget(worldIn, entityLiving, 15.0D, 3.0D) instanceof LivingEntity target1) {
-                    target1.hurt(entityLiving.damageSources().sonicBoom(entityLiving), damage);
-                    double d0 = target1.getX() - entityLiving.getX();
-                    double d1 = target1.getZ() - entityLiving.getZ();
-                    double d2 = Math.max(d0 * d0 + d1 * d1, 0.001D);
-                    MobUtil.push(target1, d0 / d2 * 4.0D, 0.2D, d1 / d2 * 4.0D);
-                }
+            if (MobUtil.getSingleTarget(worldIn, caster, range, 3.0D) instanceof LivingEntity target1){
+                target1.hurt(caster.damageSources().sonicBoom(caster), damage);
+                double d0 = target1.getX() - caster.getX();
+                double d1 = target1.getZ() - caster.getZ();
+                double d2 = Math.max(d0 * d0 + d1 * d1, 0.001D);
+                MobUtil.push(target1, d0 / d2 * 4.0D, 0.2D, d1 / d2 * 4.0D);
             }
         }
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.WARDEN_SONIC_BOOM, this.getSoundSource(), 3.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.WARDEN_SONIC_BOOM, this.getSoundSource(), 3.0F, 1.0F);
     }
 }

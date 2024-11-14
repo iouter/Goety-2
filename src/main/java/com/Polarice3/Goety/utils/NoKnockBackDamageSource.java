@@ -7,6 +7,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 
@@ -15,11 +16,14 @@ public class NoKnockBackDamageSource extends DamageSource {
     protected final Entity entity;
     @Nullable
     private final Entity owner;
+    @Nullable
+    private final Vec3 damageSourcePosition;
 
     public NoKnockBackDamageSource(Holder<DamageType> pDamageType, @Nullable Entity pSource, @Nullable Entity pIndirectEntity) {
         super(pDamageType);
         this.entity = pSource;
         this.owner = pIndirectEntity;
+        this.damageSourcePosition = this.sourcePositionRaw();
     }
 
     @Nullable
@@ -33,6 +37,15 @@ public class NoKnockBackDamageSource extends DamageSource {
             return this.owner;
         } else {
             return this.getDirectAttacker();
+        }
+    }
+
+    @Nullable
+    public Vec3 getSourcePosition() {
+        if (this.damageSourcePosition != null) {
+            return this.damageSourcePosition;
+        } else {
+            return this.getDirectAttacker() != null ? this.getDirectAttacker().position() : null;
         }
     }
 

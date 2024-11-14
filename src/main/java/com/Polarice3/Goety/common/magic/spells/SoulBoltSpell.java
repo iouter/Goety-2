@@ -6,6 +6,7 @@ import com.Polarice3.Goety.common.entities.projectiles.SoulBolt;
 import com.Polarice3.Goety.common.entities.projectiles.SpellHurtingProjectile;
 import com.Polarice3.Goety.common.items.ModItems;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.SoundUtil;
@@ -54,37 +55,37 @@ public class SoulBoltSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        Vec3 vector3d = entityLiving.getViewVector( 1.0F);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        Vec3 vector3d = caster.getViewVector( 1.0F);
         SpellHurtingProjectile soulBolt = new SoulBolt(
-                entityLiving.getX() + vector3d.x / 2,
-                entityLiving.getEyeY() - 0.2,
-                entityLiving.getZ() + vector3d.z / 2,
+                caster.getX() + vector3d.x / 2,
+                caster.getEyeY() - 0.2,
+                caster.getZ() + vector3d.z / 2,
                 vector3d.x,
                 vector3d.y,
                 vector3d.z, worldIn);
         if (staff.is(ModItems.NAMELESS_STAFF.get())) {
             soulBolt = new NecroBolt(
-                    entityLiving.getX() + vector3d.x / 2,
-                    entityLiving.getEyeY() - 0.2,
-                    entityLiving.getZ() + vector3d.z / 2,
+                    caster.getX() + vector3d.x / 2,
+                    caster.getEyeY() - 0.2,
+                    caster.getZ() + vector3d.z / 2,
                     vector3d.x,
                     vector3d.y,
                     vector3d.z, worldIn);
-            SoundUtil.playNecroBolt(entityLiving);
+            SoundUtil.playNecroBolt(caster);
         } else {
-            SoundUtil.playSoulBolt(entityLiving);
+            SoundUtil.playSoulBolt(caster);
         }
         if (soulBolt instanceof SoulBolt soulBolt1){
             if (staff.is(ModItems.NECRO_STAFF.get()) || staff.is(ModItems.NAMELESS_STAFF.get())){
                 soulBolt1.setNecro(true);
             }
         }
-        if (WandUtil.enchantedFocus(entityLiving)){
-            soulBolt.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
-            soulBolt.setBoltSpeed(WandUtil.getLevels(ModEnchantments.VELOCITY.get(), entityLiving));
+        if (WandUtil.enchantedFocus(caster)){
+            soulBolt.setExtraDamage(spellStat.getPotency() + WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
+            soulBolt.setBoltSpeed((int) (spellStat.getVelocity() + WandUtil.getLevels(ModEnchantments.VELOCITY.get(), caster)));
         }
-        soulBolt.setOwner(entityLiving);
+        soulBolt.setOwner(caster);
         worldIn.addFreshEntity(soulBolt);
     }
 }

@@ -5,6 +5,7 @@ import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.projectiles.IceSpear;
 import com.Polarice3.Goety.common.entities.projectiles.IceSpike;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.WandUtil;
@@ -18,6 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IceSpikeSpell extends Spell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setVelocity(1.6F);
+    }
 
     public int defaultSoulCost() {
         return SpellConfig.IceSpikeCost.get();
@@ -49,21 +55,22 @@ public class IceSpikeSpell extends Spell {
         return list;
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        float enchantment = 0;
-        if (WandUtil.enchantedFocus(entityLiving)) {
-            enchantment = WandUtil.getLevels(ModEnchantments.VELOCITY.get(), entityLiving) / 3.0F;
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat){
+        int potency = spellStat.getPotency();
+        float velocity = spellStat.getVelocity();
+        if (WandUtil.enchantedFocus(caster)) {
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            velocity += WandUtil.getLevels(ModEnchantments.VELOCITY.get(), caster) / 3.0F;
         }
-        float initVelocity = 1.6F;
-        IceSpike iceSpike = new IceSpike(entityLiving, worldIn);
+        IceSpike iceSpike = new IceSpike(caster, worldIn);
         if (rightStaff(staff)){
-            iceSpike = new IceSpear(entityLiving, worldIn);
-            initVelocity = 2.4F;
+            iceSpike = new IceSpear(caster, worldIn);
+            velocity *= 1.5F;
         }
-        iceSpike.shootFromRotation(entityLiving, entityLiving.getXRot(), entityLiving.getYRot(), 0.0F, initVelocity + enchantment, 1.0F);
-        iceSpike.setOwner(entityLiving);
-        iceSpike.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
+        iceSpike.shootFromRotation(caster, caster.getXRot(), caster.getYRot(), 0.0F, velocity, 1.0F);
+        iceSpike.setOwner(caster);
+        iceSpike.setExtraDamage(potency);
         worldIn.addFreshEntity(iceSpike);
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.ICE_SPIKE_CAST.get(), this.getSoundSource(), 1.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.ICE_SPIKE_CAST.get(), this.getSoundSource(), 1.0F, 1.0F);
     }
 }

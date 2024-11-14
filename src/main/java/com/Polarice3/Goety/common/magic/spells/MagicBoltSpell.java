@@ -45,18 +45,18 @@ public class MagicBoltSpell extends Spell {
         return list;
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        Vec3 vector3d = entityLiving.getViewVector( 1.0F);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff){
+        Vec3 vector3d = caster.getViewVector( 1.0F);
         MagicBolt soulBolt = new MagicBolt(worldIn,
-                entityLiving.getX() + vector3d.x / 2,
-                entityLiving.getEyeY() - 0.2,
-                entityLiving.getZ() + vector3d.z / 2,
+                caster.getX() + vector3d.x / 2,
+                caster.getEyeY() - 0.2,
+                caster.getZ() + vector3d.z / 2,
                 vector3d.x,
                 vector3d.y,
                 vector3d.z);
-        soulBolt.setOwner(entityLiving);
+        soulBolt.setOwner(caster);
         worldIn.addFreshEntity(soulBolt);
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), CastingSound(), this.getSoundSource(), 1.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), CastingSound(), this.getSoundSource(), 1.0F, 1.0F);
     }
 
 }

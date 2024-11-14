@@ -2,7 +2,7 @@
   "type": "goety:ritual",
   "ritual_type": "goety:craft",
   "activation_item": {
-    "item": "goety:rotting_focus"
+    "tag": "goety:rotting_focus"
   },
   "craftType": "necroturgy",
   "soulCost": 1,

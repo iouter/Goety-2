@@ -5,6 +5,7 @@ import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.util.UpdraftBlast;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.WandUtil;
@@ -53,16 +54,21 @@ public class UpdraftSpell extends Spell {
         return list;
     }
 
-    public void commonResult(ServerLevel worldIn, LivingEntity entityLiving, int range){
-        double radius = 2.0D;
-        float damage = SpellConfig.UpdraftBlastDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
-        if (WandUtil.enchantedFocus(entityLiving)) {
-            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
-            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), entityLiving);
-            damage += WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat){
+        int range = spellStat.getRange();
+        if (rightStaff(staff)){
+            range *= 2;
         }
-        HitResult rayTraceResult = this.rayTrace(worldIn, entityLiving, range, radius);
-        LivingEntity target = this.getTarget(entityLiving, range);
+        double radius = spellStat.getRadius();
+        float damage = SpellConfig.UpdraftBlastDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
+        if (WandUtil.enchantedFocus(caster)) {
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
+            radius += WandUtil.getLevels(ModEnchantments.RADIUS.get(), caster);
+            damage += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+        }
+        damage += spellStat.getPotency();
+        HitResult rayTraceResult = this.rayTrace(worldIn, caster, range, radius);
+        LivingEntity target = this.getTarget(caster, range);
         if (target != null){
             UpdraftBlast updraftBlast = new UpdraftBlast(ModEntityType.UPDRAFT_BLAST.get(), worldIn);
             updraftBlast.setDamage(damage);
@@ -77,9 +83,5 @@ public class UpdraftSpell extends Spell {
             updraftBlast.setPos(blockPos.getX() + 0.5F, blockPos.getY() + 1.0F, blockPos.getZ() + 0.5F);
             worldIn.addFreshEntity(updraftBlast);
         }
-    }
-
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        commonResult(worldIn, entityLiving, rightStaff(staff) ? 32 : 16);
     }
 }

@@ -363,14 +363,14 @@ public class Envioker extends HuntingIllagerEntity {
 
             BlockPos blockpos = Envioker.this.blockPosition().offset(-2 + Envioker.this.random.nextInt(5), 1, -2 + Envioker.this.random.nextInt(5));
             Tormentor tormentorEntity = ModEntityType.TORMENTOR.get().create(Envioker.this.level);
-            assert tormentorEntity != null;
-            tormentorEntity.moveTo(blockpos, 0.0F, 0.0F);
-            tormentorEntity.finalizeSpawn(serverworld, Envioker.this.level.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, null, (CompoundTag)null);
-            tormentorEntity.setOwner(Envioker.this);
-            tormentorEntity.setBoundOrigin(blockpos);
-            tormentorEntity.setLimitedLife(20 * (30 + Envioker.this.random.nextInt(90)));
-            serverworld.addFreshEntityWithPassengers(tormentorEntity);
-
+            if (tormentorEntity != null) {
+                tormentorEntity.moveTo(blockpos, 0.0F, 0.0F);
+                tormentorEntity.finalizeSpawn(serverworld, Envioker.this.level.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, null, (CompoundTag) null);
+                tormentorEntity.setOwner(Envioker.this);
+                tormentorEntity.setBoundOrigin(blockpos);
+                tormentorEntity.setLimitedLife(20 * (30 + Envioker.this.random.nextInt(90)));
+                serverworld.addFreshEntityWithPassengers(tormentorEntity);
+            }
         }
 
         protected SoundEvent getSpellPrepareSound() {

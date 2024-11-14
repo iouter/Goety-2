@@ -57,82 +57,82 @@ public class LavaballSpell extends Spell {
     }
 
     @Override
-    public ColorUtil particleColors(LivingEntity entityLiving) {
+    public ColorUtil particleColors(LivingEntity caster) {
         return new ColorUtil(1.0F, 0.0F, 0.0F);
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        Vec3 vector3d = entityLiving.getViewVector( 1.0F);
-        float extraBlast = WandUtil.getLevels(ModEnchantments.RADIUS.get(), entityLiving) / 2.0F;
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff) {
+        Vec3 vector3d = caster.getViewVector( 1.0F);
+        float extraBlast = WandUtil.getLevels(ModEnchantments.RADIUS.get(), caster) / 2.0F;
         AbstractHurtingProjectile fireballEntity = new Lavaball(worldIn,
-                entityLiving.getX() + vector3d.x / 2,
-                entityLiving.getEyeY() - 0.2,
-                entityLiving.getZ() + vector3d.z / 2,
+                caster.getX() + vector3d.x / 2,
+                caster.getEyeY() - 0.2,
+                caster.getZ() + vector3d.z / 2,
                 vector3d.x,
                 vector3d.y,
                 vector3d.z);
-        if (CuriosFinder.hasUnholySet(entityLiving)){
-            fireballEntity = new HellBlast(entityLiving.getX() + vector3d.x / 2,
-                    entityLiving.getEyeY() - 0.2,
-                    entityLiving.getZ() + vector3d.z / 2,
+        if (CuriosFinder.hasUnholySet(caster)){
+            fireballEntity = new HellBlast(caster.getX() + vector3d.x / 2,
+                    caster.getEyeY() - 0.2,
+                    caster.getZ() + vector3d.z / 2,
                     vector3d.x,
                     vector3d.y,
                     vector3d.z,
                     worldIn);
         }
-        fireballEntity.setOwner(entityLiving);
+        fireballEntity.setOwner(caster);
         if (fireballEntity instanceof Lavaball lavaball) {
             if (rightStaff(staff)) {
                 lavaball.setUpgraded(true);
             }
-            if (isShifting(entityLiving)) {
+            if (isShifting(caster)) {
                 lavaball.setDangerous(false);
             }
-            lavaball.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
-            lavaball.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), entityLiving));
+            lavaball.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
+            lavaball.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), caster));
             lavaball.setExplosionPower(lavaball.getExplosionPower() + extraBlast);
         } else if (fireballEntity instanceof HellBlast hellBlast){
-            hellBlast.setDamage(hellBlast.getDamage() + WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
+            hellBlast.setDamage(hellBlast.getDamage() + WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
             hellBlast.setRadius(hellBlast.getRadius() + extraBlast);
-            hellBlast.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), entityLiving));
+            hellBlast.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), caster));
         }
         worldIn.addFreshEntity(fireballEntity);
         if (rightStaff(staff)) {
             for (int i = 0; i < 2; ++i) {
                 AbstractHurtingProjectile fireballEntity1 = new Lavaball(worldIn,
-                        entityLiving.getX() + vector3d.x / 2 + worldIn.random.nextGaussian(),
-                        entityLiving.getEyeY() - 0.2,
-                        entityLiving.getZ() + vector3d.z / 2 + worldIn.random.nextGaussian(),
+                        caster.getX() + vector3d.x / 2 + worldIn.random.nextGaussian(),
+                        caster.getEyeY() - 0.2,
+                        caster.getZ() + vector3d.z / 2 + worldIn.random.nextGaussian(),
                         vector3d.x,
                         vector3d.y,
                         vector3d.z);
-                if (CuriosFinder.hasUnholySet(entityLiving)){
-                    fireballEntity1 = new HellBlast(entityLiving.getX() + vector3d.x / 2,
-                            entityLiving.getEyeY() - 0.2,
-                            entityLiving.getZ() + vector3d.z / 2,
+                if (CuriosFinder.hasUnholySet(caster)){
+                    fireballEntity1 = new HellBlast(caster.getX() + vector3d.x / 2,
+                            caster.getEyeY() - 0.2,
+                            caster.getZ() + vector3d.z / 2,
                             vector3d.x,
                             vector3d.y,
                             vector3d.z,
                             worldIn);
                 }
-                fireballEntity1.setOwner(entityLiving);
+                fireballEntity1.setOwner(caster);
                 if (fireballEntity1 instanceof Lavaball lavaball) {
                     lavaball.setUpgraded(true);
-                    if (isShifting(entityLiving)) {
+                    if (isShifting(caster)) {
                         lavaball.setDangerous(false);
                     }
-                    lavaball.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
-                    lavaball.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), entityLiving));
+                    lavaball.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
+                    lavaball.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), caster));
                     lavaball.setExplosionPower(lavaball.getExplosionPower() + extraBlast);
                 } else if (fireballEntity1 instanceof HellBlast hellBlast){
-                    hellBlast.setDamage(hellBlast.getDamage() + WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
+                    hellBlast.setDamage(hellBlast.getDamage() + WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
                     hellBlast.setRadius(hellBlast.getRadius() + extraBlast);
-                    hellBlast.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), entityLiving));
+                    hellBlast.setFiery(WandUtil.getLevels(ModEnchantments.BURNING.get(), caster));
                 }
                 worldIn.addFreshEntity(fireballEntity1);
             }
         }
-        worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.GHAST_SHOOT, this.getSoundSource(), 1.0F, 1.0F);
+        worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.GHAST_SHOOT, this.getSoundSource(), 1.0F, 1.0F);
     }
 }

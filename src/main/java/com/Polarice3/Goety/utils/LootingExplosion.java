@@ -127,7 +127,7 @@ public class LootingExplosion extends Explosion {
                             }
                             if (hurt) {
                                 if (flag){
-                                    entity.hurt(entity.damageSources().explosion(this.getDirectSourceEntity(), this.getIndirectSourceEntity()), (float) ((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f2 + 1.0D)));
+                                    entity.hurt(ModDamageSource.lootExplosion(this.getDirectSourceEntity(), this.getIndirectSourceEntity(), this.level), (float) ((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f2 + 1.0D)));
                                 } else {
                                     entity.hurt(this.getDamageSource(), (float) ((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f2 + 1.0D)));
                                 }

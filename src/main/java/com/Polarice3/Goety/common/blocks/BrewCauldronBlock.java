@@ -133,7 +133,7 @@ public class BrewCauldronBlock extends BaseEntityBlock{
                             playSound = true;
                         } else if (apple){
                             if (cauldron.mode == BrewCauldronBlockEntity.Mode.COMPLETED) {
-                                ItemStack itemStack = BrewUtils.setCustomEffects(stack.copy(), PotionUtils.getCustomEffects(cauldron.getBrew()), BrewUtils.getBrewEffects(cauldron.getBrew()));
+                                ItemStack itemStack = BrewUtils.setCustomEffects(stack.split(1), PotionUtils.getCustomEffects(cauldron.getBrew()), BrewUtils.getBrewEffects(cauldron.getBrew()));
                                 ItemHelper.addAndConsumeItem(pPlayer, pHand, itemStack);
                                 SEHelper.increaseBottling(pPlayer);
                                 playSound = true;

@@ -38,13 +38,13 @@ public class LichUpdatePacket {
 
     public static void consume(LichUpdatePacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            assert ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT;
-
-            Player player = Goety.PROXY.getPlayer();
-            if (player != null) {
-                player.getCapability(LichProvider.CAPABILITY).ifPresent((lichdom) -> {
-                    LichdomHelper.load(packet.tag, lichdom);
-                });
+            if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                Player player = Goety.PROXY.getPlayer();
+                if (player != null) {
+                    player.getCapability(LichProvider.CAPABILITY).ifPresent((lichdom) -> {
+                        LichdomHelper.load(packet.tag, lichdom);
+                    });
+                }
             }
         });
         ctx.get().setPacketHandled(true);

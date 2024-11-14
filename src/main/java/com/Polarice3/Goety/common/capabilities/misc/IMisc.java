@@ -15,4 +15,6 @@ public interface IMisc {
     void decreaseShieldCool();
     int ambientSoundTime();
     void setAmbientSoundTime(int soundTime);
+    String customSpinTexture();
+    void setCustomSpinTexture(String texture);
 }

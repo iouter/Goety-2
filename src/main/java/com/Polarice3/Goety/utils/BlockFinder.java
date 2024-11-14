@@ -2,6 +2,9 @@ package com.Polarice3.Goety.utils;
 
 import com.Polarice3.Goety.common.blocks.entities.ShriekObeliskBlockEntity;
 import com.Polarice3.Goety.common.entities.ModEntityType;
+import com.mojang.authlib.GameProfile;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -9,11 +12,13 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,6 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -43,12 +49,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.UsernameCache;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -453,17 +459,17 @@ public class BlockFinder {
         BlockPos.MutableBlockPos blockpos$mutable = blockPos.mutable();
         boolean flag = false;
         if (up){
-            while (blockpos$mutable.getY() < blockPos.getY() + distance && (level.getBlockState(blockpos$mutable).isAir() || canBeReplaced(level, blockpos$mutable))){
+            while (blockpos$mutable.getY() < blockPos.getY() + distance && level.getBlockState(blockpos$mutable).getCollisionShape(level, blockpos$mutable ).isEmpty()){
                 blockpos$mutable.move(Direction.UP);
                 flag = true;
             }
         } else {
-            while (blockpos$mutable.getY() > blockPos.getY() - distance && level.getBlockState(blockpos$mutable).isAir() || canBeReplaced(level, blockpos$mutable)){
+            while (blockpos$mutable.getY() > blockPos.getY() - distance && level.getBlockState(blockpos$mutable).getCollisionShape(level, blockpos$mutable ).isEmpty()){
                 blockpos$mutable.move(Direction.DOWN);
                 flag = true;
             }
         }
-        if (!level.getBlockState(blockpos$mutable).isAir()){
+        if (!level.getBlockState(blockpos$mutable).getCollisionShape(level, blockpos$mutable ).isEmpty()){
             flag = false;
         }
         return flag;
@@ -706,5 +712,122 @@ public class BlockFinder {
             }
         }
         return new BlockPos(pos.getX(), bottomY, pos.getZ());
+    }
+
+    //Based on ChainsawTask by @Shadows-of-Fire: https://github.com/Shadows-of-Fire/Apotheosis/blob/1.20/src/main/java/dev/shadowsoffire/apotheosis/ench/enchantments/masterwork/ChainsawEnchant.java
+    public static class ChopTreeTask implements EventTask {
+        UUID owner;
+        ItemStack axe;
+        ServerLevel level;
+        Int2ObjectMap<Queue<BlockPos>> hits = new Int2ObjectOpenHashMap<>();
+        int ticks = 0;
+
+        public ChopTreeTask(UUID owner, ItemStack axe, ServerLevel level, BlockPos pos) {
+            this.owner = owner;
+            this.axe = axe;
+            this.level = level;
+            this.hits.computeIfAbsent(pos.getY(), i -> new ArrayDeque<>()).add(pos);
+        }
+
+        @Override
+        public boolean getAsBoolean() {
+            if (++this.ticks % 2 != 0) {
+                return false;
+            }
+            if (this.axe.isEmpty()) {
+                return true;
+            }
+            int minY = this.hits.keySet().intStream().min().getAsInt();
+            Queue<BlockPos> queue = this.hits.get(minY);
+            int breaks = 0;
+            while (!queue.isEmpty()) {
+                BlockPos pos = queue.poll();
+                for (BlockPos blockPos : BlockPos.betweenClosed(pos.offset(-1, -1, -1), pos.offset(1, 1, 1))) {
+                    if (blockPos.equals(pos)) {
+                        continue;
+                    }
+                    BlockState state = this.level.getBlockState(blockPos);
+                    if (state.is(BlockTags.LOGS)) {
+                        breakExtraBlock(this.level, blockPos, this.axe, this.owner);
+                        if (!this.level.getBlockState(blockPos).is(BlockTags.LOGS)) {
+                            this.hits.computeIfAbsent(blockPos.getY(), i -> new ArrayDeque<>()).add(blockPos.immutable());
+                            breaks++;
+                        }
+                    }
+                }
+                if (breaks > 5) {
+                    break;
+                }
+            }
+            if (queue.isEmpty()) {
+                this.hits.remove(minY);
+            }
+            return this.hits.isEmpty();
+        }
+
+        public static boolean breakExtraBlock(ServerLevel world, BlockPos pos, ItemStack mainhand, @Nullable UUID source) {
+            BlockState blockstate = world.getBlockState(pos);
+            FakePlayer player;
+            if (source != null) {
+                player = FakePlayerFactory.get(world, new GameProfile(source, UsernameCache.getLastKnownUsername(source)));
+                Player realPlayer = world.getPlayerByUUID(source);
+                if (realPlayer != null) {
+                    player.setPos(realPlayer.position());
+                }
+            } else {
+                player = FakePlayerFactory.getMinecraft(world);
+            }
+
+            player.getInventory().items.set(player.getInventory().selected, mainhand);
+
+            if (blockstate.getDestroySpeed(world, pos) < 0 || !blockstate.canHarvestBlock(world, pos, player)) {
+                return false;
+            }
+
+            GameType type = player.getAbilities().instabuild ? GameType.CREATIVE : GameType.SURVIVAL;
+            int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(world, type, player, pos);
+            if (exp == -1) {
+                return false;
+            } else {
+                BlockEntity tileentity = world.getBlockEntity(pos);
+                Block block = blockstate.getBlock();
+                if ((block instanceof CommandBlock || block instanceof StructureBlock || block instanceof JigsawBlock) && !player.canUseGameMasterBlocks()) {
+                    world.sendBlockUpdated(pos, blockstate, blockstate, 3);
+                    return false;
+                } else if (mainhand.onBlockStartBreak(pos, player)) {
+                    return false;
+                } else if (player.blockActionRestricted(world, pos, type)) {
+                    return false;
+                } else {
+                    ItemStack itemstack1 = mainhand.copy();
+                    boolean canHarvest = blockstate.canHarvestBlock(world, pos, player);
+                    mainhand.mineBlock(world, blockstate, pos, player);
+                    if (mainhand.isEmpty() && !itemstack1.isEmpty()) {
+                        net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, itemstack1, InteractionHand.MAIN_HAND);
+                    }
+
+                    boolean removed = removeBlock(world, player, pos, canHarvest);
+
+                    if (removed && canHarvest) {
+                        block.playerDestroy(world, player, pos, blockstate, tileentity, itemstack1);
+                    }
+
+                    if (removed && exp > 0) {
+                        blockstate.getBlock().popExperience(world, pos, exp);
+                    }
+                    return true;
+                }
+            }
+        }
+
+        public static boolean removeBlock(ServerLevel world, ServerPlayer player, BlockPos pos, boolean canHarvest) {
+            BlockState state = world.getBlockState(pos);
+            boolean removed = state.onDestroyedByPlayer(world, pos, player, canHarvest, world.getFluidState(pos));
+            if (removed) {
+                state.getBlock().destroy(world, pos, state);
+            }
+            return removed;
+        }
+
     }
 }

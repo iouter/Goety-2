@@ -30,6 +30,14 @@
     },
     {
       "type": "patchouli:entity",
+      "entity": "goety:sorcerer"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "All round practitioners of the dark arts, these mages aren't specialized on one element like the other illager spellcasters, making them more unpredictable than the rest. Highly trained sorcerers tend to gild their robes with precious materials."
+    },
+    {
+      "type": "patchouli:entity",
       "entity": "goety:piker",
       "scale": 0.95
     },

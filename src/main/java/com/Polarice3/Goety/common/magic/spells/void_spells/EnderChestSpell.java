@@ -43,13 +43,13 @@ public class EnderChestSpell extends Spell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        if (entityLiving instanceof Player player){
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff) {
+        if (caster instanceof Player player){
             PlayerEnderChestContainer playerenderchestcontainer = player.getEnderChestInventory();
             player.openMenu(new SimpleMenuProvider((p_53124_, p_53125_, p_53126_) -> {
                 return ChestMenu.threeRows(p_53124_, p_53125_, playerenderchestcontainer);
             }, CONTAINER_TITLE));
-            worldIn.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), CastingSound(), this.getSoundSource(), 2.0F, 1.0F);
+            worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), CastingSound(), this.getSoundSource(), 2.0F, 1.0F);
         }
     }
 }

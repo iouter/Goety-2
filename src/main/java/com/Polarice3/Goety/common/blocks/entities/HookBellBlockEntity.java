@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
@@ -132,7 +133,7 @@ public class HookBellBlockEntity extends BlockEntity {
     }
 
     private static boolean areRaidersClose(BlockPos origin, LivingEntity living){
-        return origin.closerToCenterThan(living.position(), maxRange) && !origin.closerToCenterThan(living.position(), minRange);
+        return origin.closerToCenterThan(living.position(), maxRange) && !(origin.closerToCenterThan(living.position(), minRange) && MobUtil.canPositionBeSeen(living.level, living, Vec3.atCenterOf(origin)));
     }
 
     private static void teleportRaiders(Level p_155187_, BlockPos p_155188_, List<LivingEntity> p_155189_) {

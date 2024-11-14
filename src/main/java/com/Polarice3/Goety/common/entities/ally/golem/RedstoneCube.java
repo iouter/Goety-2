@@ -47,6 +47,7 @@ import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -307,19 +308,26 @@ public class RedstoneCube extends AbstractGolemServant{
                 if (!itemStack.isEmpty() && MobsConfig.RedstoneCubeBlockFind.get()){
                     Block block = Block.byItem(itemStack.getItem());
                     if (this.tickCount % 20 == 0) {
+                        List<BlockPos> blockPosList = new ArrayList<>();
                         this.detectPos = null;
                         for (int i = -16; i <= 16; ++i){
                             for (int j = -16; j <= 16; ++j){
                                 for (int k = -16; k <= 16; ++k){
                                     BlockPos blockPos = this.blockPosition().offset(i, j, k);
                                     if (this.level.getBlockState(blockPos).getBlock() == block){
-                                        float distance = 1.0F - ((float) this.distanceToSqr(Vec3.atCenterOf(blockPos)) / Mth.square(16.0F));
-                                        this.bigGlow = distance;
-                                        this.playSound(ModSounds.TOCK.get(), distance, 1.5F);
-                                        this.detectPos = Vec3.atCenterOf(blockPos);
-                                        break;
+                                        blockPosList.add(blockPos);
                                     }
                                 }
+                            }
+                        }
+                        if (!blockPosList.isEmpty()){
+                            blockPosList.sort(Comparator.comparingDouble(blockPos -> this.distanceToSqr(Vec3.atCenterOf(blockPos))));
+                            if (blockPosList.stream().findFirst().isPresent()){
+                                BlockPos blockPos = blockPosList.stream().findFirst().get();
+                                float distance = 1.0F - ((float) this.distanceToSqr(Vec3.atCenterOf(blockPos)) / Mth.square(16.0F));
+                                this.bigGlow = distance;
+                                this.playSound(ModSounds.TOCK.get(), distance, 1.5F);
+                                this.detectPos = Vec3.atCenterOf(blockPos);
                             }
                         }
                     }

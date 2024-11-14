@@ -4,6 +4,7 @@ import com.Polarice3.Goety.Goety;
 import com.Polarice3.Goety.client.render.ModModelLayer;
 import com.Polarice3.Goety.client.render.model.CursedKnightArmorModel;
 import com.Polarice3.Goety.common.items.ModItems;
+import com.Polarice3.Goety.utils.ItemHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -20,6 +21,15 @@ import java.util.function.Consumer;
 public class CursedKnightArmor extends ArmorItem {
     public CursedKnightArmor(ArmorItem.Type p_40387_) {
         super(ModArmorMaterials.CURSED_KNIGHT, p_40387_, ModItems.baseProperities());
+    }
+
+    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+        if (ItemHelper.armorSet(entity, this.getMaterial())){
+            if (entity.getRandom().nextBoolean()){
+                return 0;
+            }
+        }
+        return amount;
     }
 
     @Override

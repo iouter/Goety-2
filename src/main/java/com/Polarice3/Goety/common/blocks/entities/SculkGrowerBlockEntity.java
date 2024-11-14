@@ -178,14 +178,18 @@ public class SculkGrowerBlockEntity extends ModBlockEntity implements IEnchanted
     }
 
     private boolean isCrops(BlockPos blockPos) {
-        assert this.level != null;
+        if (this.level == null){
+            return false;
+        }
         BlockState blockState = this.level.getBlockState(blockPos);
         Block cropBlock = blockState.getBlock();
         return cropBlock != Blocks.GRASS_BLOCK && !(cropBlock instanceof DoublePlantBlock) && cropBlock instanceof BonemealableBlock && ((BonemealableBlock) cropBlock).isValidBonemealTarget(this.level, blockPos, blockState, this.level.isClientSide);
     }
 
     private boolean takeSouls(){
-        assert this.level != null;
+        if (this.level == null){
+            return false;
+        }
         int potency = 1 + this.enchantments.getOrDefault(ModEnchantments.POTENCY.get(), 0);
         if (!MainConfig.SculkGrowerPotency.get()){
             potency = 1;
@@ -201,7 +205,9 @@ public class SculkGrowerBlockEntity extends ModBlockEntity implements IEnchanted
     }
 
     private boolean checkCage() {
-        assert this.level != null;
+        if (this.level == null){
+            return false;
+        }
         BlockPos pos = this.getBlockPos().above();
         BlockState blockState = this.level.getBlockState(pos);
         if (blockState.is(ModBlocks.CURSED_CAGE_BLOCK.get())){

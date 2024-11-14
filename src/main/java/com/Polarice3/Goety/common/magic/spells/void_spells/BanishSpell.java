@@ -2,6 +2,7 @@ package com.Polarice3.Goety.common.magic.spells.void_spells;
 
 import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.common.magic.TouchSpell;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
@@ -26,6 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BanishSpell extends TouchSpell {
+
+    @Override
+    public SpellStat defaultStats() {
+        return super.defaultStats().setRange(64);
+    }
+
     @Override
     public int defaultSoulCost() {
         return SpellConfig.BanishCost.get();
@@ -54,30 +61,30 @@ public class BanishSpell extends TouchSpell {
     }
 
     @Override
-    public boolean conditionsMet(ServerLevel worldIn, LivingEntity entityLiving) {
-        HitResult hitResult = entityLiving.pick(entityLiving.getAttributeValue(ForgeMod.ENTITY_REACH.get()), 1.0F, false);
+    public boolean conditionsMet(ServerLevel worldIn, LivingEntity caster) {
+        HitResult hitResult = caster.pick(caster.getAttributeValue(ForgeMod.ENTITY_REACH.get()), 1.0F, false);
         if (hitResult instanceof EntityHitResult result){
             if (result.getEntity() instanceof LivingEntity living){
                 if (living.getMaxHealth() < SpellConfig.BanishMaxHealth.get()
                         && !MobUtil.hasEntityTypesConfig(SpellConfig.BanishBlackList.get(), living.getType())){
-                    worldIn.playSound((Player)null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), ModSounds.SPELL_FAIL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+                    worldIn.playSound((Player)null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.SPELL_FAIL.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
                     return false;
                 }
-                net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(living, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ());
+                net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(living, caster.getX(), caster.getY(), caster.getZ());
                 if (event.isCanceled()) {
                     return false;
                 }
             }
         }
-        return super.conditionsMet(worldIn, entityLiving);
+        return super.conditionsMet(worldIn, caster);
     }
 
     @Override
-    public void touchResult(ServerLevel worldIn, LivingEntity caster, LivingEntity target) {
+    public void touchResult(ServerLevel worldIn, LivingEntity caster, LivingEntity target, SpellStat spellStat) {
         double d0 = target.getX();
         double d1 = target.getY();
         double d2 = target.getZ();
-        int range = 64;
+        int range = spellStat.getRange();
         if (WandUtil.enchantedFocus(caster)) {
             range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
         }

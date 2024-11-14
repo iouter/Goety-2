@@ -7,12 +7,14 @@ import com.Polarice3.Goety.common.capabilities.misc.MiscProvider;
 import com.Polarice3.Goety.common.network.ModNetwork;
 import com.Polarice3.Goety.common.network.server.SPlayPlayerSoundPacket;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.player.Player;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 public class MiscCapHelper {
@@ -102,6 +104,23 @@ public class MiscCapHelper {
         MiscCapHelper.sendMiscUpdatePacket(livingEntity);
     }
 
+    @Nullable
+    public static ResourceLocation getCustomSpinTexture(LivingEntity livingEntity){
+        String string = getCapability(livingEntity).customSpinTexture();
+        if (string.isEmpty()){
+            return null;
+        }
+        return new ResourceLocation(getCapability(livingEntity).customSpinTexture());
+    }
+
+    public static void setCustomSpinTexture(LivingEntity livingEntity, @Nullable String string){
+        if (string == null) {
+            string = "";
+        }
+        getCapability(livingEntity).setCustomSpinTexture(string);
+        MiscCapHelper.sendMiscUpdatePacket(livingEntity);
+    }
+
     public static void clearGoals(GoalSelector goalSelector) {
         ArrayList<WrappedGoal> wrappedGoals = new ArrayList<>(goalSelector.getAvailableGoals());
         wrappedGoals.forEach(prioritizedGoal -> goalSelector.removeGoal(prioritizedGoal.getGoal()));
@@ -113,6 +132,7 @@ public class MiscCapHelper {
         tag.putInt("shieldTime", misc.shieldTime());
         tag.putInt("shieldCool", misc.shieldCool());
         tag.putInt("ambientSoundTime", misc.ambientSoundTime());
+        tag.putString("customSpinTexture", misc.customSpinTexture());
         return tag;
     }
 
@@ -131,6 +151,9 @@ public class MiscCapHelper {
         }
         if (tag.contains("ambientSoundTime")) {
             misc.setAmbientSoundTime(tag.getInt("ambientSoundTime"));
+        }
+        if (tag.contains("customSpinTexture")) {
+            misc.setCustomSpinTexture(tag.getString("customSpinTexture"));
         }
         return misc;
     }

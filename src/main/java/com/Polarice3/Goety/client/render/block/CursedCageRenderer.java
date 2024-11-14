@@ -21,11 +21,12 @@ public class CursedCageRenderer implements BlockEntityRenderer<CursedCageBlockEn
             pMatrixStack.pushPose();
             pMatrixStack.translate(0.5F, 0.25F, 0.5F);
             pMatrixStack.scale(1.0F, 1.0F, 1.0F);
-            assert minecraft.level != null;
-            if (pBlockEntity.getSpinning() > 0){
-                pMatrixStack.mulPose(Axis.YP.rotationDegrees(12 * (minecraft.level.getGameTime() % 360 + pPartialTicks)));
-            } else {
-                pMatrixStack.mulPose(Axis.YP.rotationDegrees(3 * (minecraft.level.getGameTime() % 360 + pPartialTicks)));
+            if (minecraft.level != null) {
+                if (pBlockEntity.getSpinning() > 0) {
+                    pMatrixStack.mulPose(Axis.YP.rotationDegrees(12 * (minecraft.level.getGameTime() % 360 + pPartialTicks)));
+                } else {
+                    pMatrixStack.mulPose(Axis.YP.rotationDegrees(3 * (minecraft.level.getGameTime() % 360 + pPartialTicks)));
+                }
             }
             minecraft.getItemRenderer().renderStatic(itemStack, ItemDisplayContext.GROUND, pCombinedLight, pCombinedOverlay, pMatrixStack, pBuffer, pBlockEntity.getLevel(), 0);
             pMatrixStack.popPose();

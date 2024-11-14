@@ -73,13 +73,22 @@ public class SoulEnergyGui {
             int useDuration = minecraft.player.getUseItem().getUseDuration();
             float remain = minecraft.player.getUseItemRemainingTicks();
             float useTime0 = (useDuration - remain) / useDuration;
-            if (WandUtil.getSpell(minecraft.player) instanceof IChargingSpell spell && spell.defaultCastUp() > 0){
-                useDuration = spell.defaultCastUp();
-                remain = Math.min(minecraft.player.getUseItem().getUseDuration() - minecraft.player.getUseItemRemainingTicks(), spell.defaultCastUp());
-                useTime0 = remain / useDuration;
+            int bar = 27;
+            if (WandUtil.getSpell(minecraft.player) instanceof IChargingSpell spell){
+                if (WandUtil.getShots(minecraft.player) > 0 && spell.shotsNumber() > 0){
+                    useDuration = spell.shotsNumber();
+                    remain = WandUtil.getShots(minecraft.player);
+                    useTime0 = remain / useDuration;
+                    bar = 45;
+                } else if (spell.defaultCastUp() > 0) {
+                    useDuration = spell.defaultCastUp();
+                    remain = minecraft.player.getUseItem().getUseDuration() - minecraft.player.getUseItemRemainingTicks();
+                    useTime0 = remain / useDuration;
+                }
             }
+            useTime0 = Math.min(1.0F, useTime0);
             int useTime = (int) (117 * useTime0);
-            guiGraphics.blit(Goety.location("textures/gui/soul_energy.png"), i + 9, height - 9, 9, 27, useTime, 9, 128, 90);
+            guiGraphics.blit(Goety.location("textures/gui/soul_energy.png"), i + 9, height - 9, 9, bar, useTime, 9, 128, 90);
         }
 
         if (MainConfig.ShowNum.get()) {

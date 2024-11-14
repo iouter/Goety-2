@@ -5,6 +5,7 @@ import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.ally.undead.skeleton.*;
 import com.Polarice3.Goety.common.items.ModItems;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.common.magic.SummonSpell;
 import com.Polarice3.Goety.common.research.ResearchList;
 import com.Polarice3.Goety.config.SpellConfig;
@@ -76,23 +77,17 @@ public class SkeletonSpell extends SummonSpell {
         return SpellConfig.SkeletonLimit.get();
     }
 
-    public void commonResult(ServerLevel worldIn, LivingEntity entityLiving){
-        if (WandUtil.enchantedFocus(entityLiving)){
-            enchantment = WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving);
-            duration = WandUtil.getLevels(ModEnchantments.DURATION.get(), entityLiving) + 1;
-        }
-        if (isShifting(entityLiving)) {
+    public void commonResult(ServerLevel worldIn, LivingEntity caster){
+        if (isShifting(caster)) {
             for (Entity entity : worldIn.getAllEntities()) {
-                if (entity instanceof AbstractSkeletonServant skeletonServant) {
-                    if (skeletonServant.getTrueOwner() == entityLiving) {
-                        entity.moveTo(entityLiving.position());
-                    }
+                if (entity instanceof AbstractSkeletonServant) {
+                    this.teleportServants(caster, entity);
                 }
             }
-            for (int i = 0; i < entityLiving.level.random.nextInt(35) + 10; ++i) {
-                worldIn.sendParticles(ParticleTypes.POOF, entityLiving.getX(), entityLiving.getEyeY(), entityLiving.getZ(), 1, 0.0F, 0.0F, 0.0F, 0);
+            for (int i = 0; i < caster.level.random.nextInt(35) + 10; ++i) {
+                worldIn.sendParticles(ParticleTypes.POOF, caster.getX(), caster.getEyeY(), caster.getZ(), 1, 0.0F, 0.0F, 0.0F, 0);
             }
-            worldIn.playSound((Player) null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.EVOKER_CAST_SPELL, this.getSoundSource(), 1.0F, 1.0F);
+            worldIn.playSound((Player) null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.EVOKER_CAST_SPELL, this.getSoundSource(), 1.0F, 1.0F);
         }
     }
 
@@ -103,22 +98,28 @@ public class SkeletonSpell extends SummonSpell {
                 || stack.is(ModItems.OMINOUS_STAFF.get());
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        this.commonResult(worldIn, entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
+        this.commonResult(worldIn, caster);
+        int potency = spellStat.getPotency();
+        int duration = spellStat.getDuration();
+        if (WandUtil.enchantedFocus(caster)){
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            duration += WandUtil.getLevels(ModEnchantments.DURATION.get(), caster) + 1;
+        }
         int i = 1;
         if (staff.is(ModItems.NAMELESS_STAFF.get())){
             i = 7;
         } else if (rightStaff(staff)){
-            i = 2 + entityLiving.level.random.nextInt(4);
+            i = 2 + caster.level.random.nextInt(4);
         } else if (specialStaffs(staff)){
             i = 2;
         }
-        if (!isShifting(entityLiving)) {
+        if (!isShifting(caster)) {
             for (int i1 = 0; i1 < i; ++i1) {
                 AbstractSkeletonServant summonedentity = new SkeletonServant(ModEntityType.SKELETON_SERVANT.get(), worldIn);
-                BlockPos blockPos = BlockFinder.SummonRadius(entityLiving.blockPosition(), summonedentity, worldIn);
-                if (entityLiving.isUnderWater()){
-                    blockPos = BlockFinder.SummonWaterRadius(entityLiving, worldIn);
+                BlockPos blockPos = BlockFinder.SummonRadius(caster.blockPosition(), summonedentity, worldIn);
+                if (caster.isUnderWater()){
+                    blockPos = BlockFinder.SummonWaterRadius(caster, worldIn);
                 }
                 if (specialStaffs(staff)) {
                     if (typeStaff(staff, SpellType.FROST)) {
@@ -131,37 +132,37 @@ public class SkeletonSpell extends SummonSpell {
                         summonedentity = new SkeletonPillagerServant(ModEntityType.SKELETON_PILLAGER_SERVANT.get(), worldIn);
                     }
                 } else if (worldIn.dimension() == Level.NETHER
-                        && (entityLiving instanceof Player player && SEHelper.hasResearch(player, ResearchList.BYGONE)    )
-                        && BlockFinder.findStructure(worldIn, entityLiving, BuiltinStructures.FORTRESS)){
+                        && (caster instanceof Player player && SEHelper.hasResearch(player, ResearchList.BYGONE)    )
+                        && BlockFinder.findStructure(worldIn, caster, BuiltinStructures.FORTRESS)){
                     summonedentity = new WitherSkeletonServant(ModEntityType.WITHER_SKELETON_SERVANT.get(), worldIn);
                 } else if (worldIn.getBiome(blockPos).is(Tags.Biomes.IS_COLD_OVERWORLD) && worldIn.canSeeSky(blockPos)){
                     summonedentity = new StrayServant(ModEntityType.STRAY_SERVANT.get(), worldIn);
-                } else if (BlockFinder.findStructure(worldIn, entityLiving, BuiltinStructures.PILLAGER_OUTPOST)){
+                } else if (BlockFinder.findStructure(worldIn, caster, BuiltinStructures.PILLAGER_OUTPOST)){
                     summonedentity = new SkeletonPillagerServant(ModEntityType.SKELETON_PILLAGER_SERVANT.get(), worldIn);
                 } else if (worldIn.getBiome(blockPos).is(BiomeTags.IS_JUNGLE) && worldIn.random.nextBoolean()){
                     summonedentity = new MossySkeletonServant(ModEntityType.MOSSY_SKELETON_SERVANT.get(), worldIn);
-                } else if (entityLiving.isUnderWater() && worldIn.isWaterAt(blockPos)){
+                } else if (caster.isUnderWater() && worldIn.isWaterAt(blockPos)){
                     summonedentity = new SunkenSkeletonServant(ModEntityType.SUNKEN_SKELETON_SERVANT.get(), worldIn);
                 }
-                summonedentity.setTrueOwner(entityLiving);
+                summonedentity.setTrueOwner(caster);
                 summonedentity.moveTo(blockPos, 0.0F, 0.0F);
                 if (summonedentity.getType() != ModEntityType.SUNKEN_SKELETON_SERVANT.get()){
                     MobUtil.moveDownToGround(summonedentity);
                 }
                 summonedentity.setPersistenceRequired();
                 summonedentity.setLimitedLife(MobUtil.getSummonLifespan(worldIn) * duration);
-                summonedentity.setArrowPower(enchantment);
-                summonedentity.finalizeSpawn(worldIn, entityLiving.level.getCurrentDifficultyAt(entityLiving.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
-                this.SummonSap(entityLiving, summonedentity);
-                this.setTarget(entityLiving, summonedentity);
+                summonedentity.setArrowPower(potency);
+                summonedentity.finalizeSpawn(worldIn, caster.level.getCurrentDifficultyAt(caster.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
+                this.SummonSap(caster, summonedentity);
+                this.setTarget(caster, summonedentity);
                 if (worldIn.addFreshEntity(summonedentity)) {
                     ColorUtil colorUtil = new ColorUtil(0x2ac9cf);
                     ServerParticleUtil.windShockwaveParticle(worldIn, colorUtil, 0.1F, 0.1F, 0.05F, -1, summonedentity.position());
                 }
-                this.summonAdvancement(entityLiving, summonedentity);
+                this.summonAdvancement(caster, summonedentity);
             }
-            this.SummonDown(entityLiving);
-            SoundUtil.playNecromancerSummon(entityLiving);
+            this.SummonDown(caster);
+            SoundUtil.playNecromancerSummon(caster);
         }
     }
 }

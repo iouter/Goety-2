@@ -3,6 +3,7 @@ package com.Polarice3.Goety.common.magic.spells;
 import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.magic.Spell;
+import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.utils.ColorUtil;
 import com.Polarice3.Goety.utils.WandUtil;
@@ -58,63 +59,66 @@ public class FangSpell extends Spell {
     }
 
     @Override
-    public ColorUtil particleColors(LivingEntity entityLiving) {
+    public ColorUtil particleColors(LivingEntity caster) {
         return new ColorUtil(0.4F, 0.3F, 0.35F);
     }
 
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff){
-        Player playerEntity = (Player) entityLiving;
-        int range = 16;
-        double radius = 2.0D;
-        if (WandUtil.enchantedFocus(entityLiving)){
-            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), entityLiving);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat){
+        int range = spellStat.getRange();
+        int potency = spellStat.getPotency();
+        int burning = spellStat.getBurning();
+        double radius = spellStat.getRadius();
+        if (WandUtil.enchantedFocus(caster)){
+            range += WandUtil.getLevels(ModEnchantments.RANGE.get(), caster);
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
+            burning += WandUtil.getLevels(ModEnchantments.BURNING.get(), caster);
         }
-        HitResult rayTraceResult = this.rayTrace(worldIn, playerEntity, range, radius);
+        HitResult rayTraceResult = this.rayTrace(worldIn, caster, range, radius);
         Vec3 vector3d = rayTraceResult.getLocation();
-        double d0 = Math.min(vector3d.y, entityLiving.getY());
-        double d1 = Math.max(vector3d.y, entityLiving.getY()) + 1.0D;
-        float f = (float) Mth.atan2(vector3d.z - entityLiving.getZ(), vector3d.x - entityLiving.getX());
-        LivingEntity target = this.getTarget(entityLiving, range);
+        double d0 = Math.min(vector3d.y, caster.getY());
+        double d1 = Math.max(vector3d.y, caster.getY()) + 1.0D;
+        float f = (float) Mth.atan2(vector3d.z - caster.getZ(), vector3d.x - caster.getX());
+        LivingEntity target = this.getTarget(caster, range);
         if (target != null){
-            d0 = Math.min(target.getY(), entityLiving.getY());
-            d1 = Math.max(target.getY(), entityLiving.getY()) + 1.0D;
-            f = (float) Mth.atan2(target.getZ() - entityLiving.getZ(), target.getX() - entityLiving.getX());
+            d0 = Math.min(target.getY(), caster.getY());
+            d1 = Math.max(target.getY(), caster.getY()) + 1.0D;
+            f = (float) Mth.atan2(target.getZ() - caster.getZ(), target.getX() - caster.getX());
         }
-        if (!isShifting(entityLiving)) {
+        if (!isShifting(caster)) {
             for(int l = 0; l < range; ++l) {
                 double d2 = 1.25D * (double)(l + 1);
-                WandUtil.spawnFangs(entityLiving,entityLiving.getX() + (double)Mth.cos(f) * d2, entityLiving.getZ() + (double)Mth.sin(f) * d2, d0, d1, f, l);
+                WandUtil.spawnFangs(caster, caster.getX() + (double)Mth.cos(f) * d2, caster.getZ() + (double)Mth.sin(f) * d2, d0, d1, f, l, potency, burning);
                 if (rightStaff(staff)) {
                     float fleft = f + 0.2F;
                     float fright = f - 0.2F;
-                    WandUtil.spawnFangs(entityLiving, entityLiving.getX() + (double) Mth.cos(fleft) * d2, entityLiving.getZ() + (double) Mth.sin(fleft) * d2, d0, d1, fleft, l);
-                    WandUtil.spawnFangs(entityLiving, entityLiving.getX() + (double) Mth.cos(fright) * d2, entityLiving.getZ() + (double) Mth.sin(fright) * d2, d0, d1, fright, l);
+                    WandUtil.spawnFangs(caster, caster.getX() + (double) Mth.cos(fleft) * d2, caster.getZ() + (double) Mth.sin(fleft) * d2, d0, d1, fleft, l, potency, burning);
+                    WandUtil.spawnFangs(caster, caster.getX() + (double) Mth.cos(fright) * d2, caster.getZ() + (double) Mth.sin(fright) * d2, d0, d1, fright, l, potency, burning);
                 }
             }
         } else {
             for(int i = 0; i < 5; ++i) {
                 float f1 = f + (float)i * (float)Math.PI * 0.4F;
-                WandUtil.spawnFangs(entityLiving,entityLiving.getX() + (double)Mth.cos(f1) * 1.5D, entityLiving.getZ() + (double)Mth.sin(f1) * 1.5D, d0, d1, f1, 0);
+                WandUtil.spawnFangs(caster, caster.getX() + (double)Mth.cos(f1) * 1.5D, caster.getZ() + (double)Mth.sin(f1) * 1.5D, d0, d1, f1, 0, potency, burning);
             }
 
             for(int k = 0; k < 8; ++k) {
                 float f2 = f + (float)k * (float)Math.PI * 2.0F / 8.0F + 1.2566371F;
-                WandUtil.spawnFangs(entityLiving,entityLiving.getX() + (double)Mth.cos(f2) * 2.5D, entityLiving.getZ() + (double)Mth.sin(f2) * 2.5D, d0, d1, f2, 3);
+                WandUtil.spawnFangs(caster, caster.getX() + (double)Mth.cos(f2) * 2.5D, caster.getZ() + (double)Mth.sin(f2) * 2.5D, d0, d1, f2, 3, potency, burning);
             }
 
             if (rightStaff(staff)) {
                 for(int k = 0; k < 11; ++k) {
                     float f2 = f + (float)k * (float)Math.PI * 4.0F / 16.0F + 2.5133462F;
-                    WandUtil.spawnFangs(entityLiving,entityLiving.getX() + (double)Mth.cos(f2) * 3.5D, entityLiving.getZ() + (double)Mth.sin(f2) * 3.5D, d0, d1, f2, 6);
+                    WandUtil.spawnFangs(caster, caster.getX() + (double)Mth.cos(f2) * 3.5D, caster.getZ() + (double)Mth.sin(f2) * 3.5D, d0, d1, f2, 6, potency, burning);
                 }
 
                 for(int k = 0; k < 14; ++k) {
                     float f2 = f + (float)k * (float)Math.PI * 8.0F / 32.0F + 5.0266924F;
-                    WandUtil.spawnFangs(entityLiving,entityLiving.getX() + (double)Mth.cos(f2) * 4.5D, entityLiving.getZ() + (double)Mth.sin(f2) * 4.5D, d0, d1, f2, 9);
+                    WandUtil.spawnFangs(caster, caster.getX() + (double)Mth.cos(f2) * 4.5D, caster.getZ() + (double)Mth.sin(f2) * 4.5D, d0, d1, f2, 9, potency, burning);
                 }
             }
         }
-        worldIn.playSound((Player) null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.EVOKER_CAST_SPELL, this.getSoundSource(), 1.0F, 1.0F);
+        worldIn.playSound((Player) null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.EVOKER_CAST_SPELL, this.getSoundSource(), 1.0F, 1.0F);
     }
 
 }

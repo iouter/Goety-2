@@ -1,74 +1,44 @@
 package com.Polarice3.Goety.common.items.curios;
 
-import com.Polarice3.Goety.Goety;
 import com.Polarice3.Goety.common.effects.GoetyEffects;
 import com.Polarice3.Goety.compat.iron.IronAttributes;
 import com.Polarice3.Goety.compat.iron.IronLoaded;
-import com.Polarice3.Goety.config.ItemConfig;
 import com.Polarice3.Goety.config.MainConfig;
 import com.Polarice3.Goety.utils.CuriosFinder;
-import com.Polarice3.Goety.utils.ModDamageSource;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.MobEffectEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.world.level.Level;
 import top.theillusivec4.curios.api.SlotContext;
 
 import java.util.UUID;
 
-@Mod.EventBusSubscriber(modid = Goety.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class UnholyRobeItem extends SingleStackItem{
 
     public UnholyRobeItem() {
         super(new Properties().fireResistant().stacksTo(1));
     }
 
-    @SubscribeEvent
-    public static void LivingEffects(LivingEvent.LivingTickEvent event){
-        LivingEntity livingEntity = event.getEntity();
-        if (livingEntity != null){
-            if (CuriosFinder.hasUnholyRobe(livingEntity)){
+    @Override
+    public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+        if (entityIn instanceof LivingEntity livingEntity) {
+            if (CuriosFinder.hasCurio(livingEntity, this)) {
                 if (livingEntity.isOnFire()){
                     livingEntity.clearFire();
                 }
-                if (!livingEntity.level.isClientSide) {
+                if (!worldIn.isClientSide) {
                     if (livingEntity.hasEffect(GoetyEffects.BURN_HEX.get())){
                         livingEntity.removeEffect(GoetyEffects.BURN_HEX.get());
                     }
                 }
             }
         }
-    }
 
-    @SubscribeEvent
-    public static void HurtEvent(LivingHurtEvent event){
-        LivingEntity victim = event.getEntity();
-        float damage = event.getAmount();
-        if (CuriosFinder.hasUnholyRobe(victim)){
-            float resistance = 1.0F - (ItemConfig.NetherRobeResistance.get() / 100.0F);
-            if (ModDamageSource.hellfireAttacks(event.getSource())){
-                resistance = Math.max(0.75F, resistance);
-                damage *= resistance;
-            }
-            event.setAmount(damage);
-        }
-    }
-
-    @SubscribeEvent
-    public static void PotionApplicationEvents(MobEffectEvent.Applicable event){
-        if (event.getEffectInstance().getEffect() == GoetyEffects.BURN_HEX.get()){
-            if (CuriosFinder.hasUnholyRobe(event.getEntity())){
-                event.setResult(Event.Result.DENY);
-            }
-        }
+        super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
     }
 
     @Override

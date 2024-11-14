@@ -62,18 +62,18 @@ public class SteamSpell extends ChargingSpell {
     }
 
     @Override
-    public void SpellResult(ServerLevel worldIn, LivingEntity entityLiving, ItemStack staff) {
-        Vec3 vector3d = entityLiving.getViewVector( 1.0F);
+    public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff) {
+        Vec3 vector3d = caster.getViewVector( 1.0F);
         SpellHurtingProjectile steamMissile = new SteamMissile(
-                entityLiving.getX() + vector3d.x / 2,
-                entityLiving.getEyeY() - 0.2,
-                entityLiving.getZ() + vector3d.z / 2,
+                caster.getX() + vector3d.x / 2,
+                caster.getEyeY() - 0.2,
+                caster.getZ() + vector3d.z / 2,
                 vector3d.x,
                 vector3d.y,
                 vector3d.z, worldIn);
-        steamMissile.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), entityLiving));
-        steamMissile.setBoltSpeed(WandUtil.getLevels(ModEnchantments.VELOCITY.get(), entityLiving));
-        steamMissile.setOwner(entityLiving);
+        steamMissile.setExtraDamage(WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster));
+        steamMissile.setBoltSpeed(WandUtil.getLevels(ModEnchantments.VELOCITY.get(), caster));
+        steamMissile.setOwner(caster);
         worldIn.addFreshEntity(steamMissile);
     }
 }

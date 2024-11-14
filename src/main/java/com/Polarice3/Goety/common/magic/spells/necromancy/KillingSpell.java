@@ -88,7 +88,7 @@ public class KillingSpell extends Spell {
             DamageSource damageSource = ModDamageSource.deathCurse(caster);
             float damage = target.getHealth();
             float casterDamage = damage * 1.25F;
-            if (caster.getHealth() - this.hurtCalculation(caster, damageSource, casterDamage) <= 0.0F){
+            if (caster.getHealth() - this.hurtCalculation(caster, damageSource, casterDamage) <= 0.0F && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(caster)){
                 damage = caster.getHealth() - 1;
                 casterDamage = caster.getHealth() - 1;
             }
@@ -103,41 +103,6 @@ public class KillingSpell extends Spell {
                     ModNetwork.sendToALL(new SThunderBoltPacket(vec3, vec31, colorUtil, 10));
                     worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), ModSounds.THUNDERBOLT.get(), this.getSoundSource(), 3.0F, 0.75F);
                     worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, this.getSoundSource(), 3.0F, 0.75F);
-                    /*if (!target.isAlive() && this.rightStaff(staff)){
-                        if (target instanceof Zombie zombieEntity && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(zombieEntity, ModEntityType.ZOMBIE_SERVANT.get(), (timer) -> {})) {
-                            EntityType<? extends Mob> entityType = ModEntityType.ZOMBIE_SERVANT.get();
-                            if (zombieEntity instanceof Husk){
-                                entityType = ModEntityType.HUSK_SERVANT.get();
-                            } else if (zombieEntity instanceof Drowned){
-                                entityType = ModEntityType.DROWNED_SERVANT.get();
-                            }
-                            ZombieServant zombieMinionEntity = (ZombieServant) zombieEntity.convertTo(entityType, false);
-                            if (zombieMinionEntity != null) {
-                                zombieMinionEntity.finalizeSpawn(worldIn, worldIn.getCurrentDifficultyAt(zombieMinionEntity.blockPosition()), MobSpawnType.CONVERSION, null, null);
-                                zombieMinionEntity.setLimitedLife(10 * (15 + worldIn.random.nextInt(45)));
-                                zombieMinionEntity.setTrueOwner(entityLiving);
-                                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(zombieEntity, zombieMinionEntity);
-                                if (!zombieMinionEntity.isSilent()) {
-                                    worldIn.levelEvent((Player) null, 1026, zombieMinionEntity.blockPosition(), 0);
-                                }
-                            }
-                        } else if (target instanceof AbstractSkeleton skeleton && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(skeleton, ModEntityType.SKELETON_SERVANT.get(), (timer) -> {})) {
-                            EntityType<? extends Mob> entityType = ModEntityType.SKELETON_SERVANT.get();
-                            if (skeleton instanceof Stray){
-                                entityType = ModEntityType.STRAY_SERVANT.get();
-                            }
-                            AbstractSkeletonServant skeletonServant = (AbstractSkeletonServant) skeleton.convertTo(entityType, false);
-                            if (skeletonServant != null) {
-                                skeletonServant.finalizeSpawn(worldIn, worldIn.getCurrentDifficultyAt(skeletonServant.blockPosition()), MobSpawnType.CONVERSION, null, null);
-                                skeletonServant.setLimitedLife(10 * (15 + worldIn.random.nextInt(45)));
-                                skeletonServant.setTrueOwner(entityLiving);
-                                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(skeleton, skeletonServant);
-                                if (!skeletonServant.isSilent()) {
-                                    worldIn.levelEvent((Player) null, 1026, skeletonServant.blockPosition(), 0);
-                                }
-                            }
-                        }
-                    }*/
                 }
             }
         }

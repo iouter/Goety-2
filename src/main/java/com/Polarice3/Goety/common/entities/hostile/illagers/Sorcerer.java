@@ -60,6 +60,7 @@ public class Sorcerer extends HuntingIllagerEntity {
     protected int castingTime;
     protected int[] spellCoolDown = new int[SorcererSpell.values().length + 1];
     public int coolDown = 0;
+    public boolean hasSpawned;
     public static int MIN_LEVEL = 1;
     public static int MAX_LEVEL = 5;
 
@@ -100,7 +101,8 @@ public class Sorcerer extends HuntingIllagerEntity {
     public void readAdditionalSaveData(CompoundTag p_33732_) {
         super.readAdditionalSaveData(p_33732_);
         if (p_33732_.contains("Level")){
-            this.setLevels(p_33732_.getInt("Level"), false);
+            boolean heal = !p_33732_.getBoolean("HasSpawned");
+            this.setLevels(p_33732_.getInt("Level"), heal);
         }
         this.castingTime = p_33732_.getInt("SorcererSpellTicks");
     }
@@ -109,6 +111,7 @@ public class Sorcerer extends HuntingIllagerEntity {
         super.addAdditionalSaveData(p_33734_);
         p_33734_.putInt("Level", this.getLevels());
         p_33734_.putInt("SorcererSpellTicks", this.castingTime);
+        p_33734_.putBoolean("HasSpawned", this.hasSpawned);
     }
 
     public AbstractIllager.IllagerArmPose getArmPose() {
@@ -160,6 +163,7 @@ public class Sorcerer extends HuntingIllagerEntity {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_37856_, DifficultyInstance p_37857_, MobSpawnType p_37858_, @Nullable SpawnGroupData p_37859_, @Nullable CompoundTag p_37860_) {
         SpawnGroupData data = super.finalizeSpawn(p_37856_, p_37857_, p_37858_, p_37859_, p_37860_);
         this.setLevels(1 + p_37856_.getRandom().nextInt(1 + (int) p_37857_.getEffectiveDifficulty()), true);
+        this.hasSpawned = true;
         return data;
     }
 
@@ -182,6 +186,9 @@ public class Sorcerer extends HuntingIllagerEntity {
     @Override
     public void tick() {
         super.tick();
+        if (!this.hasSpawned){
+            this.hasSpawned = true;
+        }
         if (!this.level.isClientSide){
             for (SorcererSpell spell : SorcererSpell.values()){
                 if (this.spellCoolDown[spell.trueId] > 0){

@@ -30,6 +30,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
@@ -39,8 +41,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
-public class HauntedMirrorBlock extends BaseEntityBlock {
+public class HauntedMirrorBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     protected static final VoxelShape NORTH_AABB = Block.box(0.0D, 0.0D, 0.0D,
@@ -60,17 +63,11 @@ public class HauntedMirrorBlock extends BaseEntityBlock {
                 .lightLevel((blockState) -> 6)
                 .noOcclusion()
                 .sound(SoundType.GLASS));
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER).setValue(LIT, Boolean.FALSE));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, Boolean.FALSE).setValue(HALF, DoubleBlockHalf.LOWER).setValue(LIT, Boolean.FALSE));
     }
 
     public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, LivingEntity pPlacer, ItemStack pStack) {
-        pLevel.setBlock(pPos.above(), pState.setValue(HALF, DoubleBlockHalf.UPPER), 3);
-        /*BlockEntity tileentity = pLevel.getBlockEntity(pPos);
-        if (pPlacer instanceof Player){
-            if (tileentity instanceof MagicMirrorBlockEntity blockEntity){
-                blockEntity.setOwner(pPlacer);
-            }
-        }*/
+        pLevel.setBlock(pPos.above(), pState.setValue(HALF, DoubleBlockHalf.UPPER).setValue(WATERLOGGED, pLevel.getFluidState(pPos.above()).getType() == Fluids.WATER), 3);
     }
 
     public void playerWillDestroy(Level p_52755_, BlockPos p_52756_, BlockState p_52757_, Player p_52758_) {
@@ -101,15 +98,20 @@ public class HauntedMirrorBlock extends BaseEntityBlock {
         BlockState blockstate = this.defaultBlockState();
         LevelReader levelreader = p_51750_.getLevel();
         BlockPos blockpos = p_51750_.getClickedPos();
+        FluidState fluidstate = levelreader.getFluidState(blockpos);
+        boolean flag = fluidstate.getType() == Fluids.WATER;
 
-        for(Direction direction : p_51750_.getNearestLookingDirections()) {
-            if (direction.getAxis() != Direction.Axis.Y) {
-                blockstate = blockstate.setValue(FACING, direction).setValue(HALF, DoubleBlockHalf.LOWER);
-                if (blockstate.canSurvive(levelreader, blockpos)) {
-                    return blockstate;
+        if (blockpos.getY() < levelreader.getMaxBuildHeight() - 1 && levelreader.getBlockState(blockpos.above()).canBeReplaced(p_51750_)) {
+            for(Direction direction : p_51750_.getNearestLookingDirections()) {
+                if (direction.getAxis() != Direction.Axis.Y) {
+                    blockstate = blockstate.setValue(FACING, direction).setValue(HALF, DoubleBlockHalf.LOWER);
+                    if (blockstate.canSurvive(levelreader, blockpos)) {
+                        return blockstate.setValue(WATERLOGGED, flag);
+                    }
                 }
             }
         }
+
         return null;
     }
 
@@ -135,7 +137,7 @@ public class HauntedMirrorBlock extends BaseEntityBlock {
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_58112_) {
-        p_58112_.add(FACING, HALF, LIT);
+        p_58112_.add(FACING, WATERLOGGED, HALF, LIT);
     }
 
     public static Direction getDirection(BlockState blockState){
@@ -144,6 +146,20 @@ public class HauntedMirrorBlock extends BaseEntityBlock {
 
     public static boolean isBlockTopOfMirror(BlockState blockState) {
         return blockState.getValue(HALF) == DoubleBlockHalf.UPPER;
+    }
+
+    public boolean placeLiquid(LevelAccessor pLevel, BlockPos pPos, BlockState pState, FluidState pFluidState) {
+        if (!pState.getValue(BlockStateProperties.WATERLOGGED) && pFluidState.getType() == Fluids.WATER) {
+            pLevel.setBlock(pPos, pState.setValue(WATERLOGGED, Boolean.TRUE), 3);
+            pLevel.scheduleTick(pPos, pFluidState.getType(), pFluidState.getType().getTickDelay(pLevel));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public FluidState getFluidState(BlockState pState) {
+        return pState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(pState);
     }
 
     @Override

@@ -115,6 +115,11 @@ public class BoltingSpell extends Spell {
             ++this.ticks;
             if (EntityFinder.getEntityByUuiD(this.owner) instanceof LivingEntity living) {
                 living.fallDistance = 0;
+                living.invulnerableTime = 20;
+                double radius = 1.0D;
+                if (this.staff){
+                    radius += 0.25D;
+                }
                 for(int i = 0; i < 2; ++i) {
                     double d0 = (2.0D * Math.random() - 1.0D) * 0.2D;
                     double d1 = (2.0D * Math.random() - 1.0D) * 0.2D;
@@ -123,7 +128,7 @@ public class BoltingSpell extends Spell {
                 }
                 ServerParticleUtil.addParticlesAroundMiddleSelf(this.level, ModParticleTypes.ELECTRIC.get(), living);
 
-                List<Entity> list = this.level.getEntities(living, living.getBoundingBox().inflate(1.0D));
+                List<Entity> list = this.level.getEntities(living, living.getBoundingBox().inflate(radius));
                 if (!list.isEmpty()) {
                     for (Entity entity : list) {
                         if (entity instanceof LivingEntity target) {

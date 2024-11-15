@@ -68,6 +68,7 @@ public class ModEntityTypeTagsProvider extends IntrinsicHolderTagsProvider<Entit
                 ModEntityType.MAVERICK.get(),
                 ModEntityType.HERETIC.get(),
                 ModEntityType.CRONE.get(),
+                ModEntityType.SORCERER.get(),
                 ModEntityType.ENVIOKER.get(),
                 ModEntityType.INQUILLAGER.get(),
                 ModEntityType.CONQUILLAGER.get(),

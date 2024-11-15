@@ -31,7 +31,7 @@
       }
     },
     {
-      "weight": 10,
+      "weight": 15,
       "element": {
 
         "location": "goety:crypt/rooms/book_room",

@@ -23,7 +23,7 @@ public class SensingSpell extends Spell {
 
     @Override
     public SpellStat defaultStats() {
-        return super.defaultStats().setDuration(1);
+        return super.defaultStats().setDuration(5);
     }
 
     @Override

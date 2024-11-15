@@ -1,8 +1,13 @@
 package com.Polarice3.Goety.common.entities.projectiles;
 
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -15,6 +20,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.item.ItemStack;
@@ -22,8 +28,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public class EyeItemEntity extends Entity implements ItemSupplier {
+public class EyeItemEntity extends SpellEntity implements ItemSupplier {
    private static final EntityDataAccessor<ItemStack> DATA_ITEM_STACK = SynchedEntityData.defineId(EyeItemEntity.class, EntityDataSerializers.ITEM_STACK);
+   private static final EntityDataAccessor<ParticleOptions> DATA_PARTICLE = SynchedEntityData.defineId(EyeItemEntity.class, EntityDataSerializers.PARTICLE);
    private double tx;
    private double ty;
    private double tz;
@@ -53,7 +60,17 @@ public class EyeItemEntity extends Entity implements ItemSupplier {
    }
 
    protected void defineSynchedData() {
+      super.defineSynchedData();
       this.getEntityData().define(DATA_ITEM_STACK, ItemStack.EMPTY);
+      this.getEntityData().define(DATA_PARTICLE, ParticleTypes.PORTAL);
+   }
+
+   public ParticleOptions getParticle() {
+      return this.getEntityData().get(DATA_PARTICLE);
+   }
+
+   public void setParticle(ParticleOptions p_19725_) {
+      this.getEntityData().set(DATA_PARTICLE, p_19725_);
    }
 
    public boolean shouldRenderAtSqrDistance(double p_36966_) {
@@ -135,7 +152,7 @@ public class EyeItemEntity extends Entity implements ItemSupplier {
             this.level.addParticle(ParticleTypes.BUBBLE, d0 - vec3.x * 0.25D, d1 - vec3.y * 0.25D, d2 - vec3.z * 0.25D, vec3.x, vec3.y, vec3.z);
          }
       } else {
-         this.level.addParticle(ParticleTypes.PORTAL, d0 - vec3.x * 0.25D + this.random.nextDouble() * 0.6D - 0.3D, d1 - vec3.y * 0.25D - 0.5D, d2 - vec3.z * 0.25D + this.random.nextDouble() * 0.6D - 0.3D, vec3.x, vec3.y, vec3.z);
+         this.level.addParticle(this.getParticle(), d0 - vec3.x * 0.25D + this.random.nextDouble() * 0.6D - 0.3D, d1 - vec3.y * 0.25D - 0.5D, d2 - vec3.z * 0.25D + this.random.nextDouble() * 0.6D - 0.3D, vec3.x, vec3.y, vec3.z);
       }
 
       if (!this.level.isClientSide) {
@@ -148,12 +165,32 @@ public class EyeItemEntity extends Entity implements ItemSupplier {
                this.level.addFreshEntity(new ItemEntity(this.level, this.getX(), this.getY(), this.getZ(), this.getItem()));
             } else {
                this.breakParticles((ServerLevel) this.level, this.blockPosition());
+               if (this.getOwner() != null){
+                  this.drawParticleBeam(this.getOwner());
+               }
             }
          }
       } else {
          this.setPosRaw(d0, d1, d2);
       }
 
+   }
+
+   private void drawParticleBeam(LivingEntity pSource) {
+      double d0 = this.getX() - pSource.getX();
+      double d1 = (this.getY() + (double) this.getBbHeight() * 0.5F) - (pSource.getY() + (double) pSource.getBbHeight() * 0.5D);
+      double d2 = this.getZ() - pSource.getZ();
+      double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
+      d0 = d0 / d3;
+      d1 = d1 / d3;
+      d2 = d2 / d3;
+      double d4 = pSource.level.random.nextDouble();
+      if (pSource.level instanceof ServerLevel serverWorld) {
+         while (d4 < d3) {
+            d4 += 1.0D;
+            serverWorld.sendParticles(ParticleTypes.ELECTRIC_SPARK, pSource.getX() + d0 * d4, pSource.getY() + d1 * d4 + (double) pSource.getEyeHeight() * 0.5D, pSource.getZ() + d2 * d4, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+         }
+      }
    }
 
    public void breakParticles(ServerLevel serverLevel, BlockPos blockPos){
@@ -166,12 +203,14 @@ public class EyeItemEntity extends Entity implements ItemSupplier {
       }
 
       for(double d12 = 0.0D; d12 < (Math.PI * 2D); d12 += 0.15707963267948966D) {
-         serverLevel.sendParticles(ParticleTypes.PORTAL, d0 + Math.cos(d12) * 5.0D, d7 - 0.4D, d9 + Math.sin(d12) * 5.0D, 0, Math.cos(d12) * -5.0D, 0.0D, Math.sin(d12) * -5.0D, 0.5F);
-         serverLevel.sendParticles(ParticleTypes.PORTAL, d0 + Math.cos(d12) * 5.0D, d7 - 0.4D, d9 + Math.sin(d12) * 5.0D, 0, Math.cos(d12) * -7.0D, 0.0D, Math.sin(d12) * -7.0D, 0.5F);
+         serverLevel.sendParticles(this.getParticle(), d0 + Math.cos(d12) * 5.0D, d7 - 0.4D, d9 + Math.sin(d12) * 5.0D, 0, Math.cos(d12) * -5.0D, 0.0D, Math.sin(d12) * -5.0D, 0.5F);
+         serverLevel.sendParticles(this.getParticle(), d0 + Math.cos(d12) * 5.0D, d7 - 0.4D, d9 + Math.sin(d12) * 5.0D, 0, Math.cos(d12) * -7.0D, 0.0D, Math.sin(d12) * -7.0D, 0.5F);
       }
    }
 
    public void addAdditionalSaveData(CompoundTag p_36975_) {
+      super.addAdditionalSaveData(p_36975_);
+      p_36975_.putString("Particle", this.getParticle().writeToString());
       p_36975_.putBoolean("Survive", this.surviveAfterDeath);
       ItemStack itemstack = this.getItemRaw();
       if (!itemstack.isEmpty()) {
@@ -180,6 +219,13 @@ public class EyeItemEntity extends Entity implements ItemSupplier {
    }
 
    public void readAdditionalSaveData(CompoundTag p_36970_) {
+      super.readAdditionalSaveData(p_36970_);
+      if (p_36970_.contains("Particle", 8)) {
+         try {
+            this.setParticle(ParticleArgument.readParticle(new StringReader(p_36970_.getString("Particle")), BuiltInRegistries.PARTICLE_TYPE.asLookup()));
+         } catch (CommandSyntaxException ignored) {
+         }
+      }
       this.surviveAfterDeath = p_36970_.getBoolean("Survive");
       ItemStack itemstack = ItemStack.of(p_36970_.getCompound("Item"));
       this.setItem(itemstack);
@@ -203,10 +249,5 @@ public class EyeItemEntity extends Entity implements ItemSupplier {
       }
 
       return Mth.lerp(0.2F, p_37274_, p_37275_);
-   }
-
-   @Override
-   public Packet<ClientGamePacketListener> getAddEntityPacket() {
-      return new ClientboundAddEntityPacket(this);
    }
 }

@@ -99,7 +99,7 @@ public class BoltingSpell extends Spell {
 
         @Override
         public void startTask() {
-            if (EntityFinder.getEntityByUuiD(this.owner) instanceof LivingEntity living) {
+            if (this.level.getEntity(this.owner) instanceof LivingEntity living) {
                 MiscCapHelper.setCustomSpinTexture(living, ConstantPaths.boltingDash());
                 living.setLivingEntityFlag(4, true);
                 for (int i = 0; i < 4; ++i){
@@ -113,7 +113,7 @@ public class BoltingSpell extends Spell {
         @Override
         public void tickTask() {
             ++this.ticks;
-            if (EntityFinder.getEntityByUuiD(this.owner) instanceof LivingEntity living) {
+            if (this.level.getEntity(this.owner) instanceof LivingEntity living) {
                 living.fallDistance = 0;
                 living.invulnerableTime = 20;
                 double radius = 1.0D;
@@ -158,7 +158,7 @@ public class BoltingSpell extends Spell {
         @Override
         public boolean getAsBoolean() {
             boolean flag = false;
-            if (EntityFinder.getEntityByUuiD(this.owner) instanceof LivingEntity living){
+            if (this.level.getEntity(this.owner) instanceof LivingEntity living){
                 if (++this.ticks >= 20 || living.isDeadOrDying()) {
                     flag = true;
                 }
@@ -179,7 +179,7 @@ public class BoltingSpell extends Spell {
 
         @Override
         public void endTask() {
-            if (EntityFinder.getEntityByUuiD(this.owner) instanceof LivingEntity living) {
+            if (this.level.getEntity(this.owner) instanceof LivingEntity living) {
                 living.setLivingEntityFlag(4, false);
                 MiscCapHelper.setCustomSpinTexture(living, null);
             }

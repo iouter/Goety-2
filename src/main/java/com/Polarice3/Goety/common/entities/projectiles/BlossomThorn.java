@@ -126,9 +126,9 @@ public class BlossomThorn extends GroundProjectile {
                 if (livingentity.isAlliedTo(target)) {
                     return;
                 }
-                flag = target.hurt(this.damageSources().thorns(livingentity), baseDamage);
+                flag = target.hurt(this.damageSources().thorns(livingentity), baseDamage + this.getExtraDamage());
             } else {
-                flag = target.hurt(this.damageSources().thorns(this), baseDamage);
+                flag = target.hurt(this.damageSources().thorns(this), baseDamage + this.getExtraDamage());
             }
             if (flag){
                 MobEffect effect = MobEffects.POISON;

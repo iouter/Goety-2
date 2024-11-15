@@ -63,8 +63,6 @@ public class Maverick extends Cultist{
     private static final EntityDataAccessor<Boolean> DATA_USING_ITEM = SynchedEntityData.defineId(Maverick.class, EntityDataSerializers.BOOLEAN);
     private int usingTime;
     private int fleeTime;
-    private NearestHealableRaiderTargetGoal<Raider> healRaidersGoal;
-    private NearestAttackableWitchTargetGoal<Player> attackPlayersGoal;
 
     public Maverick(EntityType<? extends Cultist> type, Level worldIn) {
         super(type, worldIn);
@@ -72,14 +70,6 @@ public class Maverick extends Cultist{
 
     protected void registerGoals() {
         super.registerGoals();
-        this.healRaidersGoal = new NearestHealableRaiderTargetGoal<>(this, Raider.class, true, (target) -> {
-            return target != null
-                    && target.getHealth() > 10.0F
-                    && this.hasActiveRaid()
-                    && !(target instanceof Witch)
-                    && !(target instanceof Cultist);
-        });
-        this.attackPlayersGoal = new NearestAttackableWitchTargetGoal<>(this, Player.class, 10, true, false, null);
         this.goalSelector.addGoal(1, new MaverickBarterGoal(this));
         this.goalSelector.addGoal(1, new AvoidTargetGoal<>(this, LivingEntity.class, 8, 1.0D, 1.2D){
             @Override
@@ -88,8 +78,7 @@ public class Maverick extends Cultist{
             }
         });
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2D, true));
-        this.targetSelector.addGoal(2, this.healRaidersGoal);
-        this.targetSelector.addGoal(3, this.attackPlayersGoal);
+        this.targetSelector.addGoal(3, new NearestAttackableWitchTargetGoal<>(this, Player.class, 10, true, false, null));
     }
 
     public static AttributeSupplier.Builder setCustomAttributes() {
@@ -171,8 +160,6 @@ public class Maverick extends Cultist{
             if (this.fleeTime > 0){
                 --this.fleeTime;
             }
-            this.healRaidersGoal.decrementCooldown();
-            this.attackPlayersGoal.setCanAttack(this.healRaidersGoal.getCooldown() <= 0);
             AttributeInstance attributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
             if (this.isDrinkingPotion()) {
                 int i = this.usingTime;

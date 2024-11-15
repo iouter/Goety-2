@@ -22,7 +22,11 @@
       ]
     },
     {
-      "rolls": 1,
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 1.0,
+        "max": 3.0
+      },
       "entries": [
         {
           "type": "minecraft:item",
@@ -158,6 +162,11 @@
           ],
           "weight": 5,
           "name": "goety:cursed_paladin_boots"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 5,
+          "name": "goety:haunting_scroll"
         },
         {
           "type": "minecraft:item",

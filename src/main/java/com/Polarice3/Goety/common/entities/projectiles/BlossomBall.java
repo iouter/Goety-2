@@ -33,7 +33,6 @@ import net.minecraftforge.network.NetworkHooks;
 import java.util.List;
 
 public class BlossomBall extends SpellThrowableProjectile{
-    public float extraDamage = 0.0F;
     public double radius = 3.0D;
     public int duration = 0;
 
@@ -63,16 +62,12 @@ public class BlossomBall extends SpellThrowableProjectile{
 
     public void addAdditionalSaveData(CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        pCompound.putFloat("ExtraDamage", this.extraDamage);
         pCompound.putDouble("Radius",this.getRadius());
         pCompound.putInt("Duration",this.getDuration());
     }
 
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
-        if (pCompound.contains("ExtraDamage")){
-            this.extraDamage = pCompound.getInt("ExtraDamage");
-        }
         if (pCompound.contains("Radius")){
             this.setRadius(pCompound.getDouble("Radius"));
         }
@@ -111,7 +106,7 @@ public class BlossomBall extends SpellThrowableProjectile{
                     BlossomThorn blossomThorn = new BlossomThorn(this.level, vec31.x, vec31.y, vec31.z, 30, this.getOwner());
                     MobUtil.moveDownToGround(blossomThorn);
                     blossomThorn.setDuration(this.getDuration());
-                    blossomThorn.setExtraDamage(this.extraDamage);
+                    blossomThorn.setExtraDamage(this.getExtraDamage());
                     if (this.level instanceof ServerLevel serverLevel){
                         serverLevel.sendParticles(ModParticleTypes.BLOSSOM_THORN_INDICATOR.get(), blossomThorn.position().x, blossomThorn.position().y + 0.1F, blossomThorn.position().z, 1, 0.0F, 0.0F, 0.0F, 0.0F);
                     }
@@ -133,7 +128,7 @@ public class BlossomBall extends SpellThrowableProjectile{
         if (pResult.getEntity() instanceof LivingEntity target) {
             if (this.getOwner() != null) {
                 float baseDamage = SpellConfig.BlossomDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get();
-                if (target.hurt(this.damageSources().thorns(this.getOwner()), baseDamage)) {
+                if (target.hurt(this.damageSources().thorns(this.getOwner()), baseDamage + this.getExtraDamage())) {
                     MobEffect effect = MobEffects.POISON;
                     if (CuriosFinder.hasWildRobe(this.getOwner())) {
                         effect = GoetyEffects.ACID_VENOM.get();

@@ -22,7 +22,7 @@ public class MagmaSpell extends Spell {
 
     @Override
     public SpellStat defaultStats() {
-        return super.defaultStats().setRadius(3.0D);
+        return super.defaultStats().setRadius(3.0D).setVelocity(1.5F);
     }
 
     @Override

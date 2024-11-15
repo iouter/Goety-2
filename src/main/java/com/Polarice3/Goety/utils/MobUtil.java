@@ -96,11 +96,7 @@ public class MobUtil {
     }
 
     public static boolean validEntity(Entity entity){
-        if (entity instanceof Player player){
-            return playerValidity(player, false);
-        } else {
-            return entity.isAttackable();
-        }
+        return EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity) && entity.isAttackable();
     }
 
     public static boolean playerValidity(Player player, boolean isNotLich){

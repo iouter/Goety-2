@@ -1,6 +1,7 @@
 package com.Polarice3.Goety.common.blocks.entities;
 
 import com.Polarice3.Goety.Goety;
+import com.Polarice3.Goety.client.particles.GatherTrailParticle;
 import com.Polarice3.Goety.client.particles.ModParticleTypes;
 import com.Polarice3.Goety.common.blocks.DarkAltarBlock;
 import com.Polarice3.Goety.common.blocks.ModBlocks;
@@ -14,8 +15,10 @@ import com.Polarice3.Goety.common.ritual.EnchantItemRitual;
 import com.Polarice3.Goety.common.ritual.Ritual;
 import com.Polarice3.Goety.common.ritual.RitualRequirements;
 import com.Polarice3.Goety.config.MainConfig;
+import com.Polarice3.Goety.utils.ColorUtil;
 import com.Polarice3.Goety.utils.EntityFinder;
 import com.Polarice3.Goety.utils.SEHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -263,7 +266,7 @@ public class DarkAltarBlockEntity extends PedestalBlockEntity implements GameEve
                             if (this.experienceTaken < enchantItemRitual.getLevelCost(handler.getStackInSlot(0))) {
                                 if (this.castingPlayer.experienceLevel > 1) {
                                     if (this.level.getGameTime() % 10 == 0) {
-                                        serverWorld.playSound(null, this.worldPosition, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 1.0F, 0.5F);
+                                        serverWorld.playSound(null, this.worldPosition, SoundEvents.SCULK_CATALYST_BLOOM, SoundSource.BLOCKS, 0.5F, 0.5F);
                                         this.castingPlayer.giveExperienceLevels(-1);
                                         this.experienceTaken += 1;
                                     }
@@ -347,10 +350,10 @@ public class DarkAltarBlockEntity extends PedestalBlockEntity implements GameEve
     }
 
     private void addXPParticles(ServerLevel world) {
-        double d0 = 0.1D * (this.getBlockPos().getX() - this.castingPlayer.getX());
-        double d1 = 0.1D * (this.getBlockPos().getY() + 0.5D) - (this.castingPlayer.getY() + 0.5D);
-        double d2 = 0.1D * (this.getBlockPos().getZ() - this.castingPlayer.getZ());
-        world.sendParticles(ModParticleTypes.XP_TAKE.get(), this.castingPlayer.getX(), this.castingPlayer.getY() + 0.5D, this.castingPlayer.getZ(), 0, d0, d1, d2, 1.0D);
+        ColorUtil colorUtil = new ColorUtil(0xd0e45a);
+        Vec3 vector3d = new Vec3(this.castingPlayer.getRandomX(1.0F), this.castingPlayer.getRandomY(), this.castingPlayer.getRandomZ(1.0F));
+        Vec3 vector3d1 = Vec3.atCenterOf(this.getBlockPos());
+        world.sendParticles(new GatherTrailParticle.Option(colorUtil, vector3d1), vector3d.x, vector3d.y, vector3d.z, 0, 0.0F, 0.0F, 0.0F, 0.5F);
     }
 
     public void restoreCastingPlayer() {

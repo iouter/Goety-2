@@ -1,5 +1,6 @@
 package com.Polarice3.Goety.common.items;
 
+import com.Polarice3.Goety.client.particles.ModParticleTypes;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.projectiles.EyeItemEntity;
 import com.Polarice3.Goety.common.world.structures.ModStructureTags;
@@ -32,6 +33,8 @@ public class CrypticEyeItem extends Item {
             eyeItem.setItem(itemstack);
             eyeItem.signalTo(blockpos);
             eyeItem.setSurviveAfterDeath(false);
+            eyeItem.setParticle(ModParticleTypes.TOTEM_EFFECT.get());
+            eyeItem.setOwner(p_41185_);
             p_41184_.gameEvent(GameEvent.PROJECTILE_SHOOT, eyeItem.position(), GameEvent.Context.of(p_41185_));
             p_41184_.addFreshEntity(eyeItem);
             ItemHelper.hurtAndBreak(itemstack, 1, p_41185_);

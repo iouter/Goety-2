@@ -650,7 +650,7 @@
   "item.goety.lavaball_focus": "Lava Bomb Focus",
   "item.goety.lavaball_focus.info": "Shoots a Lava Bomb. Cast crouching will make the Lava Bomb non-destructive on terrain.",
   "item.goety.magma_bomb_focus": "Magma Bomb Focus",
-  "item.goety.magma_bomb_focus.info": "Shoots a Magma Bomb, which would explode and spawn several loyal Magma Cubes.",
+  "item.goety.magma_bomb_focus.info": "Shoots a Magma Bomb, which will explode and summon several loyal Magma Cubes.",
   "item.goety.fire_blast_focus": "Fire Blast Focus",
   "item.goety.fire_blast_focus.info": "Summons a non-destructive fiery explosion on the caster, knocking back, burning and damaging nearby non-allied targets.",
   "item.goety.flame_strike_focus": "Flame Strike Focus",

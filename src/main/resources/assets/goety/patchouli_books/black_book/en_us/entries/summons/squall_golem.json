@@ -21,15 +21,12 @@
     },
     {
       "type": "patchouli:text",
-      "text": "When created the golem will be inactive, immobile and somehow unable to be harmed. The golem requires power from a block called a Resonance Crystal to function."
+      "text": "When created the golem will be inactive, immobile and somehow unable to be harmed. The golem requires power from a block called a $(l:goety:crafts/artifice/resonance_crystal)Resonance Crystal$() to function."
     },
     {
-      "type": "goety:ritual",
-      "recipe": "goety:resonance_crystal"
-    },
-    {
-      "type": "patchouli:text",
-      "text": "To activate the golem, one should register the golem by left-clicking the crystal on it. Once registered, the crystal must then be powered by a Wind Blower, blowing wind on it."
+      "type": "patchouli:spotlight",
+      "item": "goety:resonance_crystal",
+      "text": "To activate the golem, one should register the golem by left-clicking the crystal on it. Once registered, the $(l:goety:crafts/artifice/resonance_crystal)crystal$() must then be powered by a Wind Blower, blowing wind on it."
     },
     {
       "type": "patchouli:text",
@@ -39,8 +36,5 @@
       "type": "patchouli:text",
       "text": "When deactivated, right-clicking on the golem with an empty hand will rotate them towards you at an angle."
     }
-  ],
-  "extra_recipe_mappings": {
-    "goety:resonance_crystal": 4
-  }
+  ]
 }

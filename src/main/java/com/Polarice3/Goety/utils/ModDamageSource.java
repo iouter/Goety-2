@@ -1,6 +1,7 @@
 package com.Polarice3.Goety.utils;
 
 import com.Polarice3.Goety.Goety;
+import com.Polarice3.Goety.init.ModTags;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
@@ -173,23 +174,26 @@ public class ModDamageSource extends DamageSource {
     }
 
     public static boolean hellfireAttacks(DamageSource source){
-        return source != null && (source.getMsgId().equals(source("indirectHellfire"))
-                || source.is(ModDamageSource.HELLFIRE));
+        return source != null && source.is(ModTags.DamageTypes.HELLFIRE);
     }
 
     public static boolean isMagicFire(DamageSource source){
-        return source != null && (source.is(MAGIC_FIRE) || source.is(NO_OWNER_MAGIC_FIREBALL) || source.is(MAGIC_FIREBALL));
+        return source != null && (source.is(ModTags.DamageTypes.MAGIC_FIRE));
     }
 
     public static boolean shockAttacks(DamageSource source){
-        return source.getMsgId().equals(source("shock")) || source.is(ModDamageSource.SHOCK)
-                || source.getMsgId().equals(source("directShock")) || source.is(ModDamageSource.DIRECT_SHOCK)
-                || source.getMsgId().equals(source("indirectShock")) || source.is(ModDamageSource.INDIRECT_SHOCK);
+        return source.getMsgId().equals(source("shock"))
+                || source.getMsgId().equals(source("directShock"))
+                || source.getMsgId().equals(source("indirectShock"))
+                || source.is(ModTags.DamageTypes.SHOCK_ATTACKS);
     }
 
     public static boolean freezeAttacks(DamageSource source){
-        return source.getMsgId().equals(source("indirectFreeze")) || source.getMsgId().equals(source("directFreeze"))
-        || source.getMsgId().equals(source("iceBouquet")) || source.getMsgId().equals(source("frostBreath"));
+        return source.getMsgId().equals(source("indirectFreeze"))
+                || source.getMsgId().equals(source("directFreeze"))
+                || source.getMsgId().equals(source("iceBouquet"))
+                || source.getMsgId().equals(source("frostBreath"))
+                || source.is(ModTags.DamageTypes.FROST_ATTACKS);
     }
 
     public static boolean physicalAttacks(DamageSource source){
@@ -197,7 +201,8 @@ public class ModDamageSource extends DamageSource {
                 && (source.getMsgId().equals("mob")
                 || source.getMsgId().equals("sting")
                 || source.getMsgId().equals("player")
-                || source.getMsgId().equals(source("summon")));
+                || source.getMsgId().equals(source("summon"))
+                || source.is(ModTags.DamageTypes.PHYSICAL));
     }
 
     public static boolean toolAttack(DamageSource source, Predicate<Item> item){
@@ -223,6 +228,10 @@ public class ModDamageSource extends DamageSource {
 
     public static DamageSource swarm(Entity pSource, @Nullable Entity pIndirectEntity) {
         return noKnockbackDamageSource(pSource.level, SWARM, pSource, pIndirectEntity);
+    }
+
+    public static boolean wantingAttacks(DamageSource source){
+        return source.is(ModTags.DamageTypes.WANTING_DAMAGE);
     }
 
     public static String source(String source){

@@ -79,6 +79,10 @@ public class FocusCooldown {
         this.cooldowns.put(item, cooldownInstance);
     }
 
+    public Map<Item, CooldownInstance> getCooldowns(){
+        return this.cooldowns;
+    }
+
     public void save(ListTag listTag) {
         cooldowns.forEach((item, cooldown) -> {
             if (isOnCooldown(item)) {

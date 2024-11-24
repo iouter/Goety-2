@@ -60,6 +60,15 @@ public class ModFallingBlock extends Entity {
         this.setPos(vec3);
     }
 
+    public ModFallingBlock(Level worldIn, double x, double y, double z, BlockState blockState, int duration) {
+        this(ModEntityType.FALLING_BLOCK.get(), worldIn);
+        this.setBlock(blockState);
+        this.setPos(x, y + (double)((1.0F - this.getBbHeight()) / 2.0F), z);
+        this.setDeltaMovement(Vec3.ZERO);
+        this.setDuration(duration);
+        this.setMode(FallingBlockMode.DEBRIS);
+    }
+
     @Override
     protected void defineSynchedData() {
         this.entityData.define(BLOCK_STATE, Optional.of(Blocks.DIRT.defaultBlockState()));
@@ -113,6 +122,20 @@ public class ModFallingBlock extends Entity {
         this.prevMotionY = this.getDeltaMovement().y;
         this.prevMotionZ = this.getDeltaMovement().z;
         super.tick();
+        if (this.getMode() == FallingBlockMode.DEBRIS){
+            if (!this.isNoGravity()) {
+                this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
+            }
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.98D));
+
+            if (this.onGround() && this.getTicksExisted() > this.getDuration()) {
+                this.discard();
+            }
+            if (this.getTicksExisted() > 300) {
+                this.discard();
+            }
+        }
         if (this.getMode() == FallingBlockMode.MOBILE) {
             this.setDeltaMovement(this.getDeltaMovement().subtract(0.0F, GRAVITY, 0.0F));
             if (this.onGround()) {
@@ -168,7 +191,7 @@ public class ModFallingBlock extends Entity {
         return FallingBlockMode.valueOf(this.entityData.get(MODE));
     }
 
-    private void setMode(FallingBlockMode mode) {
+    public void setMode(FallingBlockMode mode) {
         this.entityData.set(MODE, mode.toString());
     }
 
@@ -187,6 +210,7 @@ public class ModFallingBlock extends Entity {
 
     public enum FallingBlockMode {
         MOBILE,
-        POPUP_ANIM
+        POPUP_ANIM,
+        DEBRIS
     }
 }

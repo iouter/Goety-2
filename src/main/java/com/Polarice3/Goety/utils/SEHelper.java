@@ -57,10 +57,7 @@ import net.minecraft.world.level.block.RespawnAnchorBlock;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class SEHelper {
 
@@ -556,11 +553,7 @@ public class SEHelper {
     }
 
     public static List<Research> getResearch(Player player){
-        List<Research> research = new ArrayList<>();
-        if (!getCapability(player).getResearch().isEmpty()){
-            research.addAll(getCapability(player).getResearch());
-        }
-        return research;
+        return getCapability(player).getResearch();
     }
 
     public static boolean hasResearch(Player player, Research research){
@@ -577,6 +570,10 @@ public class SEHelper {
 
     public static FocusCooldown.CooldownInstance getCooldownInstance(Player player, Item item){
         return getFocusCoolDown(player).getInstance(item);
+    }
+
+    public static Map<Item, FocusCooldown.CooldownInstance> getCooldowns(Player player){
+        return getFocusCoolDown(player).getCooldowns();
     }
 
     @Nullable
@@ -936,7 +933,14 @@ public class SEHelper {
 
     public static ISoulEnergy load(CompoundTag tag, ISoulEnergy soulEnergy) {
         soulEnergy.setSEActive(tag.getBoolean("seActive"));
-        soulEnergy.setArcaBlock(new BlockPos(tag.getInt("arcax"), tag.getInt("arcay"), tag.getInt("arcaz")));
+        if (tag.contains("arcax") && tag.contains("arcay") && tag.contains("arcaz")) {
+            soulEnergy.setArcaBlock(new BlockPos(tag.getInt("arcax"), tag.getInt("arcay"), tag.getInt("arcaz")));
+        }
+        if (tag.contains("dimension")) {
+            soulEnergy.setArcaBlockDimension(Level.RESOURCE_KEY_CODEC.parse(NbtOps.INSTANCE, tag.get("dimension")).resultOrPartial(Goety.LOGGER::error).orElse(Level.OVERWORLD));
+        } else {
+            soulEnergy.setArcaBlockDimension(Level.OVERWORLD);
+        }
         if (tag.contains("EndWalkX") && tag.contains("EndWalkY") && tag.contains("EndWalkZ") && tag.contains("EndWalkDim")) {
             soulEnergy.setEndWalkPos(new BlockPos(tag.getInt("EndWalkX"), tag.getInt("EndWalkY"), tag.getInt("EndWalkZ")));
             soulEnergy.setEndWalkDimension(Level.RESOURCE_KEY_CODEC.parse(NbtOps.INSTANCE, tag.get("EndWalkDim")).resultOrPartial(Goety.LOGGER::error).orElse(Level.OVERWORLD));
@@ -960,15 +964,13 @@ public class SEHelper {
         } else {
             soulEnergy.setCameraUUID(null);
         }
-        if (tag.contains("dimension")) {
-            soulEnergy.setArcaBlockDimension(Level.RESOURCE_KEY_CODEC.parse(NbtOps.INSTANCE, tag.get("dimension")).resultOrPartial(Goety.LOGGER::error).orElse(Level.OVERWORLD));
-        } else {
-            soulEnergy.setArcaBlockDimension(Level.OVERWORLD);
-        }
         if (tag.contains("grudgeList", 9)) {
             ListTag listtag = tag.getList("grudgeList", 11);
             for (Tag value : listtag) {
-                soulEnergy.addGrudge(NbtUtils.loadUUID(value));
+                UUID uuid = NbtUtils.loadUUID(value);
+                if (!soulEnergy.grudgeList().contains(uuid)){
+                    soulEnergy.addGrudge(NbtUtils.loadUUID(value));
+                }
             }
         }
         if (tag.contains("grudgeTypeList", Tag.TAG_LIST)) {
@@ -976,14 +978,20 @@ public class SEHelper {
             for (int i = 0; i < listtag.size(); ++i) {
                 String string = listtag.getCompound(i).getString("id");
                 if (EntityType.byString(string).isPresent()){
-                    soulEnergy.addGrudgeType(EntityType.byString(string).get());
+                    EntityType<?> entityType = EntityType.byString(string).get();
+                    if (!soulEnergy.grudgeTypeList().contains(entityType)) {
+                        soulEnergy.addGrudgeType(EntityType.byString(string).get());
+                    }
                 }
             }
         }
         if (tag.contains("allyList", 9)) {
             ListTag listtag = tag.getList("allyList", 11);
             for (Tag value : listtag) {
-                soulEnergy.addAlly(NbtUtils.loadUUID(value));
+                UUID uuid = NbtUtils.loadUUID(value);
+                if (!soulEnergy.allyList().contains(uuid)) {
+                    soulEnergy.addAlly(NbtUtils.loadUUID(value));
+                }
             }
         }
         if (tag.contains("allyTypeList", Tag.TAG_LIST)) {
@@ -991,14 +999,20 @@ public class SEHelper {
             for (int i = 0; i < listtag.size(); ++i) {
                 String string = listtag.getCompound(i).getString("id");
                 if (EntityType.byString(string).isPresent()){
-                    soulEnergy.addAllyType(EntityType.byString(string).get());
+                    EntityType<?> entityType = EntityType.byString(string).get();
+                    if (!soulEnergy.allyTypeList().contains(entityType)) {
+                        soulEnergy.addAllyType(EntityType.byString(string).get());
+                    }
                 }
             }
         }
         if (tag.contains("groundedList", 9)) {
             ListTag listtag = tag.getList("groundedList", 11);
             for (Tag value : listtag) {
-                soulEnergy.addGrounded(NbtUtils.loadUUID(value));
+                UUID uuid = NbtUtils.loadUUID(value);
+                if (!soulEnergy.groundedList().contains(uuid)) {
+                    soulEnergy.addGrounded(NbtUtils.loadUUID(value));
+                }
             }
         }
         if (tag.contains("groundedTypeList", Tag.TAG_LIST)) {
@@ -1006,7 +1020,10 @@ public class SEHelper {
             for (int i = 0; i < listtag.size(); ++i) {
                 String string = listtag.getCompound(i).getString("id");
                 if (EntityType.byString(string).isPresent()){
-                    soulEnergy.addGroundedType(EntityType.byString(string).get());
+                    EntityType<?> entityType = EntityType.byString(string).get();
+                    if (!soulEnergy.groundedTypeList().contains(entityType)) {
+                        soulEnergy.addGroundedType(EntityType.byString(string).get());
+                    }
                 }
             }
         }
@@ -1015,7 +1032,10 @@ public class SEHelper {
             for (int i = 0; i < listtag.size(); ++i) {
                 String string = listtag.getCompound(i).getString("research");
                 if (ResearchList.getResearch(string) != null) {
-                    soulEnergy.addResearch(ResearchList.getResearch(string));
+                    Research research = ResearchList.getResearch(string);
+                    if (!soulEnergy.getResearch().contains(research)) {
+                        soulEnergy.addResearch(ResearchList.getResearch(string));
+                    }
                 }
             }
         }

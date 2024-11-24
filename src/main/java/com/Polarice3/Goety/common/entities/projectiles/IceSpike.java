@@ -31,11 +31,13 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 
 public class IceSpike extends AbstractArrow {
+    public static final EntityDataAccessor<Boolean> DATA_RAIN = SynchedEntityData.defineId(IceSpike.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Float> DATA_EXTRA_DAMAGE = SynchedEntityData.defineId(IceSpike.class, EntityDataSerializers.FLOAT);
 
     public IceSpike(EntityType<? extends AbstractArrow> p_36721_, Level p_36722_) {
@@ -56,19 +58,32 @@ public class IceSpike extends AbstractArrow {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
+        this.entityData.define(DATA_RAIN, false);
         this.entityData.define(DATA_EXTRA_DAMAGE, 0.0F);
     }
 
     public void addAdditionalSaveData(CompoundTag p_36881_) {
         super.addAdditionalSaveData(p_36881_);
+        p_36881_.putBoolean("Rain", this.isRain());
         p_36881_.putFloat("ExtraDamage", this.getExtraDamage());
     }
 
     public void readAdditionalSaveData(CompoundTag p_36875_) {
         super.readAdditionalSaveData(p_36875_);
+        if (p_36875_.contains("Rain")) {
+            this.setRain(p_36875_.getBoolean("Rain"));
+        }
         if (p_36875_.contains("ExtraDamage")) {
             this.setExtraDamage(p_36875_.getFloat("ExtraDamage"));
         }
+    }
+
+    public boolean isRain() {
+        return this.entityData.get(DATA_RAIN);
+    }
+
+    public void setRain(boolean rain) {
+        this.entityData.set(DATA_RAIN, rain);
     }
 
     public float getExtraDamage() {
@@ -93,6 +108,12 @@ public class IceSpike extends AbstractArrow {
             double d1 = this.getY() + d4;
             double d2 = this.getZ() + d0;
             this.level.addParticle(ParticleTypes.SNOWFLAKE, d5 - d3 * 0.25D, d1 - d4 * 0.25D, d2 - d0 * 0.25D, d3, d4, d0);
+        } else {
+            if (this.isRain()){
+                if (this.tickCount % 5 == 0){
+                    this.discard();
+                }
+            }
         }
     }
 
@@ -124,6 +145,26 @@ public class IceSpike extends AbstractArrow {
             }
 
         }
+    }
+
+    protected void onHitBlock(BlockHitResult p_36755_) {
+        super.onHitBlock(p_36755_);
+        if (this.level instanceof ServerLevel serverLevel){
+            if (this.isRain()) {
+                ServerParticleUtil.addParticlesAroundSelf(serverLevel, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.PACKED_ICE.defaultBlockState()), this);
+                this.discard();
+            }
+        }
+    }
+
+    @Override
+    public void remove(RemovalReason p_146834_) {
+        if (p_146834_ == RemovalReason.DISCARDED && this.isRain()){
+            if (this.level instanceof ServerLevel serverLevel){
+                serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, this.getX(), this.getY(), this.getZ(), 0, 0.0D, 0.5D, 0.0D, 1.0F);
+            }
+        }
+        super.remove(p_146834_);
     }
 
     protected boolean canHitEntity(Entity pEntity) {

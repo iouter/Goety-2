@@ -1,5 +1,6 @@
 package com.Polarice3.Goety.common.blocks.entities;
 
+import com.Polarice3.Goety.api.blocks.entities.IWaystoneBlock;
 import com.Polarice3.Goety.api.magic.GolemType;
 import com.Polarice3.Goety.common.blocks.AnimatorBlock;
 import com.Polarice3.Goety.common.blocks.ModBlocks;
@@ -26,7 +27,7 @@ import net.minecraft.world.phys.AABB;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class AnimatorBlockEntity extends BlockEntity implements Clearable {
+public class AnimatorBlockEntity extends BlockEntity implements IWaystoneBlock, Clearable {
     private ItemStack item = ItemStack.EMPTY;
     private CursedCageBlockEntity cursedCageTile;
     private int spinning;

@@ -76,7 +76,7 @@ public class DarkScytheItem extends TieredItem implements Vanishable {
             for (BlockPos blockPos : BlockFinder.multiBlockBreak(pEntityLiving, pPos, 2, 2, 2)){
                 BlockState blockstate = pLevel.getBlockState(blockPos);
                 if (this.getMineBlocks(blockstate)){
-                    if (pLevel.destroyBlock(blockPos, true, pEntityLiving)){
+                    if (BlockFinder.breakBlock(pLevel, blockPos, pStack, pEntityLiving)){
                         if (blockstate.getDestroySpeed(pLevel, blockPos) != 0) {
                             pStack.hurtAndBreak(1, pEntityLiving, (p_220044_0_)
                                     -> p_220044_0_.broadcastBreakEvent(EquipmentSlot.MAINHAND));

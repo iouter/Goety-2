@@ -12,6 +12,7 @@ import com.Polarice3.Goety.utils.ColorUtil;
 import com.Polarice3.Goety.utils.CuriosFinder;
 import com.Polarice3.Goety.utils.ServerParticleUtil;
 import com.Polarice3.Goety.utils.WandUtil;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -122,27 +123,25 @@ public abstract class Spell implements ISpell {
 
     @Override
     public void useParticle(Level worldIn, LivingEntity caster, ItemStack stack) {
-        if (this.getSpellType() == SpellType.WIND) {
-            if (worldIn instanceof ServerLevel serverLevel) {
+        if (worldIn instanceof ServerLevel serverLevel){
+            if (this.getSpellType() == SpellType.FROST) {
+                if (caster.tickCount % 5 == 0) {
+                    ServerParticleUtil.addParticlesAroundMiddleSelf(serverLevel, ParticleTypes.SNOWFLAKE, caster);
+                }
+            } else if (this.getSpellType() == SpellType.WIND) {
                 if (caster.tickCount % 5 == 0) {
                     ColorUtil colorUtil = new ColorUtil(0x458c88);
                     ServerParticleUtil.gatheringParticles(new GatherTrailParticle.Option(colorUtil, caster.position().add(0, 1, 0)), caster, serverLevel, 1);
                 }
-            }
-        } else if (this.getSpellType() == SpellType.STORM) {
-            if (worldIn instanceof ServerLevel serverLevel) {
+            } else if (this.getSpellType() == SpellType.STORM) {
                 if (caster.tickCount % 5 == 0) {
                     ServerParticleUtil.addParticlesAroundMiddleSelf(serverLevel, ModParticleTypes.SPELL_ELECTRIC.get(), caster);
                 }
-            }
-        } else if (this.getSpellType() == SpellType.WILD) {
-            if (worldIn instanceof ServerLevel serverLevel) {
+            } else if (this.getSpellType() == SpellType.WILD) {
                 ColorUtil colorUtil = new ColorUtil(0xfcd9f7);
                 serverLevel.sendParticles(ModParticleTypes.SPELL_SQUARE.get(), caster.getX(), caster.getY() + 2.0D, caster.getZ(), 0, colorUtil.red(), colorUtil.green(), colorUtil.blue(), 0.5F);
                 serverLevel.sendParticles(new FoggyCloudParticleOption(new ColorUtil(0xcf75af), 0.25F, 6), caster.getX(), caster.getY() + 1.5D, caster.getZ(), 1, 0, 0, 0, 0);
-            }
-        } else if (this.getSpellType() == SpellType.NECROMANCY){
-            if (worldIn instanceof ServerLevel serverLevel){
+            } else if (this.getSpellType() == SpellType.NECROMANCY){
                 int range = 1;
                 ColorUtil colorUtil = new ColorUtil(0xffffff);
                 if (stack.is(ModItems.NAMELESS_STAFF.get())){
@@ -150,6 +149,8 @@ public abstract class Spell implements ISpell {
                     colorUtil = new ColorUtil(0xa7fc3e);
                 }
                 ServerParticleUtil.gatheringParticles(new GatherTrailParticle.Option(colorUtil, caster.position().add(0, 2, 0)), caster, serverLevel, range);
+            } else {
+                ISpell.super.useParticle(worldIn, caster, stack);
             }
         } else {
             ISpell.super.useParticle(worldIn, caster, stack);

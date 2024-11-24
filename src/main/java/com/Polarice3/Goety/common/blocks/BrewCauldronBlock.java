@@ -287,8 +287,11 @@ public class BrewCauldronBlock extends BaseEntityBlock{
     public void handlePrecipitation(BlockState blockState, Level level, BlockPos blockPos, Biome.Precipitation precipitation) {
         if (precipitation == Biome.Precipitation.RAIN) {
             if (level.getRandom().nextInt(20) == 1) {
-                if (blockState.getValue(LEVEL) < 3) {
-                    level.setBlockAndUpdate(blockPos, blockState.setValue(LEVEL, blockState.getValue(LEVEL) + 1));
+                BlockEntity blockEntity = level.getBlockEntity(blockPos);
+                if (blockEntity instanceof BrewCauldronBlockEntity blockEntity1){
+                    if (blockState.getValue(LEVEL) < 3 && BrewUtils.isEmpty(blockEntity1.getBrew())) {
+                        level.setBlockAndUpdate(blockPos, blockState.setValue(LEVEL, blockState.getValue(LEVEL) + 1));
+                    }
                 }
             }
         }
@@ -303,12 +306,15 @@ public class BrewCauldronBlock extends BaseEntityBlock{
     }
 
     protected void receiveStalactiteDrip(BlockState p_152940_, Level p_152941_, BlockPos p_152942_, Fluid p_152943_) {
-        if (p_152943_ == Fluids.WATER) {
-            if (p_152940_.getValue(LEVEL) < 3) {
-                p_152941_.setBlockAndUpdate(p_152942_, p_152940_.setValue(LEVEL, p_152940_.getValue(LEVEL) + 1));
+        BlockEntity blockEntity = p_152941_.getBlockEntity(p_152942_);
+        if (blockEntity instanceof BrewCauldronBlockEntity blockEntity1) {
+            if (p_152940_.getValue(LEVEL) < 3 && BrewUtils.isEmpty(blockEntity1.getBrew())) {
+                if (p_152943_ == Fluids.WATER) {
+                    p_152941_.setBlockAndUpdate(p_152942_, p_152940_.setValue(LEVEL, p_152940_.getValue(LEVEL) + 1));
+                    p_152941_.gameEvent(GameEvent.BLOCK_CHANGE, p_152942_, GameEvent.Context.of(p_152940_));
+                    p_152941_.levelEvent(1047, p_152942_, 0);
+                }
             }
-            p_152941_.gameEvent(GameEvent.BLOCK_CHANGE, p_152942_, GameEvent.Context.of(p_152940_));
-            p_152941_.levelEvent(1047, p_152942_, 0);
         }
 
     }

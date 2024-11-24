@@ -71,6 +71,30 @@
     {
       "type": "minecraft:single",
       "resource": "goety:entity/chest/windswept/trapped_right"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "goety:entity/chest/pine/normal"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "goety:entity/chest/pine/normal_left"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "goety:entity/chest/pine/normal_right"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "goety:entity/chest/pine/trapped"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "goety:entity/chest/pine/trapped_left"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "goety:entity/chest/pine/trapped_right"
     }
   ]
 }

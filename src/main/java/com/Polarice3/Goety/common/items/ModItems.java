@@ -151,6 +151,9 @@ public class ModItems {
     public static final RegistryObject<Item> WINDSWEPT_BOAT = ITEMS.register("windswept_boat", () -> new ModBoatItem(false, ModBoat.Type.WINDSWEPT, (new Item.Properties()).stacksTo(1)));
     public static final RegistryObject<Item> WINDSWEPT_CHEST_BOAT = ITEMS.register("windswept_chest_boat", () -> new ModBoatItem(true, ModBoat.Type.WINDSWEPT, (new Item.Properties()).stacksTo(1)));
 
+    public static final RegistryObject<Item> PINE_BOAT = ITEMS.register("pine_boat", () -> new ModBoatItem(false, ModBoat.Type.PINE, (new Item.Properties()).stacksTo(1)));
+    public static final RegistryObject<Item> PINE_CHEST_BOAT = ITEMS.register("pine_chest_boat", () -> new ModBoatItem(true, ModBoat.Type.PINE, (new Item.Properties()).stacksTo(1)));
+
     public static final RegistryObject<Item> HAUNTED_ARMOR_STAND = ITEMS.register("haunted_armor_stand", HauntedArmorStandItem::new);
     public static final RegistryObject<Item> HAUNTED_PAINTING = ITEMS.register("haunted_painting", HauntedPaintingItem::new);
 
@@ -257,6 +260,7 @@ public class ModItems {
     public static final RegistryObject<Item> ICE_STORM_FOCUS = ITEMS.register("ice_storm_focus", () -> new MagicFocus(new IceStormSpell()));
     public static final RegistryObject<Item> HAIL_FOCUS = ITEMS.register("hail_focus", () -> new MagicFocus(new HailSpell()));
     public static final RegistryObject<Item> ICEOLOGY_FOCUS = ITEMS.register("iceology_focus", () -> new MagicFocus(new IceChunkSpell()));
+    public static final RegistryObject<Item> BLIZZARD_FOCUS = ITEMS.register("blizzard_focus", () -> new MagicFocus(new BlizzardSpell()));
     public static final RegistryObject<Item> FROST_NOVA_FOCUS = ITEMS.register("frost_nova_focus", () -> new MagicFocus(new FrostNovaSpell()));
     public static final RegistryObject<Item> FROSTBORN_FOCUS = ITEMS.register("frostborn_focus", () -> new MagicFocus(new IceGolemSpell()));
 
@@ -342,7 +346,7 @@ public class ModItems {
     public static final RegistryObject<Item> FROST_STAFF = ITEMS.register("frost_staff", () -> new DarkStaff(ItemConfig.FrostStaffDamage.get(), SpellType.FROST));
     public static final RegistryObject<Item> WILD_STAFF = ITEMS.register("wild_staff", () -> new DarkStaff(ItemConfig.WildStaffDamage.get(), SpellType.WILD));
     public static final RegistryObject<Item> NETHER_STAFF = ITEMS.register("nether_staff", () -> new DarkStaff(DarkWand.wandProperties().fireResistant(), ItemConfig.NetherStaffDamage.get(), SpellType.NETHER));
-    public static final RegistryObject<Item> NAMELESS_STAFF = ITEMS.register("nameless_staff", () -> new DarkStaff(ItemConfig.NamelessStaffDamage.get(), SpellType.NECROMANCY));
+    public static final RegistryObject<Item> NAMELESS_STAFF = ITEMS.register("nameless_staff", NamelessStaff::new);
     public static final RegistryObject<Item> OMINOUS_SCYTHE = ITEMS.register("dark_scythe", DarkScytheItem::new);
     public static final RegistryObject<Item> DARK_METAL_SCYTHE = ITEMS.register("dark_metal_scythe", () -> new DarkScytheItem(ModTiers.DARK));
     public static final RegistryObject<Item> DEATH_SCYTHE = ITEMS.register("death_scythe", DeathScytheItem::new);

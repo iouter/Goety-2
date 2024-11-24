@@ -1,14 +1,13 @@
 package com.Polarice3.Goety.common.events;
 
 import com.Polarice3.Goety.Goety;
+import com.Polarice3.Goety.api.entities.ally.IServant;
 import com.Polarice3.Goety.common.blocks.ModBlocks;
 import com.Polarice3.Goety.common.blocks.SnapWartsBlock;
 import com.Polarice3.Goety.common.effects.GoetyEffects;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.ally.AllyIrk;
 import com.Polarice3.Goety.common.items.ModItems;
-import com.Polarice3.Goety.common.network.ModNetwork;
-import com.Polarice3.Goety.common.network.server.SLightningPacket;
 import com.Polarice3.Goety.common.world.structures.ModStructureTags;
 import com.Polarice3.Goety.config.AttributesConfig;
 import com.Polarice3.Goety.config.ItemConfig;
@@ -23,7 +22,6 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.MagmaCube;
@@ -31,7 +29,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -44,71 +41,25 @@ import static net.minecraftforge.event.entity.living.LivingChangeTargetEvent.Liv
 public class RobeEvents {
 
     @SubscribeEvent
-    public static void PlayerTick(TickEvent.PlayerTickEvent event){
-        Player player = event.player;
-        Level world = player.level;
-        if (CuriosFinder.hasWindyRobes(player) && !player.isSpectator()){
-            if (SEHelper.getSoulsAmount(player, ItemConfig.WindRobeSouls.get())
-                    || player.isCreative()) {
-                Vec3 vector3d = player.getDeltaMovement();
-                if (player.hasEffect(MobEffects.SLOW_FALLING)){
-                    player.removeEffect(MobEffects.SLOW_FALLING);
-                }
-                if (!player.onGround() && vector3d.y < 0.0D
-                        && !player.isNoGravity()
-                        && !player.getAbilities().flying
-                        && !player.onClimbable()
-                        && !player.isInFluidType()
-                        && !player.isInWater()
-                        && !player.isInLava()
-                        && player.fallDistance >= 2.0F) {
-                    if (player.tickCount % 20 == 0 && !player.isCreative() && player.fallDistance > 3.0F) {
-                        SEHelper.decreaseSouls(player, ItemConfig.WindRobeSouls.get());
-                    }
-                    if (world instanceof ServerLevel serverLevel){
-                        ColorUtil color = new ColorUtil(0xffffff);
-                        ServerParticleUtil.windParticle(serverLevel, color, 1.0F + serverLevel.random.nextFloat() * 0.5F, 0.0F, player.getId(), player.position());
-                        ServerParticleUtil.circularParticles(serverLevel, ParticleTypes.CLOUD, player, 1.0F);
-                        if (CuriosFinder.hasCurio(player, ModItems.STORM_ROBE.get())) {
-                            if (serverLevel.random.nextInt(20) == 0) {
-                                Vec3 vec3 = Vec3.atCenterOf(player.blockPosition());
-                                Vec3 vec31 = vec3.add(player.getRandom().nextDouble(), 1.0D, player.getRandom().nextDouble());
-                                ModNetwork.sendToALL(new SLightningPacket(vec3, vec31, 2));
-                            }
-                        }
-                    }
-                    if (!player.isCrouching() && !player.isShiftKeyDown()) {
-                        player.setDeltaMovement(vector3d.multiply(1.0D, 0.875D, 1.0D));
-                    } else {
-                        player.setDeltaMovement(vector3d.multiply(1.0D, 0.99D, 1.0D));
-                    }
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent
     public static void LivingEffects(LivingEvent.LivingTickEvent event){
         LivingEntity livingEntity = event.getEntity();
-        if (livingEntity != null){
-            if (!livingEntity.level.isClientSide) {
-                if (livingEntity instanceof AbstractHorse horse) {
-                    if (horse.getOwnerUUID() != null) {
-                        Player owner = horse.level.getPlayerByUUID(horse.getOwnerUUID());
-                        if (owner != null) {
-                            if (horse.getMobType() == MobType.UNDEAD) {
-                                if (!horse.isOnFire() && !horse.isDeadOrDying()) {
-                                    if (MobsConfig.UndeadMinionHeal.get() && horse.getHealth() < horse.getMaxHealth()) {
-                                        if (CuriosFinder.hasUndeadCape(owner)) {
-                                            int SoulCost = MobsConfig.UndeadMinionHealCost.get();
-                                            if (SEHelper.getSoulsAmount(owner, SoulCost)) {
-                                                if (horse.tickCount % MathHelper.secondsToTicks(MobsConfig.UndeadMinionHealTime.get()) == 0) {
-                                                    horse.heal(MobsConfig.UndeadMinionHealAmount.get().floatValue());
-                                                    Vec3 vector3d = horse.getDeltaMovement();
-                                                    if (horse.level instanceof ServerLevel serverWorld) {
-                                                        SEHelper.decreaseSouls(owner, SoulCost);
-                                                        serverWorld.sendParticles(ParticleTypes.SCULK_SOUL, horse.getRandomX(0.5D), horse.getRandomY(), horse.getRandomZ(0.5D), 0, vector3d.x * -0.2D, 0.1D, vector3d.z * -0.2D, 0.5F);
-                                                    }
+        if (MobsConfig.UndeadMinionHeal.get()) {
+            if (livingEntity != null) {
+                if (!livingEntity.level.isClientSide) {
+                    if (livingEntity instanceof OwnableEntity ownable && !(livingEntity instanceof IServant)) {
+                        if (ownable.getOwnerUUID() != null) {
+                            Player owner = livingEntity.level.getPlayerByUUID(ownable.getOwnerUUID());
+                            if (owner != null) {
+                                if (livingEntity.getMobType() == MobType.UNDEAD && livingEntity.getHealth() < livingEntity.getMaxHealth() && !livingEntity.isOnFire() && !livingEntity.isDeadOrDying()) {
+                                    if (CuriosFinder.hasUndeadCape(owner)) {
+                                        int SoulCost = MobsConfig.UndeadMinionHealCost.get();
+                                        if (SEHelper.getSoulsAmount(owner, SoulCost)) {
+                                            if (livingEntity.tickCount % MathHelper.secondsToTicks(MobsConfig.UndeadMinionHealTime.get()) == 0) {
+                                                livingEntity.heal(MobsConfig.UndeadMinionHealAmount.get().floatValue());
+                                                Vec3 vector3d = livingEntity.getDeltaMovement();
+                                                if (livingEntity.level instanceof ServerLevel serverWorld) {
+                                                    SEHelper.decreaseSouls(owner, SoulCost);
+                                                    serverWorld.sendParticles(ParticleTypes.SCULK_SOUL, livingEntity.getRandomX(0.5D), livingEntity.getRandomY(), livingEntity.getRandomZ(0.5D), 0, vector3d.x * -0.2D, 0.1D, vector3d.z * -0.2D, 0.5F);
                                                 }
                                             }
                                         }
@@ -118,8 +69,8 @@ public class RobeEvents {
                         }
                     }
                 }
-            }
 
+            }
         }
     }
 

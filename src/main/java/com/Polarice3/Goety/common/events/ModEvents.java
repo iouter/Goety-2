@@ -1274,34 +1274,31 @@ public class ModEvents {
                     if (event.getDamageSource() instanceof NoKnockBackDamageSource damageSource){
                         if (damageSource.getOwner() != null){
                             if (damageSource.getOwner() instanceof Player player) {
-                                if (EnchantmentHelper.getMobLooting(player) != 0){
-                                    looting = EnchantmentHelper.getMobLooting(player);
-                                } else if (CuriosFinder.findRing(player).getItem() == ModItems.RING_OF_WANT.get()) {
+                                if (CuriosFinder.findRing(player).getItem() == ModItems.RING_OF_WANT.get()) {
                                     if (CuriosFinder.findRing(player).isEnchanted()) {
                                         looting = CuriosFinder.findRing(player).getEnchantmentLevel(ModEnchantments.WANTING.get());
                                     }
                                 }
-                                event.setLootingLevel(looting);
+                                if (event.getLootingLevel() > looting){
+                                    looting = event.getLootingLevel();
+                                }
+                                if (ModDamageSource.wantingAttacks(damageSource)) {
+                                    event.setLootingLevel(looting);
+                                }
                             }
                         }
                     }
                     if (event.getDamageSource().getEntity() != null) {
                         if (event.getDamageSource().getEntity() instanceof Player player) {
-                            Entity spell = event.getDamageSource().getDirectEntity();
                             if (CuriosFinder.findRing(player).getItem() == ModItems.RING_OF_WANT.get()) {
                                 if (CuriosFinder.findRing(player).isEnchanted()) {
                                     looting = CuriosFinder.findRing(player).getEnchantmentLevel(ModEnchantments.WANTING.get());
                                 }
                             }
-                            if (looting > EnchantmentHelper.getMobLooting(player)) {
-                                if (spell != null) {
-                                    if (!(spell instanceof LivingEntity)) {
-                                        event.setLootingLevel(looting);
-                                    }
+                            if (looting > event.getLootingLevel()) {
+                                if (ModDamageSource.wantingAttacks(event.getDamageSource())){
+                                    event.setLootingLevel(looting);
                                 }
-                            }
-                            if (event.getDamageSource().is(ModDamageSource.LOOT_EXPLODE) || event.getDamageSource().is(ModDamageSource.LOOT_EXPLODE_OWNED)){
-                                event.setLootingLevel(looting);
                             }
                         }
                     }
@@ -1513,9 +1510,12 @@ public class ModEvents {
             if (itemStack.is(ModBlocks.HAUNTED_BOOKSHELF.get().asItem())
                     || itemStack.is(ModBlocks.ROTTEN_BOOKSHELF.get().asItem())
                     || itemStack.is(ModBlocks.WINDSWEPT_BOOKSHELF.get().asItem())
+                    || itemStack.is(ModBlocks.PINE_BOOKSHELF.get().asItem())
                     || (itemStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ModChestBlock)
                     || itemStack.is(ModBlocks.COMPACTED_WINDSWEPT_PLANKS.get().asItem())
-                    || itemStack.is(ModBlocks.THATCHED_WINDSWEPT_PLANKS.get().asItem())
+                    || itemStack.is(ModBlocks.COMPACTED_PINE_PLANKS.get().asItem())
+                    || itemStack.is(ModBlocks.THATCHED_PINE_PLANKS.get().asItem())
+                    || itemStack.is(ModBlocks.SKY_WOOD_PLANKS.get().asItem())
                     || itemStack.is(ModBlocks.OVERGROWN_ROOTS.get().asItem())) {
                 event.setBurnTime(300);
             }

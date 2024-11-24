@@ -10,7 +10,6 @@ import com.Polarice3.Goety.utils.WandUtil;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.phys.Vec3;
@@ -54,22 +53,18 @@ public class LaunchSpell extends Spell {
 
     @Override
     public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
-        if (caster instanceof Player player){
-            int potency = spellStat.getPotency();
-            if (WandUtil.enchantedFocus(player)){
-                potency = WandUtil.getLevels(ModEnchantments.POTENCY.get(), player);
-            }
-            player.hurtMarked = true;
-            if (!player.level.isClientSide){
-                player.setOnGround(false);
-            }
-            Vec3 vector3d = player.getLookAngle();
-            double power = rightStaff(staff) ? 2.5D : 1.5D;
-            double d0 = power + (double) (potency / 4);
-            player.setDeltaMovement(vector3d.x * d0, vector3d.y * d0, vector3d.z * d0);
-            player.hasImpulse = true;
-            player.fallDistance = 0;
+        int potency = spellStat.getPotency();
+        if (WandUtil.enchantedFocus(caster)){
+            potency += WandUtil.getLevels(ModEnchantments.POTENCY.get(), caster);
         }
+        caster.hurtMarked = true;
+        caster.setOnGround(false);
+        Vec3 vector3d = caster.getLookAngle();
+        double power = rightStaff(staff) ? 2.5D : 1.5D;
+        double d0 = power + (potency / 2.0D);
+        caster.setDeltaMovement(vector3d.x * d0, vector3d.y * d0, vector3d.z * d0);
+        caster.hasImpulse = true;
+        caster.fallDistance = 0;
         worldIn.playSound(null, caster.getX(), caster.getY(), caster.getZ(), CastingSound(), this.getSoundSource(), 2.0F, 1.0F);
     }
 }

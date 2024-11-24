@@ -95,6 +95,7 @@ public class ClientInitEvents {
             Sheets.addWoodType(ModWoodType.HAUNTED);
             Sheets.addWoodType(ModWoodType.ROTTEN);
             Sheets.addWoodType(ModWoodType.WINDSWEPT);
+            Sheets.addWoodType(ModWoodType.PINE);
         });
 
         ItemProperties.register(ModItems.TOTEM_OF_SOULS.get(), new ResourceLocation("souls"),
@@ -350,6 +351,7 @@ public class ClientInitEvents {
         event.registerLayerDefinition(ModModelLayer.DARK_ARMOR_OUTER, DarkArmorModel::createOuterLayer);
         event.registerLayerDefinition(ModModelLayer.SOUL_SHIELD, () -> LayerDefinition.create(PlayerModel.createMesh(new CubeDeformation(0.5F), false), 64, 64));
         event.registerLayerDefinition(ModModelLayer.SOUL_ARMOR, () -> LayerDefinition.create(PlayerModel.createMesh(new CubeDeformation(0.3F), false), 64, 64));
+        event.registerLayerDefinition(ModModelLayer.NAMELESS_STAFF, NamelessStaffModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.HAUNTED_ARMOR_STAND, HauntedArmorStandModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.HAS_INNER, () -> HauntedArmorStandArmorModel.createBodyLayer(new CubeDeformation(0.5F)));
         event.registerLayerDefinition(ModModelLayer.HAS_OUTER, () -> HauntedArmorStandArmorModel.createBodyLayer(new CubeDeformation(1.0F)));
@@ -378,7 +380,7 @@ public class ClientInitEvents {
         event.registerBlockEntityRenderer(ModBlockEntities.SOUL_MENDER.get(), SoulMenderRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.ICE_BOUQUET_TRAP.get(), ModBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.WIND_BLOWER.get(), ModBlockEntityRenderer::new);
-        event.registerBlockEntityRenderer(ModBlockEntities.RESONANCE_CRYSTAL.get(), ModBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.RESONANCE_CRYSTAL.get(), ResonanceCrystalRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SCULK_DEVOURER.get(), ModBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.FORBIDDEN_GRASS.get(), ModBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.MAGIC_LIGHT.get(), ModBlockEntityRenderer::new);
@@ -388,6 +390,7 @@ public class ClientInitEvents {
         event.registerBlockEntityRenderer(ModBlockEntities.ANIMATOR.get(), AnimatorRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.BREWING_CAULDRON.get(), BrewCauldronRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.HAUNTED_MIRROR.get(), ModBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.HAUNTED_JUG.get(), ModBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SPIDER_NEST.get(), TrainingBlockRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SHADE_GRAVESTONE.get(), TrainingBlockRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.BLAZING_CAGE.get(), TrainingBlockRenderer::new);
@@ -616,18 +619,24 @@ public class ClientInitEvents {
         event.register(
                 (state, lightReader, pos, color) ->
                         lightReader != null && pos != null ?
+                                BiomeColors.getAverageWaterColor(lightReader, pos) :
+                                -1, ModBlocks.HAUNTED_JUG.get());
+        event.register(
+                (state, lightReader, pos, color) ->
+                        lightReader != null && pos != null ?
                                 BiomeColors.getAverageFoliageColor(lightReader, pos) :
-                                FoliageColor.getDefaultColor(), ModBlocks.HARDENED_LEAVES.get(), ModBlocks.ROTTEN_LEAVES.get(), ModBlocks.WINDSWEPT_LEAVES.get());
+                                FoliageColor.getDefaultColor(), ModBlocks.HARDENED_LEAVES.get(), ModBlocks.ROTTEN_LEAVES.get(), ModBlocks.WINDSWEPT_LEAVES.get(), ModBlocks.PINE_LEAVES.get());
     }
 
     @SubscribeEvent
     public static void colorItem(RegisterColorHandlersEvent.Item event){
         event.register((itemStack, i) -> i > 0 ? -1 : PotionUtils.getColor(itemStack),
                 ModItems.BREW.get(), ModItems.SPLASH_BREW.get(), ModItems.LINGERING_BREW.get(), ModItems.GAS_BREW.get());
+        event.register((itemStack, i) -> 3694022, ModBlocks.HAUNTED_JUG.get());
         event.register((itemStack, i) -> {
             BlockState blockstate = ((BlockItem)itemStack.getItem()).getBlock().defaultBlockState();
             return event.getBlockColors().getColor(blockstate, null, null, i);
-        }, ModBlocks.HARDENED_LEAVES.get(), ModBlocks.ROTTEN_LEAVES.get(), ModBlocks.WINDSWEPT_LEAVES.get());
+        }, ModBlocks.HARDENED_LEAVES.get(), ModBlocks.ROTTEN_LEAVES.get(), ModBlocks.WINDSWEPT_LEAVES.get(), ModBlocks.PINE_LEAVES.get());
     }
 
     @SubscribeEvent
@@ -736,6 +745,7 @@ public class ClientInitEvents {
         event.registerSpriteSet(ModParticleTypes.WIND_SHOCKWAVE.get(), WindShockwaveParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.FAST_DUST.get(), FastFallDust.Provider::new);
         event.registerSpriteSet(ModParticleTypes.GATHER_TRAIL.get(), GatherTrailParticle.Provider::new);
+        event.registerSpecial(ModParticleTypes.WATER_STREAM.get(), new WaterStreamParticle.Provider());
         event.registerSpriteSet(ModParticleTypes.BLOSSOM_THORN_INDICATOR.get(),
                 spriteSet -> new GeometricParticle.Provider(spriteSet,
                 particleContext -> {

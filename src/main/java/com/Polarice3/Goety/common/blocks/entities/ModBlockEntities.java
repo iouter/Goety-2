@@ -76,6 +76,9 @@ public class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<HauntedMirrorBlockEntity>> HAUNTED_MIRROR = BLOCK_ENTITY.register("haunted_mirror",
             () -> BlockEntityType.Builder.of(HauntedMirrorBlockEntity::new, ModBlocks.HAUNTED_MIRROR.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<HauntedJugBlockEntity>> HAUNTED_JUG = BLOCK_ENTITY.register("haunted_jug",
+            () -> BlockEntityType.Builder.of(HauntedJugBlockEntity::new, ModBlocks.HAUNTED_JUG.get()).build(null));
+
     public static final RegistryObject<BlockEntityType<SpiderNestBlockEntity>> SPIDER_NEST = BLOCK_ENTITY.register("spider_nest",
             () -> BlockEntityType.Builder.of(SpiderNestBlockEntity::new, ModBlocks.SPIDER_NEST.get()).build(null));
 
@@ -118,12 +121,12 @@ public class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<ModChestBlockEntity>> MOD_CHEST = BLOCK_ENTITY.register("chest",
             () -> BlockEntityType.Builder.of(ModChestBlockEntity::new,
                     ModBlocks.HAUNTED_CHEST.get(), ModBlocks.ROTTEN_CHEST.get(),
-                    ModBlocks.WINDSWEPT_CHEST.get()).build(null));
+                    ModBlocks.WINDSWEPT_CHEST.get(), ModBlocks.PINE_CHEST.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<ModTrappedChestBlockEntity>> MOD_TRAPPED_CHEST = BLOCK_ENTITY.register("trapped_chest",
             () -> BlockEntityType.Builder.of(ModTrappedChestBlockEntity::new,
                     ModBlocks.TRAPPED_HAUNTED_CHEST.get(), ModBlocks.TRAPPED_ROTTEN_CHEST.get(),
-                    ModBlocks.TRAPPED_WINDSWEPT_CHEST.get()).build(null));
+                    ModBlocks.TRAPPED_WINDSWEPT_CHEST.get(), ModBlocks.TRAPPED_PINE_CHEST.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<LoftyChestBlockEntity>> LOFTY_CHEST = BLOCK_ENTITY.register("lofty_chest",
             () -> BlockEntityType.Builder.of(LoftyChestBlockEntity::new,
@@ -133,11 +136,13 @@ public class ModBlockEntities {
             () -> BlockEntityType.Builder.of(ModSignBlockEntity::new,
                     ModBlocks.HAUNTED_SIGN.get(), ModBlocks.HAUNTED_WALL_SIGN.get(),
                     ModBlocks.ROTTEN_SIGN.get(), ModBlocks.ROTTEN_WALL_SIGN.get(),
-                    ModBlocks.WINDSWEPT_SIGN.get(), ModBlocks.WINDSWEPT_WALL_SIGN.get()).build(null));
+                    ModBlocks.WINDSWEPT_SIGN.get(), ModBlocks.WINDSWEPT_WALL_SIGN.get(),
+                    ModBlocks.PINE_SIGN.get(), ModBlocks.PINE_WALL_SIGN.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<ModHangingSignBlockEntity>> HANGING_SIGN_BLOCK_ENTITIES = BLOCK_ENTITY.register("hanging_sign",
             () -> BlockEntityType.Builder.of(ModHangingSignBlockEntity::new,
                     ModBlocks.HAUNTED_HANGING_SIGN.get(), ModBlocks.HAUNTED_WALL_HANGING_SIGN.get(),
                     ModBlocks.ROTTEN_HANGING_SIGN.get(), ModBlocks.ROTTEN_WALL_HANGING_SIGN.get(),
-                    ModBlocks.WINDSWEPT_HANGING_SIGN.get(), ModBlocks.WINDSWEPT_WALL_HANGING_SIGN.get()).build(null));
+                    ModBlocks.WINDSWEPT_HANGING_SIGN.get(), ModBlocks.WINDSWEPT_WALL_HANGING_SIGN.get(),
+                    ModBlocks.PINE_HANGING_SIGN.get(), ModBlocks.PINE_WALL_HANGING_SIGN.get()).build(null));
 }

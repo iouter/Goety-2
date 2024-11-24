@@ -21,7 +21,6 @@ import net.minecraft.world.entity.animal.frog.Frog;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -110,7 +109,8 @@ public class ServantEvents {
                 }
             }
         }
-        if ((attacker instanceof IOwned owned && owned.getMasterOwner() instanceof Player)
+        if ((attacker instanceof IOwned owned
+                && owned.getMasterOwner() instanceof Player)
                 || attacker instanceof Player){
             if (attacker.level.getServer() != null) {
                 if (!attacker.level.getServer().isPvpAllowed()) {
@@ -196,28 +196,32 @@ public class ServantEvents {
                     int looting = 0;
                     if (event.getDamageSource() instanceof NoKnockBackDamageSource damageSource){
                         if (damageSource.getOwner() != null){
-                            if (damageSource.getOwner() instanceof IOwned ownedEntity) {
+                            if (damageSource.getOwner() instanceof IOwned ownedEntity && ownedEntity instanceof LivingEntity) {
                                 if (ownedEntity.getTrueOwner() instanceof Player player) {
                                     if (CuriosFinder.findRing(player).getItem() == ModItems.RING_OF_WANT.get()) {
                                         if (CuriosFinder.findRing(player).isEnchanted()) {
                                             looting = CuriosFinder.findRing(player).getEnchantmentLevel(ModEnchantments.WANTING.get());
                                         }
                                     }
-                                    event.setLootingLevel(event.getLootingLevel() + looting);
+                                    if (looting > event.getLootingLevel()) {
+                                        if (ModDamageSource.wantingAttacks(damageSource)) {
+                                            event.setLootingLevel(looting);
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                     if (event.getDamageSource().getEntity() != null) {
                         if (event.getDamageSource().getEntity() instanceof IOwned ownedEntity) {
-                            if (ownedEntity instanceof LivingEntity livingEntity) {
+                            if (ownedEntity instanceof LivingEntity) {
                                 if (ownedEntity.getTrueOwner() instanceof Player player) {
                                     if (CuriosFinder.findRing(player).getItem() == ModItems.RING_OF_WANT.get()) {
                                         if (CuriosFinder.findRing(player).isEnchanted()) {
                                             looting = CuriosFinder.findRing(player).getEnchantmentLevel(ModEnchantments.WANTING.get());
                                         }
                                     }
-                                    if (looting > EnchantmentHelper.getMobLooting(livingEntity)) {
+                                    if (looting > event.getLootingLevel()) {
                                         event.setLootingLevel(looting);
                                     }
                                     if (event.getDamageSource().is(ModDamageSource.LOOT_EXPLODE) || event.getDamageSource().is(ModDamageSource.LOOT_EXPLODE_OWNED)){

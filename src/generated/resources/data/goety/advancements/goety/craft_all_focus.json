@@ -85,6 +85,18 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "item.goety.blizzard_focus": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "goety:blizzard_focus"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "item.goety.blossoming_focus": {
       "conditions": {
         "items": [
@@ -1220,6 +1232,9 @@
     ],
     [
       "item.goety.iceology_focus"
+    ],
+    [
+      "item.goety.blizzard_focus"
     ],
     [
       "item.goety.frost_nova_focus"

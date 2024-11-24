@@ -24,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -111,6 +112,11 @@ public class WaystoneItem extends ItemBase {
     public static boolean isSameDimension(LivingEntity livingEntity, ItemStack stack){
         GlobalPos globalPos = getPosition(stack);
         return globalPos != null && globalPos.dimension() == livingEntity.level.dimension();
+    }
+
+    public static boolean isSameDimension(BlockEntity blockEntity, ItemStack stack){
+        GlobalPos globalPos = getPosition(stack);
+        return globalPos != null && blockEntity.getLevel() != null && globalPos.dimension() == blockEntity.getLevel().dimension();
     }
 
     public static boolean isInRange(Vec3 origin, ItemStack stack, int increase){

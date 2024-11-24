@@ -204,7 +204,11 @@ public class ScytheSlash extends AbstractHurtingProjectile {
             for (BlockPos blockpos : BlockPos.betweenClosed(Mth.floor(aabb.minX), Mth.floor(aabb.minY), Mth.floor(aabb.minZ), Mth.floor(aabb.maxX), Mth.floor(aabb.maxY), Mth.floor(aabb.maxZ))) {
                 BlockState blockstate = this.level.getBlockState(blockpos);
                 if (blockstate.is(BlockTags.MINEABLE_WITH_HOE) || BlockFinder.isScytheBreak(blockstate)) {
-                    this.level.destroyBlock(blockpos, true, this);
+                    ItemStack itemStack = this.weapon;
+                    if (this.weapon == null || this.weapon.isEmpty()){
+                        itemStack = new ItemStack(ModItems.DEATH_SCYTHE.get());
+                    }
+                    BlockFinder.breakBlock(this.level, blockpos, itemStack, this);
                 }
             }
         }

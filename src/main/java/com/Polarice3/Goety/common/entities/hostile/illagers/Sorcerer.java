@@ -272,15 +272,12 @@ public class Sorcerer extends HuntingIllagerEntity {
     }
 
     public void upgradeAssault(int sePercent){
-        int level = this.random.nextInt(2);
         if (sePercent >= 75) {
-            this.setLevels(level + 3, true);
+            this.setLevels(this.getLevels() + 3, true);
         } else if (sePercent >= 50){
-            this.setLevels(level + 2, true);
+            this.setLevels(this.getLevels() + 2, true);
         } else if (sePercent >= 25){
-            this.setLevels(level + 1, true);
-        } else {
-            this.setLevels(level, true);
+            this.setLevels(this.getLevels() + 1, true);
         }
     }
 

@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.item.Item;
@@ -25,6 +26,7 @@ public class ModTags {
         Biomes.init();
         GameEvents.init();
         Structures.init();
+        DamageTypes.init();
     }
 
     public static class Blocks {
@@ -191,6 +193,27 @@ public class ModTags {
 
         private static TagKey<Structure> create(ResourceLocation p_215874_) {
             return TagKey.create(Registries.STRUCTURE, p_215874_);
+        }
+    }
+
+    public static class DamageTypes {
+        private static void init(){}
+
+        public static final TagKey<DamageType> PHYSICAL = tag("physical");
+        public static final TagKey<DamageType> FIRE_ATTACKS = tag("fire_attacks");
+        public static final TagKey<DamageType> FROST_ATTACKS = tag("frost_attacks");
+        public static final TagKey<DamageType> SHOCK_ATTACKS = tag("shock_attacks");
+        public static final TagKey<DamageType> MAGIC_FIRE = tag("magic_fire");
+        public static final TagKey<DamageType> HELLFIRE = tag("hellfire");
+        public static final TagKey<DamageType> NO_KNOCKBACK = tag("no_knockback");
+        public static final TagKey<DamageType> WANTING_DAMAGE = tag("wanting_damage");
+
+        private static TagKey<DamageType> tag(String name) {
+            return create(Goety.location(name));
+        }
+
+        private static TagKey<DamageType> create(ResourceLocation p_215874_) {
+            return TagKey.create(Registries.DAMAGE_TYPE, p_215874_);
         }
     }
 }

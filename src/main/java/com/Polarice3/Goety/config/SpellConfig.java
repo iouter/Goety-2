@@ -216,6 +216,11 @@ public class SpellConfig {
     public static final ForgeConfigSpec.ConfigValue<Integer> HailCoolDown;
     public static final ForgeConfigSpec.ConfigValue<Double> HailDamage;
 
+    public static final ForgeConfigSpec.ConfigValue<Integer> BlizzardCost;
+    public static final ForgeConfigSpec.ConfigValue<Integer> BlizzardChargeUp;
+    public static final ForgeConfigSpec.ConfigValue<Integer> BlizzardDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> BlizzardCoolDown;
+
     public static final ForgeConfigSpec.ConfigValue<Integer> FrostNovaCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> FrostNovaDuration;
     public static final ForgeConfigSpec.ConfigValue<Integer> FrostNovaCoolDown;
@@ -906,6 +911,16 @@ public class SpellConfig {
                     .defineInRange("hailCoolDown", 20, 0, Integer.MAX_VALUE);
             HailDamage = BUILDER.comment("How much base damage Hail deals, Default: 1.0")
                     .defineInRange("hailDamage", 1.0, 1.0, Double.MAX_VALUE);
+            BUILDER.pop();
+            BUILDER.push("Blizzard Spell");
+            BlizzardCost = BUILDER.comment("Blizzard Spell Cost, Default: 8")
+                    .defineInRange("blizzardCost", 8, 0, Integer.MAX_VALUE);
+            BlizzardChargeUp = BUILDER.comment("How many ticks the Blizzard Spell much charge before casting, Default: 20")
+                    .defineInRange("blizzardChargeUp", 20, 0, Integer.MAX_VALUE);
+            BlizzardDuration = BUILDER.comment("How long the Blizzard Spell can be casted, setting it to 0 will allow the spell to be cast indefinitely, Default: 100")
+                    .defineInRange("blizzardTime", 100, 0, 72000);
+            BlizzardCoolDown = BUILDER.comment("Blizzard Spell Cooldown, Default: 400")
+                    .defineInRange("blizzardCoolDown", 400, 0, 72000);
             BUILDER.pop();
             BUILDER.push("Frost Nova Spell");
             FrostNovaCost = BUILDER.comment("Frost Nova Spell Cost, Default: 40")

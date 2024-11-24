@@ -13,11 +13,13 @@ import com.Polarice3.Goety.utils.ServerParticleUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
@@ -27,10 +29,13 @@ import java.util.UUID;
 
 public class ResonanceCrystalBlockEntity extends ModBlockEntity implements IWindPowered {
     public static String GOLEM_LIST = ResonanceBlockItem.GOLEM_LIST;
+    public static String BLOCK_LIST = "BlockList";
+    public List<BlockPos> blockPosList = new ArrayList<>();
     public List<SquallGolem> squallGolems = new ArrayList<>();
     public List<UUID> uuids = new ArrayList<>();
     public int active;
     private boolean isOn;
+    public boolean showBlock;
 
     public ResonanceCrystalBlockEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(ModBlockEntities.RESONANCE_CRYSTAL.get(), p_155229_, p_155230_);
@@ -87,6 +92,14 @@ public class ResonanceCrystalBlockEntity extends ModBlockEntity implements IWind
                     }
                     this.activateGolems();
                 }
+                if (!this.getBlockPosList().isEmpty()){
+                    for (BlockPos blockPos1 : this.getBlockPosList()){
+                        BlockEntity blockEntity = this.level.getBlockEntity(blockPos1);
+                        if (blockEntity instanceof ResonanceCrystalBlockEntity crystalBlock){
+                            crystalBlock.activate(20);
+                        }
+                    }
+                }
             } else {
                 if (this.isOn){
                     this.level.playSound(null, this.getBlockPos(), ModSounds.RESONANCE_CRYSTAL_OFF.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -105,6 +118,24 @@ public class ResonanceCrystalBlockEntity extends ModBlockEntity implements IWind
                 }
             }
         }
+    }
+
+    public List<BlockPos> getBlockPosList() {
+        return this.blockPosList;
+    }
+
+    public void addBlockPos(BlockPos blockPos){
+        if (!this.blockPosList.contains(blockPos)) {
+            this.blockPosList.add(blockPos);
+        }
+    }
+
+    public void removeBlockPos(BlockPos blockPos){
+        this.blockPosList.remove(blockPos);
+    }
+
+    public void clearBlocks(){
+        this.blockPosList.clear();
     }
 
     public List<SquallGolem> getSquallGolems() {
@@ -130,10 +161,28 @@ public class ResonanceCrystalBlockEntity extends ModBlockEntity implements IWind
         this.setChanged();
     }
 
+    public boolean isShowBlock(){
+        return this.showBlock;
+    }
+
+    public void setShowBlock(boolean showBlock){
+        this.showBlock = showBlock;
+        this.setChanged();
+    }
+
     @Override
     public void readNetwork(CompoundTag tag) {
         if (tag.contains("active")){
             this.active = tag.getInt("active");
+        }
+        if (tag.contains("showBlock")) {
+            this.showBlock = tag.getBoolean("showBlock");
+        }
+        if (tag.contains(BLOCK_LIST)){
+            ListTag list = tag.getList(BLOCK_LIST, 10);
+            for(int i = 0; i < list.size(); ++i) {
+                this.blockPosList.add(NbtUtils.readBlockPos(list.getCompound(i)));
+            }
         }
         if (tag.contains(GOLEM_LIST)){
             ListTag list = tag.getList(GOLEM_LIST, 8);
@@ -150,9 +199,28 @@ public class ResonanceCrystalBlockEntity extends ModBlockEntity implements IWind
     public CompoundTag writeNetwork(CompoundTag tag) {
         tag.putInt("active", this.active);
         List<String> list = new ArrayList<>();
+        List<BlockPos> list2 = new ArrayList<>();
         if (tag.contains(GOLEM_LIST)) {
             for (int i = 0; i < tag.getList(GOLEM_LIST, 8).size(); ++i) {
                 list.add(tag.getList(GOLEM_LIST, 8).getString(i));
+            }
+        }
+        if (tag.contains(BLOCK_LIST)) {
+            for (int i = 0; i < tag.getList(BLOCK_LIST, 10).size(); ++i) {
+                list2.add(NbtUtils.readBlockPos(tag.getList(BLOCK_LIST, 10).getCompound(i)));
+            }
+        }
+        if (!this.blockPosList.isEmpty()){
+            for (BlockPos blockPos : this.blockPosList){
+                if (!list2.contains(blockPos)){
+                    ListTag nbttaglist = new ListTag();
+                    if (tag.contains(BLOCK_LIST)) {
+                        nbttaglist = tag.getList(BLOCK_LIST, 10);
+                    }
+
+                    nbttaglist.add(NbtUtils.writeBlockPos(blockPos));
+                    tag.put(BLOCK_LIST, nbttaglist);
+                }
             }
         }
         if (!this.uuids.isEmpty()) {
@@ -168,6 +236,7 @@ public class ResonanceCrystalBlockEntity extends ModBlockEntity implements IWind
                 }
             }
         }
+        tag.putBoolean("showBlock", this.showBlock);
         tag.putBoolean("isOn", this.isOn);
         return tag;
     }

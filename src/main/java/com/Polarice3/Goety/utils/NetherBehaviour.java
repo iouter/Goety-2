@@ -84,7 +84,10 @@ public interface NetherBehaviour {
         }
 
         if (originalState.is(BlockTags.LOGS_THAT_BURN)){
-            BlockState blockstate = Blocks.BASALT.defaultBlockState().setValue(RotatedPillarBlock.AXIS, originalState.getValue(RotatedPillarBlock.AXIS));
+            BlockState blockstate = Blocks.BASALT.defaultBlockState();
+            if (originalState.hasProperty(RotatedPillarBlock.AXIS)){
+                blockstate = Blocks.BASALT.defaultBlockState().setValue(RotatedPillarBlock.AXIS, originalState.getValue(RotatedPillarBlock.AXIS));
+            }
             accessor.setBlock(blockPos, blockstate, 3);
             accessor.levelEvent(2001, blockPos, Block.getId(blockstate));
             changeBiome(accessor, blockPos);

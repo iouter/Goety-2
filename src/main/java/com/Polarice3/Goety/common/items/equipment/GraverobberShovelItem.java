@@ -1,6 +1,7 @@
 package com.Polarice3.Goety.common.items.equipment;
 
 import com.Polarice3.Goety.common.items.ModTiers;
+import com.Polarice3.Goety.utils.BlockFinder;
 import com.Polarice3.Goety.utils.MobUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,7 +36,7 @@ public class GraverobberShovelItem extends ShovelItem {
                 for (BlockPos blockPos : multiBlockBreak(pEntityLiving, pPos)) {
                     BlockState blockstate = pLevel.getBlockState(blockPos);
                     if (blockstate.is(BlockTags.MINEABLE_WITH_SHOVEL)) {
-                        if (pLevel.destroyBlock(blockPos, true, pEntityLiving)) {
+                        if (BlockFinder.breakBlock(pLevel, blockPos, pStack, pEntityLiving)) {
                             if (blockstate.getDestroySpeed(pLevel, blockPos) != 0) {
                                 pStack.hurtAndBreak(1, pEntityLiving, (p_220044_0_)
                                         -> p_220044_0_.broadcastBreakEvent(EquipmentSlot.MAINHAND));

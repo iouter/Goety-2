@@ -39,6 +39,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
@@ -712,6 +713,32 @@ public class BlockFinder {
             }
         }
         return new BlockPos(pos.getX(), bottomY, pos.getZ());
+    }
+
+    public static boolean breakBlock(Level level, BlockPos blockPos, ItemStack itemStack, @Nullable Entity entity) {
+        BlockState blockstate = level.getBlockState(blockPos);
+        if (blockstate.isAir()) {
+            return false;
+        } else {
+            FluidState fluidstate = level.getFluidState(blockPos);
+            if (!(blockstate.getBlock() instanceof BaseFireBlock)) {
+                level.levelEvent(2001, blockPos, Block.getId(blockstate));
+            }
+
+            BlockEntity blockentity = blockstate.hasBlockEntity() ? level.getBlockEntity(blockPos) : null;
+            Block.dropResources(blockstate, level, blockPos, blockentity, entity, itemStack);
+
+            boolean flag = level.setBlock(blockPos, fluidstate.createLegacyBlock(), 3, 512);
+            if (flag) {
+                level.gameEvent(GameEvent.BLOCK_DESTROY, blockPos, GameEvent.Context.of(entity, blockstate));
+            }
+
+            return flag;
+        }
+    }
+
+    public static boolean isPassableBlock(Level level, BlockPos blockPos){
+        return level.getBlockState(blockPos).getCollisionShape(level, blockPos).isEmpty();
     }
 
     //Based on ChainsawTask by @Shadows-of-Fire: https://github.com/Shadows-of-Fire/Apotheosis/blob/1.20/src/main/java/dev/shadowsoffire/apotheosis/ench/enchantments/masterwork/ChainsawEnchant.java

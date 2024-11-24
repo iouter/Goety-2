@@ -116,7 +116,7 @@ public class ElectroOrb extends SpellThrowableProjectile {
             serverLevel.sendParticles(ModParticleTypes.ELECTRIC_EXPLODE.get(), this.getX(), this.getY(), this.getZ(), 0, colorUtil.red(), colorUtil.green(), colorUtil.blue(), 1.0F);
             if (this.isStaff()) {
                 DamageSource damageSource = ModDamageSource.getDamageSource(this.level, ModDamageSource.SHOCK);
-                int radius = 1;
+                int radius = 2;
                 float damage = SpellConfig.ElectroOrbDamage.get().floatValue() * SpellConfig.SpellDamageMultiplier.get().floatValue();
                 if (this.getOwner() != null) {
                     damageSource = ModDamageSource.indirectShock(this, this.getOwner());

@@ -13,6 +13,7 @@ import com.Polarice3.Goety.utils.ServerParticleUtil;
 import com.Polarice3.Goety.utils.SpellExplosion;
 import com.google.common.collect.Maps;
 import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -21,11 +22,15 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -178,11 +183,21 @@ public class VoidRift extends CastSpellTrap {
                 }
                 List<Entity> targets = new ArrayList<>();
                 float range = 16.0F * (this.getSize() + 1.0F);
+                /*if (!this.isClosing) {
+                    int rangeInt = Mth.floor(range);
+                    this.suckBlocks(rangeInt, rangeInt, rangeInt);
+                }*/
                 if (this.level instanceof ServerLevel serverWorld) {
                     ServerParticleUtil.gatheringParticles(ParticleTypes.PORTAL, this, serverWorld, (int)range);
                 }
                 for (Entity entity : this.level.getEntitiesOfClass(Entity.class, this.getBoundingBox().inflate(range))) {
                     if (!(entity instanceof Endermite)) {
+                        if (entity instanceof ModFallingBlock modFallingBlock && modFallingBlock.getMode() == ModFallingBlock.FallingBlockMode.DEBRIS){
+                            targets.add(entity);
+                            if (entity.distanceTo(this) <= 1.0F){
+                                entity.discard();
+                            }
+                        }
                         if (this.getOwner() != null) {
                             if (entity != this.getOwner() && !MobUtil.areAllies(this.getOwner(), entity)) {
                                 targets.add(entity);
@@ -234,13 +249,45 @@ public class VoidRift extends CastSpellTrap {
                     if (this.level instanceof ServerLevel serverLevel) {
                         ColorUtil colorUtil = new ColorUtil(0x7317d2);
                         float range = 8.0F * (this.getSize() + 1.0F);
-                        serverLevel.sendParticles(new ShockwaveParticleOption(0, colorUtil.red, colorUtil.green, colorUtil.blue, range, 0, true), this.getX(), this.getY() + 0.5D, this.getZ(), 0, 0, 0, 0, 0);
+                        serverLevel.sendParticles(new ShockwaveParticleOption(colorUtil.red, colorUtil.green, colorUtil.blue, range, 0, true), this.getX(), this.getY() + 0.5D, this.getZ(), 0, 0, 0, 0, 0);
                         ServerParticleUtil.createParticleBall(ParticleTypes.DRAGON_BREATH, this.getX(), this.getY() + 0.5D, this.getZ(), serverLevel,  8 + (int) this.getSize());
                         this.playSound(SoundEvents.RESPAWN_ANCHOR_DEPLETE.get(), 5.0F, 0.5F);
                         this.playSound(SoundEvents.GENERIC_EXPLODE, 5.0F, 0.5F);
                         new SpellExplosion(this.level, this.getOwner() != null ? this.getOwner() : this, this.damageSources().indirectMagic(this, this.getOwner()), this.blockPosition(), range / 4, 0.0F);
                     }
                     this.discard();
+                }
+            }
+        }
+    }
+
+    private void suckBlocks(int x, int y, int z) {
+        int MthX = Mth.floor(this.getX());
+        int MthY = Mth.floor(this.getY());
+        int MthZ = Mth.floor(this.getZ());
+        if (!this.level.isClientSide) {
+            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this)) {
+                for (int i = -x; i <= x; ++i) {
+                    for (int j = -y; j <= y; ++j) {
+                        for (int k = -z; k <= z; ++k) {
+                            int l = MthX + i;
+                            int m = MthY + j;
+                            int n = MthZ + k;
+                            BlockPos blockpos = new BlockPos(l, m, n);
+
+                            BlockState blockState = this.level.getBlockState(blockpos);
+                            BlockState above = this.level.getBlockState(blockpos.above());
+                            BlockEntity tileEntity = this.level.getBlockEntity(blockpos);
+                            if ((above == Blocks.AIR.defaultBlockState() || above == Blocks.WATER.defaultBlockState()) && blockState != Blocks.AIR.defaultBlockState() && !blockState.is(BlockTags.WITHER_IMMUNE) && !blockState.is(BlockTags.DRAGON_IMMUNE)) {
+                                if (tileEntity == null && random.nextInt(2000) == 0) {
+                                    this.level.removeBlock(blockpos, true);
+                                    ModFallingBlock fallingBlockEntity = new ModFallingBlock(this.level, l + 0.5D, m + 0.5D, n + 0.5D, blockState, 5);
+                                    this.level.setBlock(blockpos, blockState.getFluidState().createLegacyBlock(), 3);
+                                    this.level.addFreshEntity(fallingBlockEntity);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -2,19 +2,17 @@ package com.Polarice3.Goety.common.magic.spells.storm;
 
 import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
+import com.Polarice3.Goety.common.entities.ModEntityType;
+import com.Polarice3.Goety.common.entities.projectiles.SpellLightningBolt;
 import com.Polarice3.Goety.common.magic.Spell;
 import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.BlockFinder;
-import com.Polarice3.Goety.utils.MobUtil;
 import com.Polarice3.Goety.utils.WandUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -71,45 +69,25 @@ public class LightningSpell extends Spell {
         Optional<BlockPos> lightningRod = BlockFinder.findLightningRod(worldIn, BlockPos.containing(rayTraceResult.getLocation()));
         if (lightningRod.isPresent() && !rightStaff(staff)){
             BlockPos blockPos = lightningRod.get();
-            LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, worldIn);
+            SpellLightningBolt lightningBolt = new SpellLightningBolt(ModEntityType.SPELL_LIGHTNING_BOLT.get(), worldIn);
             lightningBolt.setDamage(damage);
             lightningBolt.moveTo(Vec3.atBottomCenterOf(blockPos));
-            if (caster instanceof ServerPlayer serverPlayer) {
-                lightningBolt.setCause(serverPlayer);
-            }
+            lightningBolt.setOwner(caster);
             worldIn.addFreshEntity(lightningBolt);
         } else {
             LivingEntity target = this.getTarget(caster, range);
             if (target != null){
-                LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, worldIn);
+                SpellLightningBolt lightningBolt = new SpellLightningBolt(ModEntityType.SPELL_LIGHTNING_BOLT.get(), worldIn);
                 lightningBolt.setDamage(damage);
                 lightningBolt.setPos(target.position());
-                if (caster instanceof ServerPlayer serverPlayer) {
-                    lightningBolt.setCause(serverPlayer);
-                }
+                lightningBolt.setOwner(caster);
                 worldIn.addFreshEntity(lightningBolt);
-            } else if (rightStaff(staff)){
-                for (LivingEntity livingEntity : worldIn.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(range))){
-                    if (!MobUtil.areAllies(caster, livingEntity)){
-                        LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, worldIn);
-                        lightningBolt.setDamage(damage);
-                        lightningBolt.setPos(livingEntity.position());
-                        if (caster instanceof ServerPlayer serverPlayer) {
-                            lightningBolt.setCause(serverPlayer);
-                        }
-                        if (worldIn.addFreshEntity(lightningBolt)) {
-                            break;
-                        }
-                    }
-                }
-            } else if (rayTraceResult instanceof BlockHitResult){
-                BlockPos blockPos = ((BlockHitResult) rayTraceResult).getBlockPos();
-                LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, worldIn);
+            } else if (rayTraceResult instanceof BlockHitResult blockHitResult){
+                BlockPos blockPos = blockHitResult.getBlockPos();
+                SpellLightningBolt lightningBolt = new SpellLightningBolt(ModEntityType.SPELL_LIGHTNING_BOLT.get(), worldIn);
                 lightningBolt.setDamage(damage);
                 lightningBolt.moveTo(Vec3.atBottomCenterOf(blockPos));
-                if (caster instanceof ServerPlayer serverPlayer) {
-                    lightningBolt.setCause(serverPlayer);
-                }
+                lightningBolt.setOwner(caster);
                 worldIn.addFreshEntity(lightningBolt);
             }
         }

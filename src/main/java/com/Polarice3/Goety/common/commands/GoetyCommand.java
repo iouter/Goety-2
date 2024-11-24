@@ -8,6 +8,7 @@ import com.Polarice3.Goety.common.research.ResearchList;
 import com.Polarice3.Goety.config.MobsConfig;
 import com.Polarice3.Goety.utils.MobUtil;
 import com.Polarice3.Goety.utils.SEHelper;
+import com.Polarice3.Goety.utils.WandUtil;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -39,6 +40,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -202,6 +204,30 @@ public class GoetyCommand {
                                                 .then(Commands.argument("amount", IntegerArgumentType.integer(0)).executes((p_198439_0_) -> {
                                                     return setBrewBottling(p_198439_0_.getSource(), EntityArgument.getPlayers(p_198439_0_, "targets"), IntegerArgumentType.getInteger(p_198439_0_, "amount"));
                                                 }))))))
+                .then(Commands.literal("spell")
+                        .then(Commands.literal("cooldown")
+                                .then(Commands.literal("held").executes((p_198352_0_) -> {
+                                    if (p_198352_0_.getSource().isPlayer()) {
+                                        List<ServerPlayer> list = new ArrayList<>();
+                                        list.add(p_198352_0_.getSource().getPlayerOrException());
+                                        return resetFocusCooldown(p_198352_0_.getSource(), list);
+                                    }
+                                    return 0;
+                                })
+                                        .then(Commands.argument("targets", EntityArgument.players()).executes((p_198435_0_) -> {
+                                            return resetFocusCooldown(p_198435_0_.getSource(), EntityArgument.getPlayers(p_198435_0_, "targets"));
+                                        })))
+                                .then(Commands.literal("all").executes((p_198352_0_) -> {
+                                            if (p_198352_0_.getSource().isPlayer()) {
+                                                List<ServerPlayer> list = new ArrayList<>();
+                                                list.add(p_198352_0_.getSource().getPlayerOrException());
+                                                return resetAllFocusCooldowns(p_198352_0_.getSource(), list);
+                                            }
+                                            return 0;
+                                        })
+                                        .then(Commands.argument("targets", EntityArgument.players()).executes((p_198435_0_) -> {
+                                            return resetAllFocusCooldowns(p_198435_0_.getSource(), EntityArgument.getPlayers(p_198435_0_, "targets"));
+                                        })))))
                 .then(Commands.literal("misc")
                         .then(Commands.literal("wight").executes((p_198352_0_) -> {
                             return spawnWight(p_198352_0_.getSource(), p_198352_0_.getSource().getPlayerOrException());
@@ -627,6 +653,48 @@ public class GoetyCommand {
 
             return pTargets.size();
         }
+    }
+
+    private static int resetFocusCooldown(CommandSourceStack pSource, Collection<? extends ServerPlayer> pTargets) {
+        int i = 0;
+        for(ServerPlayer serverPlayer : pTargets) {
+            if (!WandUtil.findFocus(serverPlayer).isEmpty()){
+                Item item = WandUtil.findFocus(serverPlayer).getItem();
+                if (SEHelper.getCooldowns(serverPlayer).containsKey(item)){
+                    SEHelper.getFocusCoolDown(serverPlayer).removeCooldown(serverPlayer, pSource.getLevel(), item);
+                    ++i;
+                }
+            }
+        }
+
+        if (i == 0){
+            pSource.sendFailure(Component.translatable("commands.goety.spell.cooldown.held.failure"));
+        } else {
+            if (pTargets.size() == 1) {
+                pSource.sendSuccess(() -> Component.translatable("commands.goety.spell.cooldown.held.success.single", WandUtil.findFocus(pTargets.iterator().next()).getDisplayName()), true);
+            } else {
+                pSource.sendSuccess(() -> Component.translatable("commands.goety.spell.cooldown.held.success.multiple", pTargets.size()), true);
+            }
+        }
+
+        return i;
+    }
+
+    private static int resetAllFocusCooldowns(CommandSourceStack pSource, Collection<? extends ServerPlayer> pTargets) {
+        int i = 0;
+        for(ServerPlayer serverPlayer : pTargets) {
+            for (Item item : SEHelper.getCooldowns(serverPlayer).keySet()){
+                SEHelper.getFocusCoolDown(serverPlayer).removeCooldown(serverPlayer, pSource.getLevel(), item);
+            }
+        }
+
+        if (pTargets.size() == 1) {
+            pSource.sendSuccess(() -> Component.translatable("commands.goety.spell.cooldown.inventory.success.single", pTargets.iterator().next().getDisplayName()), true);
+        } else {
+            pSource.sendSuccess(() -> Component.translatable("commands.goety.spell.cooldown.inventory.success.multiple", pTargets.size()), true);
+        }
+
+        return i;
     }
 
     private static int spawnWight(CommandSourceStack pSource, ServerPlayer pPlayer) {

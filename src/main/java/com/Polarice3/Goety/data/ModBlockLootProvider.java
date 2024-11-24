@@ -89,6 +89,7 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
         this.dropPottedContents(ModBlocks.POTTED_HAUNTED_SAPLING.get());
         this.dropPottedContents(ModBlocks.POTTED_ROTTEN_SAPLING.get());
         this.dropPottedContents(ModBlocks.POTTED_WINDSWEPT_SAPLING.get());
+        this.dropPottedContents(ModBlocks.POTTED_PINE_SAPLING.get());
         this.add(ModBlocks.JADE_ORE.get(), (p_124076_) -> {
             return createOreDrop(p_124076_, ModItems.JADE.get());
         });
@@ -105,6 +106,12 @@ public class ModBlockLootProvider extends BlockLootSubProvider {
             return createLeavesDrops(p_124094_, ModBlocks.WINDSWEPT_SAPLING.get(), NORMAL_LEAVES_SAPLING_CHANCES);
         });
         this.add(ModBlocks.WINDSWEPT_BOOKSHELF.get(), (p_124233_) -> {
+            return createSingleItemTableWithSilkTouch(p_124233_, Items.BOOK, ConstantValue.exactly(3.0F));
+        });
+        this.add(ModBlocks.PINE_LEAVES.get(), (p_124094_) -> {
+            return createLeavesDrops(p_124094_, ModBlocks.PINE_SAPLING.get(), NORMAL_LEAVES_SAPLING_CHANCES);
+        });
+        this.add(ModBlocks.PINE_BOOKSHELF.get(), (p_124233_) -> {
             return createSingleItemTableWithSilkTouch(p_124233_, Items.BOOK, ConstantValue.exactly(3.0F));
         });
         this.add(ModBlocks.CRYPT_BOOKSHELF.get(), (p_124233_) -> {

@@ -130,6 +130,7 @@ public class ModModelLayer {
     public static final ModelLayerLocation AMETHYST_NECKLACE = register("amethyst_necklace");
     public static final ModelLayerLocation SOUL_SHIELD = register("soul_shield");
     public static final ModelLayerLocation SOUL_ARMOR = register("soul_armor");
+    public static final ModelLayerLocation NAMELESS_STAFF = register("nameless_staff");
     public static final ModelLayerLocation HAUNTED_ARMOR_STAND = register("haunted_armor_stand");
     public static final ModelLayerLocation HAS_INNER = registerInnerArmor("haunted_armor_stand");
     public static final ModelLayerLocation HAS_OUTER = registerOuterArmor("haunted_armor_stand");

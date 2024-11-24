@@ -334,6 +334,10 @@ public class BrewUtils {
         return !PotionUtils.getCustomEffects(itemStack).isEmpty() || !getBrewEffects(itemStack).isEmpty();
     }
 
+    public static boolean isEmpty(ItemStack itemStack){
+        return PotionUtils.getCustomEffects(itemStack).isEmpty() && getBrewEffects(itemStack).isEmpty();
+    }
+
     public static boolean brewableFood(ItemStack itemStack){
         return itemStack.is(ModTags.Items.BREWABLE_FOOD) && !hasEffect(itemStack);
     }

@@ -17,6 +17,7 @@ import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModKeybindings;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.init.ModTags;
+import com.Polarice3.Goety.utils.ItemHelper;
 import com.Polarice3.Goety.utils.MathHelper;
 import com.Polarice3.Goety.utils.MobUtil;
 import com.Polarice3.Goety.utils.SEHelper;
@@ -694,6 +695,7 @@ public class DarkWand extends Item implements IWand {
                 ItemStack recallFocus = IWand.getFocus(stack);
                 RecallFocus.addRecallText(recallFocus, tooltip);
             }
+            ItemHelper.addOnShift(tooltip, () -> addInformationAfterShift(IWand.getFocus(stack).getItem(), tooltip));
         } else {
             tooltip.add(Component.translatable("info.goety.wand.focus", Component.translatable("info.goety.wand.empty")));
             tooltip.add(Component.translatable("info.goety.wand.open", ModKeybindings.wandSlot().getTranslatedKeyMessage()).withStyle(ChatFormatting.BLUE));
@@ -701,96 +703,101 @@ public class DarkWand extends Item implements IWand {
         tooltip.add(Component.translatable("info.goety.wand.switch", ModKeybindings.wandCircle().getTranslatedKeyMessage()).withStyle(ChatFormatting.BLUE));
     }
 
+    public void addInformationAfterShift(Item item, List<Component> tooltip) {
+        tooltip.add(Component.translatable(item.getDescriptionId() + ".info").withStyle(ChatFormatting.GRAY));
+    }
+
     @Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         super.initializeClient(consumer);
-        consumer.accept(new IClientItemExtensions() {
+        consumer.accept(new DarkWandClient());
+    }
 
-            private static final HumanoidModel.ArmPose WAND_POSE = HumanoidModel.ArmPose.create("WAND", false, (model, entity, arm) -> {
-                float f5 = entity.walkAnimation.position(Minecraft.getInstance().getPartialTick());
-                if (arm == HumanoidArm.RIGHT) {
-                    model.rightArm.xRot -= MathHelper.modelDegrees(105);
-                    model.rightArm.zRot = Mth.cos(f5 * 0.6662F) * 0.25F;
-                    model.leftArm.xRot += MathHelper.modelDegrees(25);
-                } else {
-                    model.leftArm.xRot -= MathHelper.modelDegrees(105);
-                    model.leftArm.zRot = -Mth.cos(f5 * 0.6662F) * 0.25F;
-                    model.rightArm.xRot += MathHelper.modelDegrees(25);
-                }
-            });
-
-            private static final HumanoidModel.ArmPose HOLD_STAFF = HumanoidModel.ArmPose.create("HOLD_STAFF", false, (model, entity, arm) -> {
-                float f5 = entity.walkAnimation.position(Minecraft.getInstance().getPartialTick());
-                if (arm == HumanoidArm.RIGHT) {
-                    model.rightArm.xRot -= MathHelper.modelDegrees(90);
-                    model.rightArm.zRot = Mth.cos(f5 * 0.6662F) * 0.1F;
-                } else {
-                    model.leftArm.xRot -= MathHelper.modelDegrees(90);
-                    model.leftArm.zRot = -Mth.cos(f5 * 0.6662F) * 0.1F;
-                }
-            });
-
-            @Override
-            public HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack) {
-                if (!itemStack.isEmpty() && itemStack.getItem() instanceof DarkWand) {
-                    if (entityLiving.getUsedItemHand() == hand && entityLiving.getUseItemRemainingTicks() > 0) {
-                        return WAND_POSE;
-                    }
-                }
-                return HumanoidModel.ArmPose.EMPTY;
-            }
-
-            @Override
-            public boolean applyForgeHandTransform(PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack itemInHand, float partialTick, float equipProcess, float swingProcess) {
-                int i = arm == HumanoidArm.RIGHT ? 1 : -1;
-                if (player.isUsingItem()) {
-                    applyItemArmTransform(poseStack, arm, equipProcess);
-                    poseStack.translate((double)((float)i * -0.2785682F), (double)0.18344387F, (double)0.15731531F);
-                    poseStack.mulPose(Axis.XP.rotationDegrees(-13.935F));
-                    poseStack.mulPose(Axis.YP.rotationDegrees((float)i * 35.3F));
-                    poseStack.mulPose(Axis.ZP.rotationDegrees((float)i * -9.785F));
-                    float f8 = (float)itemInHand.getUseDuration() - ((float)player.getUseItemRemainingTicks() - partialTick + 1.0F);
-                    float f12 = f8 / 20.0F;
-                    f12 = (f12 * f12 + f12 * 2.0F) / 3.0F;
-                    if (f12 > 1.0F) {
-                        f12 = 1.0F;
-                    }
-
-                    if (f12 > 0.1F) {
-                        float f15 = Mth.sin((f8 - 0.1F) * 1.3F);
-                        float f18 = f12 - 0.1F;
-                        float f20 = f15 * f18;
-                        poseStack.translate((double)(f20 * 0.0F), (double)(f20 * 0.004F), (double)(f20 * 0.0F));
-                    }
-
-                    poseStack.translate((double)(f12 * 0.0F), (double)(f12 * 0.0F), (double)(f12 * 0.04F));
-                    poseStack.scale(1.0F, 1.0F, 1.0F + f12 * 0.2F);
-                    poseStack.mulPose(Axis.YN.rotationDegrees((float)i * 45.0F));
-                } else {
-                    float f5 = -0.4F * Mth.sin(Mth.sqrt(swingProcess) * (float)Math.PI);
-                    float f6 = 0.2F * Mth.sin(Mth.sqrt(swingProcess) * ((float)Math.PI * 2F));
-                    float f10 = -0.2F * Mth.sin(swingProcess * (float)Math.PI);
-                    poseStack.translate((double)((float)i * f5), (double)f6, (double)f10);
-                    this.applyItemArmTransform(poseStack, arm, equipProcess);
-                    this.applyItemArmAttackTransform(poseStack, arm, swingProcess);
-                }
-                return true;
-            }
-
-            private void applyItemArmTransform(PoseStack poseStack, HumanoidArm arm, float equipProcess) {
-                int i = arm == HumanoidArm.RIGHT ? 1 : -1;
-                poseStack.translate((double)((float)i * 0.56F), (double)(-0.52F + equipProcess * -0.6F), (double)-0.72F);
-            }
-
-            private void applyItemArmAttackTransform(PoseStack poseStack, HumanoidArm humanoidArm, float swingProcess) {
-                int i = humanoidArm == HumanoidArm.RIGHT ? 1 : -1;
-                float f = Mth.sin(swingProcess * swingProcess * (float)Math.PI);
-                poseStack.mulPose(Axis.YP.rotationDegrees((float)i * (45.0F + f * -20.0F)));
-                float f1 = Mth.sin(Mth.sqrt(swingProcess) * (float)Math.PI);
-                poseStack.mulPose(Axis.ZP.rotationDegrees((float)i * f1 * -20.0F));
-                poseStack.mulPose(Axis.XP.rotationDegrees(f1 * -80.0F));
-                poseStack.mulPose(Axis.YP.rotationDegrees((float)i * -45.0F));
+    public static class DarkWandClient implements IClientItemExtensions{
+        private static final HumanoidModel.ArmPose WAND_POSE = HumanoidModel.ArmPose.create("WAND", false, (model, entity, arm) -> {
+            float f5 = entity.walkAnimation.position(Minecraft.getInstance().getPartialTick());
+            if (arm == HumanoidArm.RIGHT) {
+                model.rightArm.xRot -= MathHelper.modelDegrees(105);
+                model.rightArm.zRot = Mth.cos(f5 * 0.6662F) * 0.25F;
+                model.leftArm.xRot += MathHelper.modelDegrees(25);
+            } else {
+                model.leftArm.xRot -= MathHelper.modelDegrees(105);
+                model.leftArm.zRot = -Mth.cos(f5 * 0.6662F) * 0.25F;
+                model.rightArm.xRot += MathHelper.modelDegrees(25);
             }
         });
+
+        private static final HumanoidModel.ArmPose HOLD_STAFF = HumanoidModel.ArmPose.create("HOLD_STAFF", false, (model, entity, arm) -> {
+            float f5 = entity.walkAnimation.position(Minecraft.getInstance().getPartialTick());
+            if (arm == HumanoidArm.RIGHT) {
+                model.rightArm.xRot -= MathHelper.modelDegrees(90);
+                model.rightArm.zRot = Mth.cos(f5 * 0.6662F) * 0.1F;
+            } else {
+                model.leftArm.xRot -= MathHelper.modelDegrees(90);
+                model.leftArm.zRot = -Mth.cos(f5 * 0.6662F) * 0.1F;
+            }
+        });
+
+        @Override
+        public HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack) {
+            if (!itemStack.isEmpty() && itemStack.getItem() instanceof DarkWand) {
+                if (entityLiving.getUsedItemHand() == hand && entityLiving.getUseItemRemainingTicks() > 0) {
+                    return WAND_POSE;
+                }
+            }
+            return HumanoidModel.ArmPose.EMPTY;
+        }
+
+        @Override
+        public boolean applyForgeHandTransform(PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack itemInHand, float partialTick, float equipProcess, float swingProcess) {
+            int i = arm == HumanoidArm.RIGHT ? 1 : -1;
+            if (player.isUsingItem()) {
+                applyItemArmTransform(poseStack, arm, equipProcess);
+                poseStack.translate((double)((float)i * -0.2785682F), (double)0.18344387F, (double)0.15731531F);
+                poseStack.mulPose(Axis.XP.rotationDegrees(-13.935F));
+                poseStack.mulPose(Axis.YP.rotationDegrees((float)i * 35.3F));
+                poseStack.mulPose(Axis.ZP.rotationDegrees((float)i * -9.785F));
+                float f8 = (float)itemInHand.getUseDuration() - ((float)player.getUseItemRemainingTicks() - partialTick + 1.0F);
+                float f12 = f8 / 20.0F;
+                f12 = (f12 * f12 + f12 * 2.0F) / 3.0F;
+                if (f12 > 1.0F) {
+                    f12 = 1.0F;
+                }
+
+                if (f12 > 0.1F) {
+                    float f15 = Mth.sin((f8 - 0.1F) * 1.3F);
+                    float f18 = f12 - 0.1F;
+                    float f20 = f15 * f18;
+                    poseStack.translate((double)(f20 * 0.0F), (double)(f20 * 0.004F), (double)(f20 * 0.0F));
+                }
+
+                poseStack.translate((double)(f12 * 0.0F), (double)(f12 * 0.0F), (double)(f12 * 0.04F));
+                poseStack.scale(1.0F, 1.0F, 1.0F + f12 * 0.2F);
+                poseStack.mulPose(Axis.YN.rotationDegrees((float)i * 45.0F));
+            } else {
+                float f5 = -0.4F * Mth.sin(Mth.sqrt(swingProcess) * (float)Math.PI);
+                float f6 = 0.2F * Mth.sin(Mth.sqrt(swingProcess) * ((float)Math.PI * 2F));
+                float f10 = -0.2F * Mth.sin(swingProcess * (float)Math.PI);
+                poseStack.translate((double)((float)i * f5), (double)f6, (double)f10);
+                this.applyItemArmTransform(poseStack, arm, equipProcess);
+                this.applyItemArmAttackTransform(poseStack, arm, swingProcess);
+            }
+            return true;
+        }
+
+        private void applyItemArmTransform(PoseStack poseStack, HumanoidArm arm, float equipProcess) {
+            int i = arm == HumanoidArm.RIGHT ? 1 : -1;
+            poseStack.translate((double)((float)i * 0.56F), (double)(-0.52F + equipProcess * -0.6F), (double)-0.72F);
+        }
+
+        private void applyItemArmAttackTransform(PoseStack poseStack, HumanoidArm humanoidArm, float swingProcess) {
+            int i = humanoidArm == HumanoidArm.RIGHT ? 1 : -1;
+            float f = Mth.sin(swingProcess * swingProcess * (float)Math.PI);
+            poseStack.mulPose(Axis.YP.rotationDegrees((float)i * (45.0F + f * -20.0F)));
+            float f1 = Mth.sin(Mth.sqrt(swingProcess) * (float)Math.PI);
+            poseStack.mulPose(Axis.ZP.rotationDegrees((float)i * f1 * -20.0F));
+            poseStack.mulPose(Axis.XP.rotationDegrees(f1 * -80.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees((float)i * -45.0F));
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.Polarice3.Goety.client.events;
 import com.Polarice3.Goety.Goety;
 import com.Polarice3.Goety.api.blocks.entities.IOwnedBlock;
 import com.Polarice3.Goety.api.blocks.entities.ITrainingBlock;
+import com.Polarice3.Goety.api.blocks.entities.IWaystoneBlock;
 import com.Polarice3.Goety.api.items.magic.IWand;
 import com.Polarice3.Goety.api.magic.ISpell;
 import com.Polarice3.Goety.client.audio.*;
@@ -11,8 +12,8 @@ import com.Polarice3.Goety.client.gui.screen.inventory.FocusRadialMenuScreen;
 import com.Polarice3.Goety.client.render.BurrowingLaserRenderer;
 import com.Polarice3.Goety.client.render.ModModelLayer;
 import com.Polarice3.Goety.client.render.WearRenderer;
+import com.Polarice3.Goety.client.render.item.CustomItemsRenderer;
 import com.Polarice3.Goety.client.render.model.LichModeModel;
-import com.Polarice3.Goety.common.blocks.entities.AnimatorBlockEntity;
 import com.Polarice3.Goety.common.blocks.entities.ArcaBlockEntity;
 import com.Polarice3.Goety.common.blocks.entities.BrewCauldronBlockEntity;
 import com.Polarice3.Goety.common.blocks.entities.CursedCageBlockEntity;
@@ -170,7 +171,7 @@ public class ClientEvents {
     public static float PARTIAL_TICK = 0;
 
     @SubscribeEvent
-    public static void clientTick(TickEvent.RenderTickEvent event){
+    public static void renderTick(TickEvent.RenderTickEvent event){
         if (event.phase == TickEvent.Phase.START){
             PARTIAL_TICK = event.renderTickTime;
         }
@@ -493,8 +494,8 @@ public class ClientEvents {
                             RenderSystem.disableBlend();
                             poseStack.popPose();
                         }
-                    } else if (blockEntity instanceof AnimatorBlockEntity animatorBlock) {
-                        GlobalPos globalPos = animatorBlock.getPosition();
+                    } else if (blockEntity instanceof IWaystoneBlock waystoneBlock) {
+                        GlobalPos globalPos = waystoneBlock.getPosition();
                         if ((player.isShiftKeyDown() || player.isCrouching()) && globalPos != null) {
                             poseStack.pushPose();
                             poseStack.translate((float) (width / 2), (float) (height - 60), 0.0F);
@@ -515,15 +516,17 @@ public class ClientEvents {
                             event.getGuiGraphics().drawString(fontRenderer, s, (-l / 2), -4, 0xFFFFFF);
                             RenderSystem.disableBlend();
                             poseStack.popPose();
-                            poseStack.pushPose();
-                            poseStack.translate((float) (width / 2), (float) (height - 76), 0.0F);
-                            RenderSystem.enableBlend();
-                            RenderSystem.defaultBlendFunc();
-                            String s0 = Component.translatable("tooltip.goety.blockSoulCost").getString() + animatorBlock.getSoulCost();
-                            int l0 = fontRenderer.width(s0);
-                            event.getGuiGraphics().drawString(fontRenderer, s0, (-l0 / 2), -4, 0xFFFFFF);
-                            RenderSystem.disableBlend();
-                            poseStack.popPose();
+                            if (waystoneBlock.getSoulCost() > 0) {
+                                poseStack.pushPose();
+                                poseStack.translate((float) (width / 2), (float) (height - 76), 0.0F);
+                                RenderSystem.enableBlend();
+                                RenderSystem.defaultBlendFunc();
+                                String s0 = Component.translatable("tooltip.goety.blockSoulCost").getString() + waystoneBlock.getSoulCost();
+                                int l0 = fontRenderer.width(s0);
+                                event.getGuiGraphics().drawString(fontRenderer, s0, (-l0 / 2), -4, 0xFFFFFF);
+                                RenderSystem.disableBlend();
+                                poseStack.popPose();
+                            }
                         }
                     }
                 }
@@ -710,35 +713,35 @@ public class ClientEvents {
     @SubscribeEvent
     public static void TickEvents(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.START){
-            return;
-        }
+            CustomItemsRenderer.incrementTick();
+        } else {
+            Minecraft minecraft = Minecraft.getInstance();
 
-        Minecraft minecraft = Minecraft.getInstance();
+            if (minecraft.player != null){
+                Player player = minecraft.player;
+                Wight wight = Wight.findWight(player);
+                if (wight != null) {
+                    if (MobUtil.isPlayerLookingTowards(player, minecraft.options.fov().get().floatValue(), wight)){
+                        wight.lookTime += 1;
 
-        if (minecraft.player != null){
-            Player player = minecraft.player;
-            Wight wight = Wight.findWight(player);
-            if (wight != null) {
-                if (MobUtil.isPlayerLookingTowards(player, minecraft.options.fov().get().floatValue(), wight)){
-                    wight.lookTime += 1;
-
-                    if (wight.lookTime >= MathHelper.secondsToTicks(3)){
-                        if (wight.lookTime % 20 == 0 && wight.getRandom().nextInt(8) == 0) {
-                            wight.lookTime = 0;
-                            ModNetwork.INSTANCE.send(PacketDistributor.SERVER.noArg(), new CTargetPlayerPacket(wight));
+                        if (wight.lookTime >= MathHelper.secondsToTicks(3)){
+                            if (wight.lookTime % 20 == 0 && wight.getRandom().nextInt(8) == 0) {
+                                wight.lookTime = 0;
+                                ModNetwork.INSTANCE.send(PacketDistributor.SERVER.noArg(), new CTargetPlayerPacket(wight));
+                            }
+                        }
+                    } else {
+                        if (wight.lookTime > 0){
+                            wight.lookTime -= 1;
                         }
                     }
-                } else {
-                    if (wight.lookTime > 0){
-                        wight.lookTime -= 1;
-                    }
                 }
+                if (minecraft.options.keyJump.isDown() && !prevJumpBindState && !player.isInWater() && SEHelper.getTicksInAir(player) > 2 && !player.isCreative() && !player.isSpectator() && !player.isPassenger()) {
+                    ModNetwork.sendToServer(new CMultiJumpPacket());
+                    SEHelper.doubleJump(player);
+                }
+                prevJumpBindState = minecraft.options.keyJump.isDown();
             }
-            if (minecraft.options.keyJump.isDown() && !prevJumpBindState && !player.isInWater() && SEHelper.getTicksInAir(player) > 2 && !player.isCreative() && !player.isSpectator() && !player.isPassenger()) {
-                ModNetwork.sendToServer(new CMultiJumpPacket());
-                SEHelper.doubleJump(player);
-            }
-            prevJumpBindState = minecraft.options.keyJump.isDown();
         }
     }
 

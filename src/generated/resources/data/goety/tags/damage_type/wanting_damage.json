@@ -1,0 +1,11 @@
+{
+  "values": [
+    "#minecraft:witch_resistant_to",
+    "#goety:no_knockback",
+    "#goety:fire_attacks",
+    "#goety:frost_attacks",
+    "#goety:shock_attacks",
+    "goety:loot_explode",
+    "goety:loot_explode_owned"
+  ]
+}

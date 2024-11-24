@@ -121,7 +121,7 @@ public class WindBlowerBlockEntity extends BlockEntity {
                         double strength = MobUtil.isShifting(entity) ? 0.0D : 0.2D;
                         MobUtil.push(entity,
                                 Mth.sin(facing.getOpposite().toYRot() * (float) Math.PI / 180.0F) * strength,
-                                0.08D,
+                                0.0D,
                                 -Mth.cos(facing.getOpposite().toYRot() * (float) Math.PI / 180.0F) * strength);
                     } else if (facing == Direction.UP) {
                         if (MobUtil.isShifting(entity)){

@@ -18,7 +18,6 @@ import com.Polarice3.Goety.config.MainConfig;
 import com.Polarice3.Goety.utils.ColorUtil;
 import com.Polarice3.Goety.utils.EntityFinder;
 import com.Polarice3.Goety.utils.SEHelper;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;

@@ -53,7 +53,7 @@ public interface ISummonSpell extends ISpell{
     default void setTarget(LivingEntity source, Mob summoned){
         LivingEntity target = this.getTarget(summoned);
         if (target != null){
-            if (MobUtil.areNotFullAllies(source, target)) {
+            if (!MobUtil.areAllies(source, target)) {
                 summoned.setTarget(target);
             }
         }

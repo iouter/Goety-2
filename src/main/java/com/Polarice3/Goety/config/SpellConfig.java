@@ -221,6 +221,10 @@ public class SpellConfig {
     public static final ForgeConfigSpec.ConfigValue<Integer> BlizzardDuration;
     public static final ForgeConfigSpec.ConfigValue<Integer> BlizzardCoolDown;
 
+    public static final ForgeConfigSpec.ConfigValue<Integer> ChillingCost;
+    public static final ForgeConfigSpec.ConfigValue<Integer> ChillingDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> ChillingCoolDown;
+
     public static final ForgeConfigSpec.ConfigValue<Integer> FrostNovaCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> FrostNovaDuration;
     public static final ForgeConfigSpec.ConfigValue<Integer> FrostNovaCoolDown;
@@ -921,6 +925,14 @@ public class SpellConfig {
                     .defineInRange("blizzardTime", 100, 0, 72000);
             BlizzardCoolDown = BUILDER.comment("Blizzard Spell Cooldown, Default: 400")
                     .defineInRange("blizzardCoolDown", 400, 0, 72000);
+            BUILDER.pop();
+            BUILDER.push("Chilling Spell");
+            ChillingCost = BUILDER.comment("Chilling Spell Cost, Default: 48")
+                    .defineInRange("chillingCost", 48, 0, Integer.MAX_VALUE);
+            ChillingDuration = BUILDER.comment("Time to cast Chilling Spell, Default: 60")
+                    .defineInRange("chillingTime", 60, 0, 72000);
+            ChillingCoolDown = BUILDER.comment("Chilling Spell Cooldown, Default: 500")
+                    .defineInRange("chillingCoolDown", 500, 0, Integer.MAX_VALUE);
             BUILDER.pop();
             BUILDER.push("Frost Nova Spell");
             FrostNovaCost = BUILDER.comment("Frost Nova Spell Cost, Default: 40")

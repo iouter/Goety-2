@@ -41,8 +41,12 @@ public class SensorMixin<T extends LivingEntity> {
                 }
             }
 
-            brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_NEMESIS, enemyWither);
-            brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED, zombie);
+            if (enemyWither.isPresent()){
+                brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_NEMESIS, enemyWither);
+            }
+            if (zombie.isPresent()) {
+                brain.setMemory(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED, zombie);
+            }
         }
     }
 }

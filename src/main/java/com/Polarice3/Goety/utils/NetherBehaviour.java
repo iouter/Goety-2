@@ -96,7 +96,7 @@ public interface NetherBehaviour {
 
         if (accessor instanceof Level level) {
             if (BlockFinder.canBeReplaced(level, blockPos) && !originalState.isAir() && !(originalState.getBlock() instanceof LiquidBlock) && !(originalState.getBlock() instanceof BaseFireBlock)) {
-                if (level.random.nextFloat() <= 0.15F || (originalState.getBlock() instanceof IPlantable plantable && !Blocks.NETHERRACK.defaultBlockState().canSustainPlant(accessor, blockPos.below(), Direction.UP, plantable))){
+                if ((level.random.nextFloat() <= 0.15F && !(originalState.getBlock() instanceof IPlantable)) || (originalState.getBlock() instanceof IPlantable plantable && !Blocks.NETHERRACK.defaultBlockState().canSustainPlant(accessor, blockPos.below(), Direction.UP, plantable))){
                     BlockState fire = BaseFireBlock.getState(accessor, blockPos);
                     accessor.setBlock(blockPos, fire, 3);
                     accessor.levelEvent(2001, blockPos, Block.getId(fire));

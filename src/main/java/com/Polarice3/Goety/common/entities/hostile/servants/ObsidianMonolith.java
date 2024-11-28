@@ -46,10 +46,7 @@ import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -481,7 +478,9 @@ public class ObsidianMonolith extends AbstractMonolith implements Enemy {
                                 if (spawner != null) {
                                     Entity entity = spawner.type.create(serverLevel);
                                     BlockPos blockPos = BlockFinder.SummonRadius(this.blockPosition(), entity, serverLevel, 24);
-                                    if (SpawnPlacements.checkSpawnRules(spawner.type, serverLevel, MobSpawnType.SPAWNER, blockPos, serverLevel.random)) {
+                                    SpawnPlacements.Type spawnplacements$type = SpawnPlacements.getPlacementType(spawner.type);
+                                    if (NaturalSpawner.isSpawnPositionOk(spawnplacements$type, this.level, blockPos, spawner.type)
+                                            && SpawnPlacements.checkSpawnRules(spawner.type, serverLevel, MobSpawnType.SPAWNER, blockPos, serverLevel.random)) {
                                         if (entity instanceof Mob mob) {
                                             if (!(entity instanceof Ghast) && !(entity instanceof AbstractPiglin) && !(entity instanceof Hoglin)) {
                                                 mob.setPos(blockPos.getX() + 0.5F, blockPos.getY(), blockPos.getZ() + 0.5F);

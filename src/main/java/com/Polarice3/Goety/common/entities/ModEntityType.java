@@ -581,6 +581,11 @@ public class ModEntityType {
                     .sized(0.6F, 1.95F)
                     .clientTrackingRange(8));
 
+    public static final RegistryObject<EntityType<ZombieVillagerServant>> ZOMBIE_VILLAGER_SERVANT = register("zombie_villager_servant",
+            EntityType.Builder.of(ZombieVillagerServant::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.95F)
+                    .clientTrackingRange(8));
+
     public static final RegistryObject<EntityType<HuskServant>> HUSK_SERVANT = register("husk_servant",
             EntityType.Builder.of(HuskServant::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.95F)
@@ -1170,13 +1175,6 @@ public class ModEntityType {
                     .sized(6.0F, 0.5F)
                     .clientTrackingRange(10)
                     .updateInterval(Integer.MAX_VALUE));
-
-    public static final RegistryObject<EntityType<SkullLaser>> LASER = register("laser",
-            EntityType.Builder.of(SkullLaser::new, MobCategory.MISC)
-                    .fireImmune()
-                    .noSummon()
-                    .sized(0.5F, 0.5F)
-                    .clientTrackingRange(10));
 
     public static final RegistryObject<EntityType<VineHook>> VINE_HOOK = register("vine_hook",
             EntityType.Builder.<VineHook>of(VineHook::new, MobCategory.MISC)

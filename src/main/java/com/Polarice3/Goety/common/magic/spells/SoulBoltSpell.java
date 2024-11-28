@@ -1,10 +1,12 @@
 package com.Polarice3.Goety.common.magic.spells;
 
+import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.projectiles.NecroBolt;
 import com.Polarice3.Goety.common.entities.projectiles.SoulBolt;
 import com.Polarice3.Goety.common.entities.projectiles.SpellHurtingProjectile;
 import com.Polarice3.Goety.common.items.ModItems;
+import com.Polarice3.Goety.common.items.magic.DarkStaff;
 import com.Polarice3.Goety.common.magic.Spell;
 import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.config.SpellConfig;
@@ -77,7 +79,7 @@ public class SoulBoltSpell extends Spell {
             SoundUtil.playSoulBolt(caster);
         }
         if (soulBolt instanceof SoulBolt soulBolt1){
-            if (staff.is(ModItems.NECRO_STAFF.get()) || staff.is(ModItems.NAMELESS_STAFF.get())){
+            if (staff.getItem() instanceof DarkStaff darkStaff && darkStaff.getSpellType() == SpellType.NECROMANCY){
                 soulBolt1.setNecro(true);
             }
         }

@@ -115,7 +115,7 @@ public class HauntedArmorStand extends ArmorStand {
         }
     }
 
-    private void showBreakingParticles() {
+    public void showBreakingParticles() {
         if (this.level instanceof ServerLevel) {
             ((ServerLevel)this.level).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, ModBlocks.HAUNTED_PLANKS.get().defaultBlockState()), this.getX(), this.getY(0.6666666666666666D), this.getZ(), 10, (double)(this.getBbWidth() / 4.0F), (double)(this.getBbHeight() / 4.0F), (double)(this.getBbWidth() / 4.0F), 0.05D);
         }

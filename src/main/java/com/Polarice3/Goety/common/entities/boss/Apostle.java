@@ -413,7 +413,7 @@ public class Apostle extends SpellCastingCultist implements RangedAttackMob {
             }
             if (this.deathTime >= 200) {
                 this.move(MoverType.SELF, new Vec3(0.0D, -4.0D, 0.0D));
-                if (this.onGround() || this.getY() <= 0) {
+                if (this.onGround() || this.getY() <= this.level.getMinBuildHeight()) {
                     if (!this.level.isClientSide) {
                         ServerLevel ServerLevel = (ServerLevel) this.level;
                         if (ServerLevel.getLevelData().isThundering()) {
@@ -1064,7 +1064,7 @@ public class Apostle extends SpellCastingCultist implements RangedAttackMob {
         if (this.isSettingUpSecond()){
             this.setFiring(false);
             this.f = 0;
-            this.heal(1.0F);
+            this.heal(0.015625F * this.getMaxHealth());
             for (Entity entity : this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(3.0D), ALIVE)) {
                 if (!MobUtil.areAllies(this, entity)) {
                     this.barrier(entity, this);

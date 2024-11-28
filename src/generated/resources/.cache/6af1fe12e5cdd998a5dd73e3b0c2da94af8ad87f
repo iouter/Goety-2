@@ -1,4 +1,4 @@
-// 1.20.1	2024-11-11T17:29:48.3405086	Item Models: goety
+// 1.20.1	2024-11-28T18:21:51.8022307	Item Models: goety
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/goety/models/item/apostle_spawn_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/goety/models/item/bear_servant_spawn_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/goety/models/item/blackguard_servant_spawn_egg.json
@@ -84,6 +84,7 @@
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/goety/models/item/wraith_servant_spawn_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/goety/models/item/wraith_spawn_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/goety/models/item/zombie_servant_spawn_egg.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/goety/models/item/zombie_villager_servant_spawn_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/goety/models/item/zombie_vindicator_servant_spawn_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/goety/models/item/zpiglin_brute_servant_spawn_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/goety/models/item/zpiglin_servant_spawn_egg.json

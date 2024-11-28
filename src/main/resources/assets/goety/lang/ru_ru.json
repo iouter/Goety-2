@@ -2514,5 +2514,12 @@
   "advancements.goety.craft_haunted_mirror.title": "Magic Mirror on the Wall...",
   "advancements.goety.craft_haunted_mirror.description": "Allows teleportation if two mirrors are placed on the same axis.",
   "advancements.goety.craft_haunted_jug.title": "Extreme Thirst",
-  "advancements.goety.craft_haunted_jug.description": "Provides limitless source of water."
+  "advancements.goety.craft_haunted_jug.description": "Provides limitless source of water.",
+  "item.goety.zombie_villager_servant_spawn_egg": "Zombie Villager Servant Spawn Egg",
+  "item.goety.chilling_focus": "Chilling Focus",
+  "item.goety.chilling_focus.info": "Gives Chill Hide effect to caster, or an allied target while crouch casting, which increases armor points and cause attackers to get Freezing effect.",
+  "effect.goety.chill_hide": "Chill Hide",
+  "effect.goety.chill_hide.description": "Increases armor points by 3 per level. Entities attacking the affected gets Freezing effect.",
+  "config.jade.plugin_goety.villager_profession": "Профессия крестьянина",
+  "config.jade.plugin_goety.zombie_villager": "Zombie Villager Conversion"
 }

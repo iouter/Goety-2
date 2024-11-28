@@ -4,11 +4,17 @@ import com.Polarice3.Goety.api.blocks.entities.IWaystoneBlock;
 import com.Polarice3.Goety.api.magic.GolemType;
 import com.Polarice3.Goety.common.blocks.AnimatorBlock;
 import com.Polarice3.Goety.common.blocks.ModBlocks;
+import com.Polarice3.Goety.common.entities.ModEntityType;
+import com.Polarice3.Goety.common.entities.ally.undead.HauntedArmorServant;
+import com.Polarice3.Goety.common.entities.deco.HauntedArmorStand;
 import com.Polarice3.Goety.common.items.ModItems;
 import com.Polarice3.Goety.common.items.WaystoneItem;
 import com.Polarice3.Goety.common.magic.construct.SpawnFromBlock;
+import com.Polarice3.Goety.common.research.ResearchList;
 import com.Polarice3.Goety.config.MainConfig;
 import com.Polarice3.Goety.init.ModSounds;
+import com.Polarice3.Goety.utils.ItemHelper;
+import com.Polarice3.Goety.utils.SEHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -18,6 +24,8 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Clearable;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -25,6 +33,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class AnimatorBlockEntity extends BlockEntity implements IWaystoneBlock, Clearable {
@@ -58,7 +68,26 @@ public class AnimatorBlockEntity extends BlockEntity implements IWaystoneBlock, 
                         if (this.checkCage() && this.cursedCageTile.getSouls() >= this.getSoulCost()) {
                             ItemStack itemStack = ModItems.ANIMATION_CORE.get().getDefaultInstance();
                             BlockState blockState = this.level.getBlockState(this.getPosition().pos());
-                            if (GolemType.getGolemList().containsKey(blockState)) {
+                            AABB aabb = new AABB(this.getPosition().pos());
+                            List<HauntedArmorStand> list = this.level.getEntitiesOfClass(HauntedArmorStand.class, aabb, ItemHelper::isFullEquipped);
+                            Optional<HauntedArmorStand> optional = !list.isEmpty() ? list.stream().findFirst() : Optional.empty();
+                            if (optional.isPresent() && SEHelper.hasResearch(this.getOwner(), ResearchList.HAUNTING)){
+                                HauntedArmorStand hauntedArmorStand = optional.get();
+                                HauntedArmorServant hauntedArmorServant = new HauntedArmorServant(ModEntityType.HAUNTED_ARMOR_SERVANT.get(), this.level);
+                                for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+                                    hauntedArmorServant.setItemSlot(equipmentSlot, hauntedArmorStand.getItemBySlot(equipmentSlot));
+                                    hauntedArmorServant.setGuaranteedDrop(equipmentSlot);
+                                }
+                                hauntedArmorServant.setPersistenceRequired();
+                                hauntedArmorServant.setTrueOwner(this.getOwner());
+                                hauntedArmorServant.moveTo(hauntedArmorStand.blockPosition(), hauntedArmorStand.getYRot(), hauntedArmorStand.getXRot());
+                                hauntedArmorServant.setLeftHanded(this.getOwner().getMainArm() == HumanoidArm.LEFT);
+                                if (this.level.addFreshEntity(hauntedArmorServant)) {
+                                    hauntedArmorStand.playSound(ModSounds.SUMMON_SPELL.get());
+                                    hauntedArmorStand.showBreakingParticles();
+                                    hauntedArmorStand.discard();
+                                }
+                            } else if (GolemType.getGolemList().containsKey(blockState)) {
                                 if (GolemType.getGolemList().get(blockState).spawnServant(this.getOwner(), itemStack, this.level, this.getPosition().pos())) {
                                     this.level.playSound(null, this.getBlockPos(), ModSounds.SUMMON_SPELL.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
                                     this.level.playSound(null, this.getPosition().pos(), ModSounds.SUMMON_SPELL.get(), SoundSource.BLOCKS, 1.0F, 1.0F);

@@ -74,6 +74,11 @@ public class GoetyEffects {
                     .addAttributeModifier(Attributes.ARMOR, "7487ebfe-56fb-4e83-b804-3f337b2a7814",
                             4.0D, AttributeModifier.Operation.ADDITION));
 
+    public static final RegistryObject<MobEffect> CHILL_HIDE = EFFECTS.register("chill_hide",
+            () -> new GoetyBaseEffect(MobEffectCategory.BENEFICIAL, 0)
+                    .addAttributeModifier(Attributes.ARMOR, "2767ec5c-c2dd-4c0c-b98b-d947b1b7f07f",
+                            3.0D, AttributeModifier.Operation.ADDITION));
+
     public static final RegistryObject<MobEffect> SHADOW_WALK = EFFECTS.register("shadow_walk",
             () -> new GoetyBaseEffect(MobEffectCategory.BENEFICIAL, 0));
 

@@ -152,8 +152,6 @@ public abstract class Spell implements ISpell {
             } else {
                 ISpell.super.useParticle(worldIn, caster, stack);
             }
-        } else {
-            ISpell.super.useParticle(worldIn, caster, stack);
         }
     }
 

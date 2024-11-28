@@ -4,6 +4,8 @@ import com.Polarice3.Goety.api.entities.IOwned;
 import com.Polarice3.Goety.client.particles.ModParticleTypes;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.boss.Apostle;
+import com.Polarice3.Goety.utils.CuriosFinder;
+import com.Polarice3.Goety.utils.LichdomHelper;
 import com.Polarice3.Goety.utils.MobUtil;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -54,6 +57,26 @@ public class DeathArrow extends Arrow {
                     apostle.heal(1.0F);
                 }
             }
+        } else if (this.getOwner() instanceof LivingEntity livingOwner){
+            if (CuriosFinder.hasUnholySet(livingOwner)){
+                if (livingOwner.level.dimension() == Level.NETHER) {
+                    float voidDamage = livingEntity.getMaxHealth() * 0.05F;
+
+                    if (livingEntity.getHealth() > voidDamage + 1.0F) {
+                        livingEntity.heal(-voidDamage);
+                    }
+                }
+
+                if (livingOwner instanceof Player player && LichdomHelper.isLich(player)) {
+                    if (LichdomHelper.smited(player) <= 0) {
+                        if (MobUtil.healthIsHalved(player)) {
+                            player.heal(4.0F);
+                        } else {
+                            player.heal(1.0F);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -66,21 +89,23 @@ public class DeathArrow extends Arrow {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult p_36757_) {
-        super.onHitEntity(p_36757_);
+    protected void onHitEntity(EntityHitResult result) {
+        super.onHitEntity(result);
         float f = (float)this.getDeltaMovement().length();
         int i = Mth.ceil(Mth.clamp((double)f * this.getBaseDamage(), 0.0D, 2.147483647E9D));
         if (this.isCritArrow()) {
             long j = (long)this.random.nextInt(i / 2 + 2);
             i = (int)Math.min(j + (long)i, 2147483647L);
         }
-        Entity entity = p_36757_.getEntity();
+        Entity entity = result.getEntity();
         if (entity instanceof WitherBoss witherBoss){
             Entity entity1 = this.getOwner();
             if (entity1 instanceof Apostle apostle) {
                 if (apostle.getTarget() == witherBoss || witherBoss.getTarget() == apostle){
                     witherBoss.hurt(this.damageSources().indirectMagic(this, apostle), i);
                 }
+            } else if (entity1 instanceof LivingEntity livingEntity && CuriosFinder.hasUnholySet(livingEntity)){
+                witherBoss.hurt(this.damageSources().indirectMagic(this, livingEntity), i);
             }
         }
     }

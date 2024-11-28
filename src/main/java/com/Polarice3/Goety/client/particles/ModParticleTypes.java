@@ -328,4 +328,12 @@ public class ModParticleTypes {
                     return GatherTrailParticle.Option.CODEC;
                 }
             });
+
+    public static final RegistryObject<ParticleType<AuraParticle.Option>> AURA = PARTICLE_TYPES.register("aura",
+            () -> new ParticleType<>(false, AuraParticle.Option.DESERIALIZER) {
+                @Override
+                public Codec codec() {
+                    return AuraParticle.Option.CODEC;
+                }
+            });
 }

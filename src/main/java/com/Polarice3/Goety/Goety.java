@@ -32,7 +32,6 @@ import com.Polarice3.Goety.common.entities.hostile.illagers.*;
 import com.Polarice3.Goety.common.entities.hostile.servants.*;
 import com.Polarice3.Goety.common.entities.neutral.*;
 import com.Polarice3.Goety.common.entities.projectiles.*;
-import com.Polarice3.Goety.common.entities.util.SkullLaser;
 import com.Polarice3.Goety.common.inventory.ModSaveInventory;
 import com.Polarice3.Goety.common.items.ModItems;
 import com.Polarice3.Goety.common.items.ModPotions;
@@ -481,6 +480,7 @@ public class Goety {
         event.put(ModEntityType.ALLY_VEX.get(), AllyVex.setCustomAttributes().build());
         event.put(ModEntityType.ALLY_IRK.get(), AllyIrk.setCustomAttributes().build());
         event.put(ModEntityType.ZOMBIE_SERVANT.get(), ZombieServant.setCustomAttributes().build());
+        event.put(ModEntityType.ZOMBIE_VILLAGER_SERVANT.get(), ZombieVillagerServant.setCustomAttributes().build());
         event.put(ModEntityType.HUSK_SERVANT.get(), HuskServant.setCustomAttributes().build());
         event.put(ModEntityType.DROWNED_SERVANT.get(), DrownedServant.setCustomAttributes().build());
         event.put(ModEntityType.FROZEN_ZOMBIE_SERVANT.get(), FrozenZombieServant.setCustomAttributes().build());
@@ -567,7 +567,6 @@ public class Goety {
         event.put(ModEntityType.SKULL_LORD.get(), SkullLord.setCustomAttributes().build());
         event.put(ModEntityType.BONE_LORD.get(), BoneLord.setCustomAttributes().build());
         event.put(ModEntityType.WITHER_NECROMANCER.get(), WitherNecromancer.setCustomAttributes().build());
-        event.put(ModEntityType.LASER.get(), SkullLaser.setCustomAttributes().build());
         event.put(ModEntityType.SURVEY_EYE.get(), Mob.createMobAttributes().build());
         event.put(ModEntityType.HAUNTED_ARMOR_STAND.get(), LivingEntity.createLivingAttributes().build());
     }

@@ -49,6 +49,7 @@ import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.*;
+import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -133,18 +134,6 @@ public class MobUtil {
                     || SEHelper.getAllyEntityTypes(player1).contains(living1.getType())));
         } else {
             return false;
-        }
-    }
-
-    public static boolean areNotFullAllies(@Nullable Entity entity, @Nullable Entity entity1){
-        if (entity != null && entity1 != null) {
-            return !entity.isAlliedTo(entity1) || !entity1.isAlliedTo(entity)
-                    || (entity instanceof Player player && entity1 instanceof LivingEntity living
-                    && (!SEHelper.getAllyEntities(player).contains(living) && !SEHelper.getAllyEntityTypes(player).contains(living.getType())))
-                    || (entity1 instanceof Player player1 && entity instanceof LivingEntity living1
-                    && (!SEHelper.getAllyEntities(player1).contains(living1) && !SEHelper.getAllyEntityTypes(player1).contains(living1.getType())));
-        } else {
-            return true;
         }
     }
 
@@ -1319,6 +1308,7 @@ public class MobUtil {
                     && !(target.getMobType() == MobType.ARTHROPOD && owner != null && CuriosFinder.hasWarlockRobe(owner))
                     && !(target instanceof Creeper && target.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && MobsConfig.MinionsAttackCreepers.get())
                     && !(target instanceof NeutralMob neutralMob && ((owner != null && neutralMob.getTarget() != owner) || neutralMob.getTarget() != attacker))
+                    && !(target instanceof AbstractPiglin piglin && ((owner != null && piglin.getTarget() != owner) || piglin.getTarget() != attacker))
                     && !(target instanceof IOwned ownedTarget && (owner != null && ownedTarget.getTrueOwner() == owner))
                     || (owner instanceof Player player
                     && ((!SEHelper.getGrudgeEntities(player).isEmpty() && SEHelper.getGrudgeEntities(player).contains(target))

@@ -337,6 +337,13 @@ public class PotionEvents {
                 event.setAmount(event.getAmount() * multiply);
                 living.removeEffect(GoetyEffects.SHADOW_WALK.get());
             }
+            if (target.hasEffect(GoetyEffects.CHILL_HIDE.get()) && ModDamageSource.physicalAttacks(event.getSource())){
+                MobEffectInstance effectInstance = target.getEffect(GoetyEffects.CHILL_HIDE.get());
+                if (effectInstance != null) {
+                    int i = effectInstance.getAmplifier() * 2;
+                    living.addEffect(new MobEffectInstance(GoetyEffects.FREEZING.get(), MathHelper.secondsToTicks(3 + i), 1));
+                }
+            }
         }
     }
 

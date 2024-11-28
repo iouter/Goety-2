@@ -237,7 +237,7 @@ public class Owned extends PathfinderMob implements IOwned, OwnableEntity, ICust
     public LivingEntity getTrueOwner() {
         if (!this.level.isClientSide){
             UUID uuid = this.getOwnerId();
-            return uuid == null ? null : EntityFinder.getLivingEntityByUuiD(uuid);
+            return uuid == null ? null : EntityFinder.getLivingEntityByUuiD(this.level, uuid);
         } else {
             int id = this.getOwnerClientId();
             return id <= -1 ? null : this.level.getEntity(this.getOwnerClientId()) instanceof LivingEntity living && living != this ? living : null;

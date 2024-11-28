@@ -2,6 +2,7 @@ package com.Polarice3.Goety.client.render.item;
 
 import com.Polarice3.Goety.Goety;
 import com.Polarice3.Goety.client.render.ModModelLayer;
+import com.Polarice3.Goety.client.render.ModRenderType;
 import com.Polarice3.Goety.client.render.model.NamelessStaffModel;
 import com.Polarice3.Goety.common.items.ModItems;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -23,6 +24,7 @@ public class CustomItemsRenderer extends BlockEntityWithoutLevelRenderer {
     private final NamelessStaffModel<?> staffModel;
     private static final ResourceLocation NAMELESS_STAFF_TEXTURE = Goety.location("textures/item/nameless_staff_model.png");
     private static final ResourceLocation NAMELESS_STAFF_ORB_TEXTURE = Goety.location("textures/item/nameless_staff_orb.png");
+    private static final ResourceLocation NAMELESS_STAFF_ORB_CENTER_TEXTURE = Goety.location("textures/item/nameless_staff_orb_center.png");
 
     public CustomItemsRenderer() {
         this(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
@@ -57,9 +59,15 @@ public class CustomItemsRenderer extends BlockEntityWithoutLevelRenderer {
             matrixStackIn.pushPose();
             matrixStackIn.translate(0.5F, 0.5F, 0.5F);
             matrixStackIn.scale(1.0F, -1.0F, -1.0F);
-            VertexConsumer vertexconsumer2 = bufferIn.getBuffer(RenderType.entityTranslucentEmissive(NAMELESS_STAFF_ORB_TEXTURE));
+            VertexConsumer vertexconsumer2 = bufferIn.getBuffer(RenderType.eyes(NAMELESS_STAFF_ORB_TEXTURE));
             this.staffModel.animate(tick + partialTick);
             this.staffModel.renderToBuffer(matrixStackIn, vertexconsumer2, 15728640, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            matrixStackIn.popPose();
+            matrixStackIn.pushPose();
+            matrixStackIn.translate(0.5F, 0.5F, 0.5F);
+            matrixStackIn.scale(1.0F, -1.0F, -1.0F);
+            VertexConsumer vertexconsumer3 = bufferIn.getBuffer(ModRenderType.orbCenter(NAMELESS_STAFF_ORB_CENTER_TEXTURE));
+            this.staffModel.renderToBuffer(matrixStackIn, vertexconsumer3, 15728640, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
             matrixStackIn.popPose();
         }
     }

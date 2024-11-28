@@ -1,12 +1,10 @@
 package com.Polarice3.Goety.common.effects;
 
+import com.Polarice3.Goety.client.particles.AuraParticle;
 import com.Polarice3.Goety.client.particles.ModParticleTypes;
 import com.Polarice3.Goety.common.network.ModNetwork;
 import com.Polarice3.Goety.common.network.server.SPlayWorldSoundPacket;
-import com.Polarice3.Goety.utils.BlockFinder;
-import com.Polarice3.Goety.utils.MobUtil;
-import com.Polarice3.Goety.utils.ModDamageSource;
-import com.Polarice3.Goety.utils.ServerParticleUtil;
+import com.Polarice3.Goety.utils.*;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -28,6 +26,7 @@ import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.Vec3;
 
 public class GoetyBaseEffect extends MobEffect {
@@ -142,6 +141,17 @@ public class GoetyBaseEffect extends MobEffect {
                         ModNetwork.sendToALL(new SPlayWorldSoundPacket(livingEntity.blockPosition(), SoundEvents.PLAYER_HURT_FREEZE, 1.0F, 0.75F));
                         living.addEffect(new MobEffectInstance(GoetyEffects.FREEZING.get(), 100, amplify));
                     }
+                }
+            }
+        }
+        if (this == GoetyEffects.CHILL_HIDE.get()){
+            if (world instanceof ServerLevel serverLevel) {
+                if (livingEntity.tickCount % 5 == 0) {
+                    float f = livingEntity.getBbWidth();
+                    ServerParticleUtil.windParticle(serverLevel, new ColorUtil(0x7eb7d4), f, livingEntity.getBbHeight() / 2.0F, livingEntity.getId(), livingEntity.position());
+                }
+                if (livingEntity.tickCount % 15 == 0) {
+                    serverLevel.sendParticles(new AuraParticle.Option(livingEntity.getId(), livingEntity.getBbHeight(), new ColorUtil(MapColor.ICE)), livingEntity.getX(), livingEntity.getY() + (livingEntity.getBbHeight() / 2.0F), livingEntity.getZ(), 1, 0, 0, 0, 0.5F);
                 }
             }
         }

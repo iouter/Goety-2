@@ -10,6 +10,7 @@ import com.Polarice3.Goety.config.MobsConfig;
 import com.Polarice3.Goety.init.ModTags;
 import com.Polarice3.Goety.utils.BlockFinder;
 import com.Polarice3.Goety.utils.MobUtil;
+import com.Polarice3.Goety.utils.ServantUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -33,9 +34,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.monster.Drowned;
-import net.minecraft.world.entity.monster.Husk;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
@@ -46,7 +45,6 @@ import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.time.LocalDate;
-import java.time.temporal.ChronoField;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -230,6 +228,8 @@ public class ZombieServant extends Summoned {
                     entityType1 = ModEntityType.ZPIGLIN_BRUTE_SERVANT.get();
                 }
                 entityType = entityType1;
+            } else if (BlockFinder.findStructure(serverLevel, blockPos, StructureTags.VILLAGE)) {
+                entityType = ModEntityType.ZOMBIE_VILLAGER_SERVANT.get();
             } else if (BlockFinder.findStructure(serverLevel, blockPos, StructureTags.ON_WOODLAND_EXPLORER_MAPS)) {
                 entityType = ModEntityType.ZOMBIE_VINDICATOR_SERVANT.get();
             } else if (level.getBiome(blockPos).get().coldEnoughToSnow(blockPos)) {
@@ -246,8 +246,8 @@ public class ZombieServant extends Summoned {
         float f = difficultyIn.getSpecialMultiplier();
         if (this.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) {
             LocalDate localdate = LocalDate.now();
-            int i = localdate.get(ChronoField.DAY_OF_MONTH);
-            int j = localdate.get(ChronoField.MONTH_OF_YEAR);
+            int i = localdate.getDayOfMonth();
+            int j = localdate.getMonthValue();
             if (j == 10 && i == 31 && this.random.nextFloat() < 0.25F) {
                 this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(this.random.nextFloat() < 0.1F ? Blocks.JACK_O_LANTERN : Blocks.CARVED_PUMPKIN));
                 this.armorDropChances[EquipmentSlot.HEAD.getIndex()] = 0.0F;
@@ -279,24 +279,12 @@ public class ZombieServant extends Summoned {
     public boolean killedEntity(ServerLevel world, LivingEntity killedEntity) {
         boolean flag = super.killedEntity(world, killedEntity);
         float random = this.level.random.nextFloat();
-        if (this.isUpgraded() && killedEntity instanceof Zombie zombieEntity && random <= 0.5F && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(killedEntity, ModEntityType.ZOMBIE_SERVANT.get(), (timer) -> {})) {
-            EntityType<? extends Mob> entityType = ModEntityType.ZOMBIE_SERVANT.get();
-            if (zombieEntity instanceof Husk){
-                entityType = ModEntityType.HUSK_SERVANT.get();
-            } else if (zombieEntity instanceof Drowned){
-                entityType = ModEntityType.DROWNED_SERVANT.get();
+        if (this.isUpgraded()){
+            if (random <= 0.5F) {
+                ServantUtil.convertZombies(killedEntity, this.getTrueOwner(), false);
             }
-            ZombieServant zombieMinionEntity = (ZombieServant) zombieEntity.convertTo(entityType, false);
-            if (zombieMinionEntity != null) {
-                zombieMinionEntity.finalizeSpawn(world, level.getCurrentDifficultyAt(zombieMinionEntity.blockPosition()), MobSpawnType.CONVERSION, null, null);
-                zombieMinionEntity.setLimitedLife(10 * (15 + this.level.random.nextInt(45)));
-                if (this.getTrueOwner() != null){
-                    zombieMinionEntity.setTrueOwner(this.getTrueOwner());
-                }
-                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(killedEntity, zombieMinionEntity);
-                if (!this.isSilent()) {
-                    world.levelEvent((Player) null, 1026, this.blockPosition(), 0);
-                }
+            if (killedEntity instanceof Villager villager){
+                ServantUtil.infect(villager, this.getTrueOwner(), true, true);
             }
         }
         return flag;

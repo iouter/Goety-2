@@ -1,0 +1,28 @@
+{
+  "name": "共振水晶",
+  "icon": "goety:resonance_crystal",
+  "category": "goety:crafts/artifice",
+  "advancement": "goety:goety/read_mistral_scroll",
+  "secret": true,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "一种神秘的方块，当强风吹拂时就会获得能量，比如$(l:goety:crafts/artifice/wind_blower)鼓风机$()的强风。手持这个水晶左键点击(l:goety:summons/squall_golem)呼啸傀儡时$()，会储存这个傀儡的信息，一旦充能就会激活这个傀儡。"
+    },
+    {
+      "type": "goety:ritual",
+      "recipe": "goety:resonance_crystal"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "它们不仅能为呼啸傀儡供能，还能为其他共振水晶供能。手持一个已标记有其他水晶所在位置的$(l:goety:crafts/waystone)指路石$()右键点击这个它，它就会储存该位置信息。这不会消耗传送石，并且能一次性储存多个水晶的位置，但前提是所述水晶距离它不超过64个方块。"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "如果它已经储存了任何位置信息，空手右键点击该水晶就会显示它所连接的位置，然而，按住潜行并右键点击则会清除水晶中的所有位置信息。破坏水晶也会清除所有已记录的位置信息。"
+    }
+  ],
+  "extra_recipe_mappings": {
+    "goety:resonance_crystal": 1
+  }
+}

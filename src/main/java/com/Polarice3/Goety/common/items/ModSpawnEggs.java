@@ -90,6 +90,9 @@ public class ModSpawnEggs {
     public static final RegistryObject<ModSpawnEggItem> ZOMBIE_SERVANT_SPAWN_EGG = ITEMS.register("zombie_servant_spawn_egg",
             () -> new ModSpawnEggItem(ModEntityType.ZOMBIE_SERVANT, 0x192927, 0x737885, egg()));
 
+    public static final RegistryObject<ModSpawnEggItem> ZOMBIE_VILLAGER_SERVANT_SPAWN_EGG = ITEMS.register("zombie_villager_servant_spawn_egg",
+            () -> new ModSpawnEggItem(ModEntityType.ZOMBIE_VILLAGER_SERVANT, 0x3b3131, 0x6f8a52, egg()));
+
     public static final RegistryObject<ModSpawnEggItem> HUSK_SERVANT_SPAWN_EGG = ITEMS.register("husk_servant_spawn_egg",
             () -> new ModSpawnEggItem(ModEntityType.HUSK_SERVANT, 0x322921, 0x64492a, egg()));
 

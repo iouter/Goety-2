@@ -146,6 +146,8 @@ public class ZombieSpell extends SummonSpell {
                         summoned = new ZPiglinBruteServant(ModEntityType.ZPIGLIN_BRUTE_SERVANT.get(), worldIn);
                     }
                     summonedentity = summoned;
+                } else if (BlockFinder.findStructure(worldIn, blockPos, StructureTags.VILLAGE)) {
+                    summonedentity = new ZombieVillagerServant(ModEntityType.ZOMBIE_VILLAGER_SERVANT.get(), worldIn);
                 } else if (BlockFinder.findStructure(worldIn, blockPos, StructureTags.ON_WOODLAND_EXPLORER_MAPS)){
                     summonedentity = new ZombieVindicatorServant(ModEntityType.ZOMBIE_VINDICATOR_SERVANT.get(), worldIn);
                 } else if (worldIn.getBiome(blockPos).get().coldEnoughToSnow(blockPos)){

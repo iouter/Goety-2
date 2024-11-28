@@ -36,6 +36,9 @@ public class RaidAdditions {
             if (MobsConfig.CryologerRaid.get()) {
                 addWaves("GOETY_CRYOLOGER", ModEntityType.CRYOLOGER.get(), MobsConfig.CryologerRaidCount.get());
             }
+            if (MobsConfig.PreacherRaid.get()) {
+                addWaves("GOETY_PREACHER", ModEntityType.PREACHER.get(), MobsConfig.PreacherRaidCount.get());
+            }
             if (MobsConfig.ConquillagerRaid.get()) {
                 addWaves("GOETY_CONQUILLAGER", ModEntityType.CONQUILLAGER.get(), MobsConfig.ConquillagerRaidCount.get());
             }

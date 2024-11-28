@@ -70,6 +70,10 @@ public class EntityFinder {
         return null;
     }
 
+    public static LivingEntity getLivingEntityByUuiD(Level level, UUID uuid) {
+        return getLivingEntityByUuiD(level.getServer(), uuid);
+    }
+
     public static LivingEntity getLivingEntityByUuiD(UUID uuid) {
         return getLivingEntityByUuiD(ServerLifecycleHooks.getCurrentServer(), uuid);
     }

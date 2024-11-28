@@ -505,6 +505,7 @@ public class ClientInitEvents {
         event.registerEntityRenderer(ModEntityType.ALLY_VEX.get(), AllyVexRenderer::new);
         event.registerEntityRenderer(ModEntityType.ALLY_IRK.get(), IrkRenderer::new);
         event.registerEntityRenderer(ModEntityType.ZOMBIE_SERVANT.get(), ZombieServantRenderer::new);
+        event.registerEntityRenderer(ModEntityType.ZOMBIE_VILLAGER_SERVANT.get(), ZombieVillagerServantRenderer::new);
         event.registerEntityRenderer(ModEntityType.HUSK_SERVANT.get(), HuskServantRenderer::new);
         event.registerEntityRenderer(ModEntityType.DROWNED_SERVANT.get(), DrownedServantRenderer::new);
         event.registerEntityRenderer(ModEntityType.FROZEN_ZOMBIE_SERVANT.get(), FrozenZombieRenderer::new);
@@ -601,7 +602,6 @@ public class ClientInitEvents {
         event.registerEntityRenderer(ModEntityType.SPELL_LIGHTNING_BOLT.get(), SpellLightningBoltRenderer::new);
         event.registerEntityRenderer(ModEntityType.BREW_EFFECT_CLOUD.get(), TrapRenderer::new);
         event.registerEntityRenderer(ModEntityType.DRAGON_BREATH_CLOUD.get(), TrapRenderer::new);
-        event.registerEntityRenderer(ModEntityType.LASER.get(), TrapRenderer::new);
         event.registerEntityRenderer(ModEntityType.VINE_HOOK.get(), VineHookRenderer::new);
         event.registerEntityRenderer(ModEntityType.SURVEY_EYE.get(), TrapRenderer::new);
         event.registerEntityRenderer(ModEntityType.CAMERA_SHAKE.get(), TrapRenderer::new);
@@ -724,6 +724,7 @@ public class ClientInitEvents {
         event.registerSpriteSet(ModParticleTypes.MAGIC_BOLT.get(), RollingParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.NECRO_BOLT.get(), RollingParticle.QuickProvider::new);
         event.registerSpriteSet(ModParticleTypes.STUN.get(), RollingParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.AURA.get(), AuraParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.RISING_ENCHANT.get(), RisingRollingParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.ROLLING_ENCHANT.get(), RollingParticle.EnchantProvider::new);
         event.registerSpriteSet(ModParticleTypes.FUNGUS_EXPLOSION.get(), HugeExplosionParticle.Provider::new);

@@ -1,0 +1,18 @@
+{
+  "name": "暴雪聚晶",
+  "icon": "goety:blizzard_focus",
+  "category": "goety:focuses/frost",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "将箭雨聚晶注入冰霜之力，你召唤的将是冰刺之雨而非原来的箭雨。"
+    },
+    {
+      "type": "goety:ritual",
+      "recipe": "goety:focus/blizzard_focus"
+    }
+  ],
+  "extra_recipe_mappings": {
+    "goety:blizzard_focus": 1
+  }
+}

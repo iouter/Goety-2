@@ -261,6 +261,7 @@ public class ModItems {
     public static final RegistryObject<Item> HAIL_FOCUS = ITEMS.register("hail_focus", () -> new MagicFocus(new HailSpell()));
     public static final RegistryObject<Item> ICEOLOGY_FOCUS = ITEMS.register("iceology_focus", () -> new MagicFocus(new IceChunkSpell()));
     public static final RegistryObject<Item> BLIZZARD_FOCUS = ITEMS.register("blizzard_focus", () -> new MagicFocus(new BlizzardSpell()));
+    public static final RegistryObject<Item> CHILLING_FOCUS = ITEMS.register("chilling_focus", () -> new MagicFocus(new ChillHideSpell()));
     public static final RegistryObject<Item> FROST_NOVA_FOCUS = ITEMS.register("frost_nova_focus", () -> new MagicFocus(new FrostNovaSpell()));
     public static final RegistryObject<Item> FROSTBORN_FOCUS = ITEMS.register("frostborn_focus", () -> new MagicFocus(new IceGolemSpell()));
 
@@ -378,7 +379,7 @@ public class ModItems {
 
     //Discs
     public static final RegistryObject<Item> MUSIC_DISC_VIZIER = ITEMS.register("music_disc_vizier", () -> new RecordItem(14, ModSounds.MUSIC_DISC_VIZIER, (new Item.Properties()).stacksTo(1).rarity(Rarity.RARE), 1860));
-    public static final RegistryObject<Item> MUSIC_DISC_APOSTLE = ITEMS.register("music_disc_apostle", () -> new RecordItem(15, ModSounds.MUSIC_DISC_APOSTLE, (new Item.Properties()).stacksTo(1).rarity(Rarity.RARE),3220));
+    public static final RegistryObject<Item> MUSIC_DISC_APOSTLE = ITEMS.register("music_disc_apostle", () -> new RecordItem(15, ModSounds.MUSIC_DISC_APOSTLE, (new Item.Properties()).stacksTo(1).rarity(Rarity.RARE),3440));
 
     //Dummies
     public static final RegistryObject<Item> PEDESTAL_DUMMY = ITEMS.register("pedestal_dummy",

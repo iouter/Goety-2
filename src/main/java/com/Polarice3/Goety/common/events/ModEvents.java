@@ -1365,7 +1365,7 @@ public class ModEvents {
         if (!event.getEntity().level.isClientSide) {
             if (event.getItem().getItem() instanceof IWand && CuriosFinder.hasCurio(event.getEntity(), ModItems.TARGETING_MONOCLE.get())) {
                 Entity entity = MobUtil.getSingleTarget(event.getEntity().level, event.getEntity(), 16, 3);
-                if (entity instanceof LivingEntity living && MobUtil.areNotFullAllies(entity, event.getEntity())) {
+                if (entity instanceof LivingEntity living && !MobUtil.areAllies(entity, event.getEntity())) {
                     event.getEntity().lookAt(EntityAnchorArgument.Anchor.EYES, new Vec3(living.getX(), living.getEyeY(), living.getZ()));
                 }
             }

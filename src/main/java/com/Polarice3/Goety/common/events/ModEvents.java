@@ -1507,11 +1507,10 @@ public class ModEvents {
     public static void FurnaceBurnItems(FurnaceFuelBurnTimeEvent event){
         if (!event.getItemStack().isEmpty()){
             ItemStack itemStack = event.getItemStack();
-            if (itemStack.is(ModBlocks.HAUNTED_BOOKSHELF.get().asItem())
-                    || itemStack.is(ModBlocks.ROTTEN_BOOKSHELF.get().asItem())
+            if (itemStack.is(ModBlocks.ROTTEN_BOOKSHELF.get().asItem())
                     || itemStack.is(ModBlocks.WINDSWEPT_BOOKSHELF.get().asItem())
                     || itemStack.is(ModBlocks.PINE_BOOKSHELF.get().asItem())
-                    || (itemStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ModChestBlock)
+                    || (itemStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ModChestBlock && blockItem.getBlock().defaultBlockState().ignitedByLava())
                     || itemStack.is(ModBlocks.COMPACTED_WINDSWEPT_PLANKS.get().asItem())
                     || itemStack.is(ModBlocks.COMPACTED_PINE_PLANKS.get().asItem())
                     || itemStack.is(ModBlocks.THATCHED_PINE_PLANKS.get().asItem())

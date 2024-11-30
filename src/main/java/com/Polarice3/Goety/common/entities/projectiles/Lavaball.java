@@ -149,6 +149,13 @@ public class Lavaball extends LargeFireball {
         this.entityData.set(DATA_UPGRADED, upgraded);
     }
 
+    public void tick() {
+        super.tick();
+        if (this.tickCount >= MathHelper.secondsToTicks(10)){
+            this.discard();
+        }
+    }
+
     protected void onHit(HitResult pResult) {
         HitResult.Type hitresult$type = pResult.getType();
         if (hitresult$type == HitResult.Type.ENTITY) {

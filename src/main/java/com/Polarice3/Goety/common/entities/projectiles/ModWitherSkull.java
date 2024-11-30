@@ -131,6 +131,13 @@ public class ModWitherSkull extends WitherSkull {
       }
    }
 
+   public void tick() {
+      super.tick();
+      if (this.tickCount >= MathHelper.secondsToTicks(10)){
+         this.discard();
+      }
+   }
+
    protected void onHitEntity(EntityHitResult p_37626_) {
       if (!this.level.isClientSide) {
          Entity entity = p_37626_.getEntity();

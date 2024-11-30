@@ -429,9 +429,7 @@ public class ObsidianMonolith extends AbstractMonolith implements Enemy {
                                 summon.moveTo(blockPos, 0.0F, 0.0F);
                                 summon.setTrueOwner(apostle);
                                 summon.setLimitedLife(MobUtil.getSummonLifespan(this.level));
-                                summon.finalizeSpawn(ServerLevel, this.level.getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);
-                                summon.setTarget(apostle.getTarget());
-                                SummonCircle summonCircle = new SummonCircle(this.level, blockPos, summon, false, true, apostle);
+                                SummonCircle summonCircle = new SummonCircle(this.level, blockPos, summon, true, true, apostle);
                                 this.level.addFreshEntity(summonCircle);
                             }
                         }

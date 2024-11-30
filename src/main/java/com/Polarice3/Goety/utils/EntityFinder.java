@@ -56,6 +56,11 @@ public class EntityFinder {
     }
 
     @Nullable
+    public static Entity getEntityByUuiD(Level level, UUID uuid) {
+        return getEntityByUuiD(level.getServer(), uuid);
+    }
+
+    @Nullable
     public static Entity getEntityByUuiD(UUID uuid) {
         return getEntityByUuiD(ServerLifecycleHooks.getCurrentServer(), uuid);
     }

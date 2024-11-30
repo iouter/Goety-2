@@ -19,6 +19,7 @@ public class LichdomHelper {
 
     public static void setLich(Player player, boolean lich) {
         getCapability(player).setLichdom(lich);
+        sendLichUpdatePacket(player);
     }
 
     public static boolean isLich(@Nullable Entity livingEntity) {
@@ -43,6 +44,7 @@ public class LichdomHelper {
 
     public static void setLichMode(Player player, boolean lichMode){
         getCapability(player).setLichMode(lichMode);
+        sendLichUpdatePacket(player);
     }
 
     public static boolean nightVision(Player player){
@@ -51,6 +53,7 @@ public class LichdomHelper {
 
     public static void setNightVision(Player player, boolean nightVision){
         getCapability(player).setNightVision(nightVision);
+        sendLichUpdatePacket(player);
     }
 
     public static int smited(Player player){
@@ -59,6 +62,7 @@ public class LichdomHelper {
 
     public static void setSmited(Player player, int smited){
         getCapability(player).setSmited(smited);
+        sendLichUpdatePacket(player);
     }
 
     public static boolean isLich(Player player) {
@@ -66,7 +70,9 @@ public class LichdomHelper {
     }
 
     public static void sendLichUpdatePacket(Player player) {
-        ModNetwork.sendTo(player, new LichUpdatePacket(player));
+        if (!player.level.isClientSide) {
+            ModNetwork.sendTo(player, new LichUpdatePacket(player));
+        }
     }
 
     public static CompoundTag save(CompoundTag tag, ILichdom lichdom) {
@@ -78,10 +84,18 @@ public class LichdomHelper {
     }
 
     public static ILichdom load(CompoundTag tag, ILichdom lichdom) {
-        lichdom.setLichdom(tag.getBoolean("lichdom"));
-        lichdom.setLichMode(tag.getBoolean("lichMode"));
-        lichdom.setNightVision(tag.getBoolean("nightVision"));
-        lichdom.setSmited(tag.getInt("smited"));
+        if (tag.contains("lichdom")) {
+            lichdom.setLichdom(tag.getBoolean("lichdom"));
+        }
+        if (tag.contains("lichMode")) {
+            lichdom.setLichMode(tag.getBoolean("lichMode"));
+        }
+        if (tag.contains("nightVision")) {
+            lichdom.setNightVision(tag.getBoolean("nightVision"));
+        }
+        if (tag.contains("smited")) {
+            lichdom.setSmited(tag.getInt("smited"));
+        }
         return lichdom;
     }
 }

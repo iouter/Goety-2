@@ -12,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.*;
@@ -99,8 +100,9 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
                                 double d2 = (double) blockPos.getZ() + (randomsource.nextDouble() - randomsource.nextDouble()) * (double) 4 + 0.5D;
                                 BlockPos blockpos = BlockPos.containing(d0, d1, d2);
                                 if (serverLevel.noCollision(blockEntity.getTrainMob().getAABB(d0, d1, d2))) {
-                                    Entity entity = blockEntity.getTrainMob().spawn(serverLevel, blockpos, MobSpawnType.SPAWNER);
+                                    Entity entity = blockEntity.getTrainMob().create(serverLevel);
                                     if (entity != null) {
+                                        entity.moveTo((double)blockpos.getX() + 0.5D, (double)blockpos.getY(), (double)blockpos.getZ() + 0.5D, Mth.wrapDegrees(serverLevel.random.nextFloat() * 360.0F), 0.0F);
                                         level.gameEvent(entity, GameEvent.ENTITY_PLACE, blockpos);
                                         if (entity instanceof IOwned owned && blockEntity.getTrueOwner() != null) {
                                             owned.setTrueOwner(blockEntity.getTrueOwner());
@@ -109,6 +111,8 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
                                             }
                                         }
                                         if (entity instanceof Mob mob) {
+                                            mob.yHeadRot = mob.getYRot();
+                                            mob.yBodyRot = mob.getYRot();
                                             mob.spawnAnim();
                                             ForgeEventFactory.onFinalizeSpawn(mob, serverLevel, serverLevel.getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);
                                         }
@@ -118,6 +122,7 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
                                             servant.setStaying(false);
                                         }
                                         blockEntity.playSpawnSound();
+                                        serverLevel.addFreshEntityWithPassengers(entity);
                                         break;
                                     }
                                 }

@@ -4,7 +4,7 @@
   "activation_item": {
     "type": "forge:nbt",
     "item": "goety:unholy_blood",
-    "nbt": "{\"Pure\": 1}"
+    "nbt": "{\"Pure\": 1b}"
   },
   "craftType": "expert_nether",
   "soulCost": 5,

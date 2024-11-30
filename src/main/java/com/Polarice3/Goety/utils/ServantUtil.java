@@ -29,14 +29,14 @@ public class ServantUtil {
             }
             ZombieServant zombieServant = (ZombieServant) zombieEntity.convertTo(entityType, true);
             if (zombieServant != null) {
+                if (owner != null) {
+                    zombieServant.setTrueOwner(owner);
+                }
                 if (target.level instanceof ServerLevel serverLevel) {
                     zombieServant.finalizeSpawn(serverLevel, target.level.getCurrentDifficultyAt(zombieServant.blockPosition()), MobSpawnType.CONVERSION, null, null);
                 }
                 if (!permanent) {
                     zombieServant.setLimitedLife(10 * (15 + target.level.random.nextInt(45)));
-                }
-                if (owner != null) {
-                    zombieServant.setTrueOwner(owner);
                 }
                 net.minecraftforge.event.ForgeEventFactory.onLivingConvert(zombieEntity, zombieServant);
                 if (!zombieServant.isSilent()) {
@@ -56,14 +56,14 @@ public class ServantUtil {
             }
             AbstractSkeletonServant skeletonServant = (AbstractSkeletonServant) skeleton.convertTo(entityType, true);
             if (skeletonServant != null) {
+                if (owner != null) {
+                    skeletonServant.setTrueOwner(owner);
+                }
                 if (target.level instanceof ServerLevel serverLevel) {
                     skeletonServant.finalizeSpawn(serverLevel, target.level.getCurrentDifficultyAt(skeletonServant.blockPosition()), MobSpawnType.CONVERSION, null, null);
                 }
                 if (!permanent) {
                     skeletonServant.setLimitedLife(10 * (15 + target.level.random.nextInt(45)));
-                }
-                if (owner != null) {
-                    skeletonServant.setTrueOwner(owner);
                 }
                 net.minecraftforge.event.ForgeEventFactory.onLivingConvert(skeleton, skeletonServant);
                 if (!skeletonServant.isSilent()) {

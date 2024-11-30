@@ -156,8 +156,8 @@ public class QuickGrowingVine extends AbstractVine{
         return pSpawnData;
     }
 
-    public void initRotate(ServerLevelAccessor pLevel) {
-        switch (pLevel.getLevel().random.nextInt(4)){
+    public void initRotate() {
+        switch (this.getRandom().nextInt(4)){
             case 1 -> {
                 this.setYRot(90.0F);
                 this.setYBodyRot(90.0F);

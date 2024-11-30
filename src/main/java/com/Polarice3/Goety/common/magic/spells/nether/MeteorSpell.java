@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FireRainSpell extends EverChargeSpell {
+public class MeteorSpell extends EverChargeSpell {
 
     @Override
     public int defaultSoulCost() {

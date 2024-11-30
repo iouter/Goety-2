@@ -98,6 +98,8 @@ public class HammerItem extends TieredItem implements Vanishable {
                 itemStack.hurtAndBreak(5, player, (p_220045_0_) ->
                         p_220045_0_.broadcastBreakEvent(EquipmentSlot.MAINHAND));
                 level.setBlockAndUpdate(blockpos, Blocks.DAMAGED_ANVIL.defaultBlockState());
+                level.scheduleTick(blockpos, Blocks.DAMAGED_ANVIL, 2);
+                return InteractionResult.SUCCESS;
             }
         }
         return super.useOn(p_41427_);

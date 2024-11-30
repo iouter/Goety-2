@@ -4,6 +4,7 @@ import com.Polarice3.Goety.api.entities.IOwned;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.utils.CuriosFinder;
+import com.Polarice3.Goety.utils.MathHelper;
 import com.Polarice3.Goety.utils.MobUtil;
 import com.Polarice3.Goety.utils.ModDamageSource;
 import net.minecraft.core.BlockPos;
@@ -106,6 +107,13 @@ public class ModFireball extends SmallFireball {
 
     public void setFiery(int fiery) {
         this.entityData.set(DATA_FIERY, fiery);
+    }
+
+    public void tick() {
+        super.tick();
+        if (this.tickCount >= MathHelper.secondsToTicks(10)){
+            this.discard();
+        }
     }
 
     protected void onHitEntity(EntityHitResult pResult) {

@@ -45,6 +45,14 @@
     },
     {
       "type": "patchouli:entity",
+      "entity": "goety:zombie_villager_servant"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "A simple Zombie Villager, only more loyal and less curable. Summoning a zombie in a Village will summon a Zombie Villager Servant."
+    },
+    {
+      "type": "patchouli:entity",
       "entity": "goety:frozen_zombie_servant"
     },
     {

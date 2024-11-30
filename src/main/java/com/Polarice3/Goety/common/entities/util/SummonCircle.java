@@ -20,6 +20,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
@@ -68,19 +69,14 @@ public class SummonCircle extends Entity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag pCompound) {
-        UUID uuid;
-        if (pCompound.hasUUID("Owner")) {
-            uuid = pCompound.getUUID("Owner");
-        } else {
-            String s = pCompound.getString("Owner");
-            uuid = OldUsersConverter.convertMobOwnerIfNecessary(this.getServer(), s);
+        Entity entity = EntityType.loadEntityRecursive(pCompound, this.level, (p_58740_) -> {
+            return p_58740_;
+        });
+        if (entity != null) {
+            this.entity = entity;
         }
-
-        if (uuid != null) {
-            try {
-                this.setOwnerId(uuid);
-            } catch (Throwable ignored) {
-            }
+        if (pCompound.hasUUID("Owner")) {
+            this.setOwnerId(pCompound.getUUID("Owner"));
         }
         this.preMade = pCompound.getBoolean("preMade");
         this.noPos = pCompound.getBoolean("noPos");
@@ -95,6 +91,9 @@ public class SummonCircle extends Entity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag pCompound) {
+        if (this.entity != null){
+            this.entity.save(pCompound);
+        }
         if (this.getOwnerId() != null) {
             pCompound.putUUID("Owner", this.getOwnerId());
         }
@@ -179,22 +178,22 @@ public class SummonCircle extends Entity {
                         this.entity.setPos(this.getX(), this.getY(), this.getZ());
                     }
                     if (this.preMade) {
-                        if (this.entity instanceof TamableAnimal && this.getOwnerId() != null) {
-                            ((TamableAnimal) this.entity).setOwnerUUID(this.getOwnerId());
+                        if (this.entity instanceof TamableAnimal tamableAnimal && this.getOwnerId() != null) {
+                            tamableAnimal.setOwnerUUID(this.getOwnerId());
                         }
-                        if (this.entity instanceof IOwned && this.getTrueOwner() != null) {
-                            ((IOwned) this.entity).setTrueOwner(this.getTrueOwner());
+                        if (this.entity instanceof IOwned owned && this.getTrueOwner() != null) {
+                            owned.setTrueOwner(this.getTrueOwner());
                         }
-                        if (this.entity instanceof Mob) {
-                            ((Mob) this.entity).finalizeSpawn(serverWorld, this.level.getCurrentDifficultyAt(this.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
-                            if (this.getTrueOwner() != null && this.getTrueOwner() instanceof Mob) {
-                                if (((Mob) this.getTrueOwner()).getTarget() != null) {
-                                    ((Mob) this.entity).setTarget(((Mob) this.getTrueOwner()).getTarget());
+                        if (this.entity instanceof Mob mob) {
+                            ForgeEventFactory.onFinalizeSpawn(mob, serverWorld, this.level.getCurrentDifficultyAt(this.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
+                            if (this.getTrueOwner() != null && this.getTrueOwner() instanceof Mob mob1) {
+                                if (mob1.getTarget() != null) {
+                                    mob.setTarget(mob1.getTarget());
                                 }
                             }
                         }
                     }
-                    serverWorld.addFreshEntity(entity);
+                    serverWorld.addFreshEntity(this.entity);
                 }
             }
         }

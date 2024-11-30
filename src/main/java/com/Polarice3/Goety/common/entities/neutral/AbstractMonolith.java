@@ -71,7 +71,7 @@ public abstract class AbstractMonolith extends Owned{
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
         pSpawnData = super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
-        this.initRotate(pLevel);
+        this.initRotate();
         if (pReason == MobSpawnType.MOB_SUMMONED) {
             if (!this.canSpawn(pLevel.getLevel())) {
                 this.discard();
@@ -80,8 +80,8 @@ public abstract class AbstractMonolith extends Owned{
         return pSpawnData;
     }
 
-    public void initRotate(ServerLevelAccessor pLevel) {
-        switch (pLevel.getLevel().random.nextInt(4)){
+    public void initRotate() {
+        switch (this.getRandom().nextInt(4)){
             case 1 -> this.setYRot(90.0F);
             case 2 -> this.setYRot(180.0F);
             case 3 -> this.setYRot(270.0F);

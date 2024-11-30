@@ -59,19 +59,14 @@ public class DelayedSummon extends Entity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag pCompound) {
-        UUID uuid;
-        if (pCompound.hasUUID("Owner")) {
-            uuid = pCompound.getUUID("Owner");
-        } else {
-            String s = pCompound.getString("Owner");
-            uuid = OldUsersConverter.convertMobOwnerIfNecessary(this.getServer(), s);
+        Entity entity = EntityType.loadEntityRecursive(pCompound, this.level, (p_58740_) -> {
+            return p_58740_;
+        });
+        if (entity != null) {
+            this.entity = entity;
         }
-
-        if (uuid != null) {
-            try {
-                this.setOwnerId(uuid);
-            } catch (Throwable ignored) {
-            }
+        if (pCompound.hasUUID("Owner")) {
+            this.setOwnerId(pCompound.getUUID("Owner"));
         }
         this.preMade = pCompound.getBoolean("preMade");
         this.noPos = pCompound.getBoolean("noPos");
@@ -80,6 +75,9 @@ public class DelayedSummon extends Entity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag pCompound) {
+        if (this.entity != null){
+            this.entity.save(pCompound);
+        }
         if (this.getOwnerId() != null) {
             pCompound.putUUID("Owner", this.getOwnerId());
         }

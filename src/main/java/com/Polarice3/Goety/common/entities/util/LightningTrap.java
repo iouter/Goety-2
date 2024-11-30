@@ -2,6 +2,7 @@ package com.Polarice3.Goety.common.entities.util;
 
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.boss.Apostle;
+import com.Polarice3.Goety.common.entities.projectiles.SpellLightningBolt;
 import com.Polarice3.Goety.config.AttributesConfig;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.EntityType;
@@ -28,7 +29,7 @@ public class LightningTrap extends AbstractTrap {
     public void tick() {
         super.tick();
         if (this.tickCount >= this.getDuration()) {
-            LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
+            SpellLightningBolt lightning = new SpellLightningBolt(ModEntityType.SPELL_LIGHTNING_BOLT.get(), level);
             lightning.setPos(this.getX(),this.getY(),this.getZ());
             if (this.getOwner() instanceof Apostle){
                 lightning.setDamage(AttributesConfig.ApostleMagicDamage.get().floatValue());

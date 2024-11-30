@@ -108,9 +108,9 @@ public class LavaballSpell extends Spell {
                         vector3d.y,
                         vector3d.z);
                 if (CuriosFinder.hasUnholySet(caster)){
-                    fireballEntity1 = new HellBlast(caster.getX() + vector3d.x / 2,
+                    fireballEntity1 = new HellBlast(caster.getX() + vector3d.x / 2 + worldIn.random.nextGaussian(),
                             caster.getEyeY() - 0.2,
-                            caster.getZ() + vector3d.z / 2,
+                            caster.getZ() + vector3d.z / 2 + worldIn.random.nextGaussian(),
                             vector3d.x,
                             vector3d.y,
                             vector3d.z,

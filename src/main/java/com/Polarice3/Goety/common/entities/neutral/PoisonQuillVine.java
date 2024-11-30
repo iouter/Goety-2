@@ -231,7 +231,7 @@ public class PoisonQuillVine extends AbstractVine{
     }
 
     @Override
-    public void initRotate(ServerLevelAccessor pLevel) {
+    public void initRotate() {
     }
 
     @Nullable

@@ -1064,7 +1064,9 @@ public class Apostle extends SpellCastingCultist implements RangedAttackMob {
         if (this.isSettingUpSecond()){
             this.setFiring(false);
             this.f = 0;
-            this.heal(0.015625F * this.getMaxHealth());
+            if (this.tickCount % 5 == 0) {
+                this.heal(0.015625F * this.getMaxHealth());
+            }
             for (Entity entity : this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(3.0D), ALIVE)) {
                 if (!MobUtil.areAllies(this, entity)) {
                     this.barrier(entity, this);
@@ -1839,9 +1841,7 @@ public class Apostle extends SpellCastingCultist implements RangedAttackMob {
                             }
                             summonedentity.setTrueOwner(Apostle.this);
                             summonedentity.setLimitedLife(60 * (90 + Apostle.this.level.random.nextInt(180)));
-                            summonedentity.finalizeSpawn(serverLevel, Apostle.this.level.getCurrentDifficultyAt(blockpos$mutable.above(2)), MobSpawnType.MOB_SUMMONED, null, null);
-                            summonedentity.setTarget(livingentity);
-                            SummonCircle summonCircle = new SummonCircle(Apostle.this.level, blockpos$mutable, summonedentity, false, false, Apostle.this);
+                            SummonCircle summonCircle = new SummonCircle(Apostle.this.level, blockpos$mutable, summonedentity, true, false, Apostle.this);
                             Apostle.this.level.addFreshEntity(summonCircle);
                         } else {
                             BlockPos blockpos = Apostle.this.blockPosition();
@@ -1850,9 +1850,7 @@ public class Apostle extends SpellCastingCultist implements RangedAttackMob {
                             summonedentity.setTrueOwner(Apostle.this);
                             summonedentity.setLimitedLife(60 * (90 + Apostle.this.level.random.nextInt(180)));
                             summonedentity.setUpgraded(true);
-                            summonedentity.finalizeSpawn(serverLevel, Apostle.this.level.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, null, null);
-                            summonedentity.setTarget(livingentity);
-                            SummonCircle summonCircle = new SummonCircle(Apostle.this.level, blockpos, summonedentity, false, true, Apostle.this);
+                            SummonCircle summonCircle = new SummonCircle(Apostle.this.level, blockpos, summonedentity, true, true, Apostle.this);
                             Apostle.this.level.addFreshEntity(summonCircle);
                             Apostle.this.setInfernoCoolDown(MathHelper.secondsToTicks(45));
                         }
@@ -1867,9 +1865,7 @@ public class Apostle extends SpellCastingCultist implements RangedAttackMob {
                             summonedentity.moveTo(blockPos, 0.0F, 0.0F);
                             summonedentity.setTrueOwner(Apostle.this);
                             summonedentity.setLimitedLife(60 * (90 + Apostle.this.level.random.nextInt(180)));
-                            summonedentity.finalizeSpawn(serverLevel, Apostle.this.level.getCurrentDifficultyAt(blockpos$mutable), MobSpawnType.MOB_SUMMONED, null, null);
-                            summonedentity.setTarget(livingentity);
-                            SummonCircle summonCircle = new SummonCircle(Apostle.this.level, blockpos$mutable, summonedentity, false, true, Apostle.this);
+                            SummonCircle summonCircle = new SummonCircle(Apostle.this.level, blockpos$mutable, summonedentity, true, true, Apostle.this);
                             Apostle.this.level.addFreshEntity(summonCircle);
                         }
                         Apostle.this.setInfernoCoolDown(MathHelper.secondsToTicks(45));

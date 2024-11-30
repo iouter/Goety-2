@@ -50,6 +50,12 @@ public class SummonCircleBoss extends Entity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag pCompound) {
+        Entity entity = EntityType.loadEntityRecursive(pCompound, this.level, (p_58740_) -> {
+            return p_58740_;
+        });
+        if (entity != null) {
+            this.entity = entity;
+        }
         if (pCompound.contains("LifeSpan")) {
             this.lifeSpan = pCompound.getInt("lifeSpan");
         }
@@ -63,6 +69,9 @@ public class SummonCircleBoss extends Entity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag pCompound) {
+        if (this.entity != null){
+            this.entity.save(pCompound);
+        }
         pCompound.putInt("lifeSpan", this.lifeSpan);
         pCompound.putInt("CurrentLife", this.tickCount);
         pCompound.putBoolean("PlayedEvent", this.playedEvent);
@@ -110,7 +119,7 @@ public class SummonCircleBoss extends Entity {
                     }
                 }
                 if (this.entity != null){
-                    serverWorld.addFreshEntity(entity);
+                    serverWorld.addFreshEntity(this.entity);
                 }
             }
         }

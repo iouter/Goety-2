@@ -327,24 +327,24 @@ public class ModBlocks {
 
     //Pine
     public static final RegistryObject<Block> PINE_PLANKS = register("pine_planks",
-            () -> new Block(Block.Properties.of().mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
+            () -> new Block(Block.Properties.of().mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava()));
     public static final RegistryObject<Block> COMPACTED_PINE_PLANKS = register("compacted_pine_planks",
-            () -> new RotatedPillarBlock(Block.Properties.of().mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
+            () -> new RotatedPillarBlock(Block.Properties.of().mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava()));
     public static final RegistryObject<Block> COMPACTED_PINE_SLAB = registerSlabs("compacted_pine_slab",
             COMPACTED_PINE_PLANKS);
     public static final RegistryObject<Block> THATCHED_PINE_PLANKS = register("thatched_pine_planks",
-            () -> new Block(Block.Properties.of().mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
+            () -> new Block(Block.Properties.of().mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava()));
     public static final RegistryObject<Block> PINE_LOG = register("pine_log", () -> log(MapColor.COLOR_BROWN, MapColor.COLOR_BROWN));
     public static final RegistryObject<Block> STRIPPED_PINE_LOG = register("stripped_pine_log", () -> log(MapColor.COLOR_BROWN, MapColor.COLOR_BROWN));
     public static final RegistryObject<Block> PINE_WOOD = register("pine_wood",
-            () -> new RotatedPillarBlock(Block.Properties.of().mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD)));
+            () -> new RotatedPillarBlock(Block.Properties.of().mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()));
     public static final RegistryObject<Block> STRIPPED_PINE_WOOD = register("stripped_pine_wood",
-            () -> new RotatedPillarBlock(Block.Properties.of().mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD)));
+            () -> new RotatedPillarBlock(Block.Properties.of().mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava()));
     public static final RegistryObject<Block> PINE_LEAVES = register("pine_leaves", () -> leaves(SoundType.GRASS), true, LootTableType.EMPTY);
     public static final RegistryObject<Block> PINE_PRESSURE_PLATE = register("pine_pressure_plate",
-            () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, BlockBehaviour.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY), ModBlockSetType.PINE));
+            () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, BlockBehaviour.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY).ignitedByLava(), ModBlockSetType.PINE));
     public static final RegistryObject<Block> PINE_TRAPDOOR = register("pine_trapdoor",
-            () -> new TrapDoorBlock(Block.Properties.of().mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), ModBlockSetType.PINE));
+            () -> new TrapDoorBlock(Block.Properties.of().mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion().ignitedByLava(), ModBlockSetType.PINE));
     public static final RegistryObject<Block> PINE_BUTTON = register("pine_button",
             () -> woodenButton(ModBlockSetType.PINE));
     public static final RegistryObject<Block> PINE_STAIRS = registerStairs("pine_stairs",
@@ -352,26 +352,26 @@ public class ModBlocks {
     public static final RegistryObject<Block> PINE_SLAB = registerSlabs("pine_slab",
             PINE_PLANKS);
     public static final RegistryObject<Block> PINE_FENCE_GATE = register("pine_fence_gate",
-            () -> new FenceGateBlock(Block.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD), ModWoodType.PINE));
+            () -> new FenceGateBlock(Block.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava(), ModWoodType.PINE));
     public static final RegistryObject<Block> PINE_FENCE = register("pine_fence",
-            () -> new FenceBlock(Block.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
+            () -> new FenceBlock(Block.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava()));
     public static final RegistryObject<Block> PINE_DOOR = register("pine_door",
-            () -> new DoorBlock(Block.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), ModBlockSetType.PINE));
+            () -> new DoorBlock(Block.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion().ignitedByLava(), ModBlockSetType.PINE));
     public static final RegistryObject<Block> PINE_BOOKSHELF = register("pine_bookshelf",
-            () -> new BookshelfBlock(Block.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).instrument(NoteBlockInstrument.BASS).strength(1.5F).sound(SoundType.WOOD)), true, LootTableType.EMPTY);
-    public static final RegistryObject<ModChestBlock> PINE_CHEST = isterRegister("pine_chest", () -> new ModChestBlock(Block.Properties.of().instrument(NoteBlockInstrument.BASS).strength(2.5F).sound(SoundType.WOOD)));
-    public static final RegistryObject<ModTrappedChestBlock> TRAPPED_PINE_CHEST = isterRegister("trapped_pine_chest", () -> new ModTrappedChestBlock(Block.Properties.of().instrument(NoteBlockInstrument.BASS).strength(2.5F).sound(SoundType.WOOD)));
+            () -> new BookshelfBlock(Block.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).instrument(NoteBlockInstrument.BASS).strength(1.5F).sound(SoundType.WOOD).ignitedByLava()), true, LootTableType.EMPTY);
+    public static final RegistryObject<ModChestBlock> PINE_CHEST = isterRegister("pine_chest", () -> new ModChestBlock(Block.Properties.of().instrument(NoteBlockInstrument.BASS).strength(2.5F).sound(SoundType.WOOD).ignitedByLava()));
+    public static final RegistryObject<ModTrappedChestBlock> TRAPPED_PINE_CHEST = isterRegister("trapped_pine_chest", () -> new ModTrappedChestBlock(Block.Properties.of().instrument(NoteBlockInstrument.BASS).strength(2.5F).sound(SoundType.WOOD).ignitedByLava()));
     public static final RegistryObject<Block> PINE_SIGN = register("pine_sign",
-            () -> new ModStandSignBlock(Block.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).sound(SoundType.WOOD), ModWoodType.PINE), false);
+            () -> new ModStandSignBlock(Block.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).sound(SoundType.WOOD).ignitedByLava(), ModWoodType.PINE), false);
     public static final RegistryObject<Block> PINE_WALL_SIGN = register("pine_wall_sign",
-            () -> new ModWallSignBlock(Block.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).sound(SoundType.WOOD).lootFrom(PINE_SIGN), ModWoodType.PINE), false);
+            () -> new ModWallSignBlock(Block.Properties.of().mapColor(PINE_PLANKS.get().defaultMapColor()).instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).sound(SoundType.WOOD).ignitedByLava().lootFrom(PINE_SIGN), ModWoodType.PINE), false);
     public static final RegistryObject<Block> PINE_HANGING_SIGN = register("pine_hanging_sign",
-            () -> new ModHangingSignBlock(BlockBehaviour.Properties.of().mapColor(PINE_LOG.get().defaultMapColor()).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F), ModWoodType.PINE), false);
+            () -> new ModHangingSignBlock(BlockBehaviour.Properties.of().mapColor(PINE_LOG.get().defaultMapColor()).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).ignitedByLava(), ModWoodType.PINE), false);
     public static final RegistryObject<Block> PINE_WALL_HANGING_SIGN = register("pine_wall_hanging_sign",
-            () -> new ModWallHangingSignBlock(BlockBehaviour.Properties.of().mapColor(PINE_LOG.get().defaultMapColor()).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).lootFrom(PINE_HANGING_SIGN), ModWoodType.PINE), false);
+            () -> new ModWallHangingSignBlock(BlockBehaviour.Properties.of().mapColor(PINE_LOG.get().defaultMapColor()).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(1.0F).lootFrom(PINE_HANGING_SIGN).ignitedByLava(), ModWoodType.PINE), false);
     public static final RegistryObject<Block> PINE_SAPLING = register("pine_sapling", () -> sapling(new PineTree()));
     public static final RegistryObject<Block> POTTED_PINE_SAPLING = register("potted_pine_sapling", () ->
-            new FlowerPotBlock(() -> (FlowerPotBlock) ForgeRegistries.BLOCKS.getDelegateOrThrow(Blocks.FLOWER_POT).get(), ModBlocks.PINE_SAPLING, Block.Properties.of().pushReaction(PushReaction.DESTROY).noOcclusion().instabreak()), false, LootTableType.EMPTY);
+            new FlowerPotBlock(() -> (FlowerPotBlock) ForgeRegistries.BLOCKS.getDelegateOrThrow(Blocks.FLOWER_POT).get(), ModBlocks.PINE_SAPLING, Block.Properties.of().pushReaction(PushReaction.DESTROY).noOcclusion().instabreak().ignitedByLava()), false, LootTableType.EMPTY);
 
     //Steep
     public static final RegistryObject<Block> STEEP_PLANKS = register("steep_planks",
@@ -407,7 +407,7 @@ public class ModBlocks {
 
     //Sky Wood
     public static final RegistryObject<Block> SKY_WOOD_PLANKS = register("sky_wood_planks",
-            () -> new Block(Block.Properties.of().mapColor(MapColor.TERRACOTTA_BLUE).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD)));
+            () -> new Block(Block.Properties.of().mapColor(MapColor.TERRACOTTA_BLUE).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD).ignitedByLava()));
     public static final RegistryObject<Block> SKY_WOOD_SLAB = registerSlabs("sky_wood_slab",
             SKY_WOOD_PLANKS);
     public static final RegistryObject<Block> SKY_WOOD_STAIRS = registerStairs("sky_wood_stairs",

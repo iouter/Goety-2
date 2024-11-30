@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.registries.Registries;
@@ -15,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.PoiTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -23,6 +25,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
+import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -58,6 +61,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class BlockFinder {
 
@@ -422,6 +426,15 @@ public class BlockFinder {
 
     public static boolean findStructure(ServerLevel serverLevel, BlockPos blockPos, TagKey<Structure> structureTagKey){
         return serverLevel.structureManager().getStructureWithPieceAt(blockPos, structureTagKey).isValid();
+    }
+
+    public static boolean findVillageSize(ServerLevel serverLevel, BlockPos blockPos, int size){
+        PoiManager poimanager = serverLevel.getPoiManager();
+        List<BlockPos> list = poimanager.getInRange(
+                (p_217747_) -> p_217747_.is(PoiTypeTags.VILLAGE),
+                blockPos, 32, PoiManager.Occupancy.ANY)
+                .map(PoiRecord::getPos).toList();
+        return list.size() >= size;
     }
 
     public static boolean isEmptyBox(Level level, BlockPos p_46860_){

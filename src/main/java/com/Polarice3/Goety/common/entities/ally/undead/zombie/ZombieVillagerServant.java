@@ -146,23 +146,22 @@ public class ZombieVillagerServant extends ZombieServant implements InventoryCar
 
     public InteractionResult mobInteract(Player p_34394_, InteractionHand p_34395_) {
         ItemStack itemstack = p_34394_.getItemInHand(p_34395_);
-        if (this.canConvert() && itemstack.is(Items.GOLDEN_APPLE)) {
-            if (this.hasEffect(MobEffects.WEAKNESS)) {
-                if (!p_34394_.getAbilities().instabuild) {
-                    itemstack.shrink(1);
-                }
+        if (!this.level.isClientSide) {
+            if (this.canConvert() && itemstack.is(Items.GOLDEN_APPLE)) {
+                if (this.hasEffect(MobEffects.WEAKNESS)) {
+                    if (!p_34394_.getAbilities().instabuild) {
+                        itemstack.shrink(1);
+                    }
 
-                if (!this.level.isClientSide) {
                     this.startConverting(p_34394_.getUUID(), this.random.nextInt(2401) + 3600);
-                }
 
-                return InteractionResult.SUCCESS;
-            } else {
-                return InteractionResult.CONSUME;
+                    return InteractionResult.SUCCESS;
+                } else {
+                    return InteractionResult.CONSUME;
+                }
             }
-        } else {
-            return super.mobInteract(p_34394_, p_34395_);
         }
+        return super.mobInteract(p_34394_, p_34395_);
     }
 
     protected boolean convertsInWater() {
@@ -326,9 +325,10 @@ public class ZombieVillagerServant extends ZombieServant implements InventoryCar
     }
 
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_34378_, DifficultyInstance p_34379_, MobSpawnType p_34380_, @Nullable SpawnGroupData p_34381_, @Nullable CompoundTag p_34382_) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_34378_, DifficultyInstance p_34379_, MobSpawnType p_34380_, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag p_34382_) {
+        spawnDataIn = super.finalizeSpawn(p_34378_, p_34379_, p_34380_, spawnDataIn, p_34382_);
         this.setVillagerData(this.getVillagerData().setType(VillagerType.byBiome(p_34378_.getBiome(this.blockPosition()))));
-        return super.finalizeSpawn(p_34378_, p_34379_, p_34380_, p_34381_, p_34382_);
+        return spawnDataIn;
     }
 
     public void setVillagerData(VillagerData p_34376_) {

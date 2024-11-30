@@ -97,15 +97,15 @@ public class FireballSpell extends Spell {
                         vector3d.x,
                         vector3d.y,
                         vector3d.z);
-                smallFireballEntity2.setOwner(caster);
                 if (CuriosFinder.hasUnholySet(caster)){
-                    smallFireballEntity2 = new HellBolt(caster.getX() + vector3d.x / 2,
+                    smallFireballEntity2 = new HellBolt(caster.getX() + vector3d.x / 2 + worldIn.random.nextGaussian(),
                             caster.getEyeY() - 0.2,
-                            caster.getZ() + vector3d.z / 2,
+                            caster.getZ() + vector3d.z / 2 + worldIn.random.nextGaussian(),
                             vector3d.x,
                             vector3d.y,
                             vector3d.z, worldIn);
                 }
+                smallFireballEntity2.setOwner(caster);
                 if (smallFireballEntity2 instanceof ModFireball fireball) {
                     if (isShifting(caster)) {
                         fireball.setDangerous(false);

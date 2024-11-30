@@ -1,7 +1,7 @@
 {
   "name": "Chilling Focus",
   "icon": "goety:chilling_focus",
-  "category": "goety:focuses",
+  "category": "goety:focuses/frost",
   "pages": [
     {
       "type": "patchouli:text",

@@ -228,7 +228,7 @@ public class ZombieServant extends Summoned {
                     entityType1 = ModEntityType.ZPIGLIN_BRUTE_SERVANT.get();
                 }
                 entityType = entityType1;
-            } else if (BlockFinder.findStructure(serverLevel, blockPos, StructureTags.VILLAGE)) {
+            } else if (BlockFinder.findStructure(serverLevel, blockPos, StructureTags.VILLAGE) || BlockFinder.findVillageSize(serverLevel, blockPos, 3)) {
                 entityType = ModEntityType.ZOMBIE_VILLAGER_SERVANT.get();
             } else if (BlockFinder.findStructure(serverLevel, blockPos, StructureTags.ON_WOODLAND_EXPLORER_MAPS)) {
                 entityType = ModEntityType.ZOMBIE_VINDICATOR_SERVANT.get();

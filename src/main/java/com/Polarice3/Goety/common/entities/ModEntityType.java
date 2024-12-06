@@ -648,6 +648,11 @@ public class ModEntityType {
                     .sized(0.75F, 2.4875F)
                     .clientTrackingRange(8));
 
+    public static final RegistryObject<EntityType<DrownedNecromancer>> DROWNED_NECROMANCER_SERVANT = register("drowned_necromancer_servant",
+            EntityType.Builder.of(DrownedNecromancer::new, MobCategory.MONSTER)
+                    .sized(0.75F, 2.8875F)
+                    .clientTrackingRange(8));
+
     public static final RegistryObject<EntityType<VanguardServant>> VANGUARD_SERVANT = register("vanguard_servant",
             EntityType.Builder.of(VanguardServant::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.99F)
@@ -1081,6 +1086,13 @@ public class ModEntityType {
                     .sized(2.0F, 2.0F)
                     .clientTrackingRange(10)
                     .updateInterval(Integer.MAX_VALUE));
+
+    public static final RegistryObject<EntityType<TridentStorm>> TRIDENT_STORM = register("trident_storm",
+            EntityType.Builder.<TridentStorm>of(TridentStorm::new, MobCategory.MISC)
+                    .fireImmune()
+                    .sized(4.0F, 0.5F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1));
 
     public static final RegistryObject<EntityType<DelayedSummon>> DELAYED_SUMMON = register("delayed_summon",
             EntityType.Builder.<DelayedSummon>of(DelayedSummon::new, MobCategory.MISC)

@@ -389,7 +389,7 @@ public class DarkAltarBlockEntity extends PedestalBlockEntity implements GameEve
                             if (!RitualRequirements.getProperStructure(ritualRecipe.getCraftType(), this, pos, world)){
                                 player.displayClientMessage(Component.translatable("info.goety.ritual.structure.fail"), true);
                                 return false;
-                            } else if (ritualRecipe.getCraftType().contains("lich")){
+                            } else if (ritualRecipe.getResearch().contains(ResearchList.FORBIDDEN.getId())){
                                 if (MainConfig.LichScrollRequirement.get()) {
                                     if (SEHelper.hasResearch(player, ResearchList.FORBIDDEN)) {
                                         this.startRitual(player, activationItem, ritualRecipe);

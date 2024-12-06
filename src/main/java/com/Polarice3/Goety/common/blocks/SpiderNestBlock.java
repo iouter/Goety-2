@@ -43,7 +43,7 @@ public class SpiderNestBlock extends TrainingBlock {
                 .strength(0.2F, 3.0F)
                 .sound(SoundType.WART_BLOCK)
                 .noOcclusion());
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, Boolean.FALSE));
     }
 
     @SuppressWarnings("deprecation")
@@ -104,7 +104,7 @@ public class SpiderNestBlock extends TrainingBlock {
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_152043_) {
-        p_152043_.add(FACING);
+        p_152043_.add(POWERED, FACING);
     }
 
     public PushReaction getPistonPushReaction(BlockState p_152047_) {

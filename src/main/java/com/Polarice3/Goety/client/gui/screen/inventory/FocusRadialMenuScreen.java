@@ -135,8 +135,10 @@ public class FocusRadialMenuScreen extends Screen {
                 this.needsRecheckStacks = true;
             }
 
-            if (!ClientEvents.isKeyDown(ModKeybindings.wandCircle())) {
-                processClick();
+            if (ModKeybindings.wandCircle() != null) {
+                if (!ClientEvents.isKeyDown(ModKeybindings.wandCircle())) {
+                    processClick();
+                }
             }
         } else {
             Minecraft.getInstance().setScreen(null);

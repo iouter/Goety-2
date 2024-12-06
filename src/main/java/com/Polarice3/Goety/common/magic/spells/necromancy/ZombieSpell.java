@@ -6,31 +6,26 @@ import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.ally.Summoned;
 import com.Polarice3.Goety.common.entities.ally.undead.zombie.*;
-import com.Polarice3.Goety.common.entities.neutral.ZPiglinBruteServant;
 import com.Polarice3.Goety.common.entities.neutral.ZPiglinServant;
 import com.Polarice3.Goety.common.items.ModItems;
 import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.common.magic.SummonSpell;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
-import com.Polarice3.Goety.init.ModTags;
 import com.Polarice3.Goety.utils.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.tags.BiomeTags;
-import net.minecraft.tags.StructureTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.common.Tags;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,6 +95,7 @@ public class ZombieSpell extends SummonSpell {
         return typeStaff(stack, SpellType.FROST)
                 || typeStaff(stack, SpellType.WILD)
                 || typeStaff(stack, SpellType.NETHER)
+                || typeStaff(stack, SpellType.ABYSS)
                 || stack.is(ModItems.OMINOUS_STAFF.get());
     }
 
@@ -121,6 +117,7 @@ public class ZombieSpell extends SummonSpell {
                 i = 2;
             }
             for (int i1 = 0; i1 < i; ++i1) {
+                EntityType<?> entityType;
                 Summoned summonedentity = new ZombieServant(ModEntityType.ZOMBIE_SERVANT.get(), worldIn);
                 BlockPos blockPos = BlockFinder.SummonRadius(caster.blockPosition(), summonedentity, worldIn);
                 if (caster.isUnderWater()){
@@ -133,27 +130,19 @@ public class ZombieSpell extends SummonSpell {
                         summonedentity = new JungleZombieServant(ModEntityType.JUNGLE_ZOMBIE_SERVANT.get(), worldIn);
                     } else if (typeStaff(staff, SpellType.NETHER)) {
                         summonedentity = new ZPiglinServant(ModEntityType.ZPIGLIN_SERVANT.get(), worldIn);
+                    } else if (typeStaff(staff, SpellType.ABYSS)) {
+                        summonedentity = new DrownedServant(ModEntityType.DROWNED_SERVANT.get(), worldIn);
                     } else if (staff.is(ModItems.OMINOUS_STAFF.get())) {
                         summonedentity = new ZombieVindicatorServant(ModEntityType.ZOMBIE_VINDICATOR_SERVANT.get(), worldIn);
                     }
-                } else if (caster.isUnderWater() && worldIn.isWaterAt(blockPos)){
-                    summonedentity = new DrownedServant(ModEntityType.DROWNED_SERVANT.get(), worldIn);
-                } else if (worldIn.getBiome(blockPos).is(Tags.Biomes.IS_DESERT) && worldIn.canSeeSky(blockPos)){
-                    summonedentity = new HuskServant(ModEntityType.HUSK_SERVANT.get(), worldIn);
-                } else if (worldIn.dimension() == Level.NETHER){
-                    Summoned summoned = new ZPiglinServant(ModEntityType.ZPIGLIN_SERVANT.get(), worldIn);
-                    if (worldIn.random.nextFloat() <= 0.25F && BlockFinder.findStructure(worldIn, caster, ModTags.Structures.CAN_SUMMON_BRUTES)){
-                        summoned = new ZPiglinBruteServant(ModEntityType.ZPIGLIN_BRUTE_SERVANT.get(), worldIn);
+                } else {
+                    entityType = summonedentity.getVariant(worldIn, blockPos);
+                    if (entityType != null){
+                        Entity entity = entityType.create(worldIn);
+                        if (entity instanceof Summoned summoned){
+                            summonedentity = summoned;
+                        }
                     }
-                    summonedentity = summoned;
-                } else if (BlockFinder.findStructure(worldIn, blockPos, StructureTags.VILLAGE)) {
-                    summonedentity = new ZombieVillagerServant(ModEntityType.ZOMBIE_VILLAGER_SERVANT.get(), worldIn);
-                } else if (BlockFinder.findStructure(worldIn, blockPos, StructureTags.ON_WOODLAND_EXPLORER_MAPS)){
-                    summonedentity = new ZombieVindicatorServant(ModEntityType.ZOMBIE_VINDICATOR_SERVANT.get(), worldIn);
-                } else if (worldIn.getBiome(blockPos).get().coldEnoughToSnow(blockPos)){
-                    summonedentity = new FrozenZombieServant(ModEntityType.FROZEN_ZOMBIE_SERVANT.get(), worldIn);
-                } else if (worldIn.getBiome(blockPos).is(BiomeTags.IS_JUNGLE) && worldIn.random.nextBoolean()){
-                    summonedentity = new JungleZombieServant(ModEntityType.JUNGLE_ZOMBIE_SERVANT.get(), worldIn);
                 }
                 summonedentity.setTrueOwner(caster);
                 summonedentity.moveTo(blockPos, 0.0F, 0.0F);

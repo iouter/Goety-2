@@ -22,4 +22,12 @@ public class JeiRecipeTypes {
 
     public static final RecipeType<WitchBrewJeiRecipe> BREWING =
             RecipeType.create(Goety.MOD_ID, "brewing", WitchBrewJeiRecipe.class);
+
+    public static RecipeType<RitualRecipe> getRitual(String type){
+        return getRitual(Goety.MOD_ID, type);
+    }
+
+    public static RecipeType<RitualRecipe> getRitual(String modID, String type){
+        return RecipeType.create(modID, "ritual_" + type, RitualRecipe.class);
+    }
 }

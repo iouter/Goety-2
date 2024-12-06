@@ -24,6 +24,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.gameevent.BlockPositionSource;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.GameEventListener;
@@ -46,6 +47,7 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
     public int updateVariant;
     public boolean showArea;
     public boolean sensorSensitive;
+    public boolean patrolling = true;
     public boolean guarding;
     public boolean reachedLimit;
     public ItemStack itemStack = ItemStack.EMPTY;
@@ -117,7 +119,11 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
                                             ForgeEventFactory.onFinalizeSpawn(mob, serverLevel, serverLevel.getCurrentDifficultyAt(blockPos), MobSpawnType.MOB_SUMMONED, null, null);
                                         }
                                         if (entity instanceof IServant servant){
-                                            servant.setBoundPos(blockPos);
+                                            if (this.isPatrolling()) {
+                                                servant.setBoundPos(blockPos);
+                                            } else {
+                                                servant.setBoundPos(null);
+                                            }
                                             servant.setWandering(false);
                                             servant.setStaying(false);
                                         }
@@ -136,6 +142,9 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
                     blockEntity.trainTime = 0;
                     blockEntity.markUpdated();
                 }
+            }
+            if (blockState.hasProperty(BlockStateProperties.POWERED)){
+                level.setBlock(blockPos, blockState.setValue(BlockStateProperties.POWERED, blockEntity.isTraining()), 3);
             }
         }
     }
@@ -334,6 +343,9 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
         if (tag.contains("sensorSensitive")) {
             this.sensorSensitive = tag.getBoolean("sensorSensitive");
         }
+        if (tag.contains("patrolling")) {
+            this.patrolling = tag.getBoolean("patrolling");
+        }
         if (tag.contains("guarding")) {
             this.guarding = tag.getBoolean("guarding");
         }
@@ -351,6 +363,7 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
         tag1.put("EntityToSpawn", this.entityToSpawn);
         tag1.putBoolean("showArea", this.showArea);
         tag1.putBoolean("sensorSensitive", this.sensorSensitive);
+        tag1.putBoolean("patrolling", this.patrolling);
         tag1.putBoolean("guarding", this.guarding);
         tag1.putBoolean("reachedLimit", this.reachedLimit);
         return tag1;
@@ -371,6 +384,15 @@ public abstract class TrainingBlockEntity extends OwnedBlockEntity implements IT
 
     public void setSensorSensitive(boolean sensorSensitive){
         this.sensorSensitive = sensorSensitive;
+        this.markUpdated();
+    }
+
+    public boolean isPatrolling(){
+        return this.patrolling;
+    }
+
+    public void setPatrolling(boolean patrolling){
+        this.patrolling = patrolling;
         this.markUpdated();
     }
 

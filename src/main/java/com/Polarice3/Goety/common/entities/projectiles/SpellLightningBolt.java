@@ -239,7 +239,7 @@ public class SpellLightningBolt extends LightningBolt {
                             if (this.getOwner() != null) {
                                 if (!MobUtil.areAllies(this.getOwner(), livingEntity)) {
                                     flag = true;
-                                    damageSource = ModDamageSource.indirectShock(this, this.getOwner());
+                                    damageSource = ModDamageSource.lightning(this, this.getOwner());
                                 }
                             } else {
                                 flag = true;

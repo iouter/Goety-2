@@ -380,6 +380,10 @@ public class SpellConfig {
     public static final ForgeConfigSpec.ConfigValue<Integer> LightningCoolDown;
     public static final ForgeConfigSpec.ConfigValue<Double> LightningDamage;
 
+    public static final ForgeConfigSpec.ConfigValue<Integer> TridentStormCost;
+    public static final ForgeConfigSpec.ConfigValue<Integer> TridentStormCoolDown;
+    public static final ForgeConfigSpec.ConfigValue<Double> TridentStormDamage;
+
     public static final ForgeConfigSpec.ConfigValue<Integer> CallCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> CallDuration;
     public static final ForgeConfigSpec.ConfigValue<Integer> CallCoolDown;
@@ -1243,6 +1247,14 @@ public class SpellConfig {
                     .defineInRange("lightningCoolDown", 100, 0, Integer.MAX_VALUE);
             LightningDamage = BUILDER.comment("How much base damage Lightning from the spell deals, Default: 5.0")
                     .defineInRange("lightningDamage", 5.0, 1.0, Double.MAX_VALUE);
+            BUILDER.pop();
+            BUILDER.push("Trident Storm Spell");
+            TridentStormCost = BUILDER.comment("Trident Storm Spell Cost, Default: 48")
+                    .defineInRange("tridentStormCost", 48, 0, Integer.MAX_VALUE);
+            TridentStormCoolDown = BUILDER.comment("Trident Storm Spell Cooldown, Default: 200")
+                    .defineInRange("tridentStormCoolDown", 200, 0, Integer.MAX_VALUE);
+            TridentStormDamage = BUILDER.comment("How much base damage Trident Storm from the spell deals, Default: 16.0")
+                    .defineInRange("tridentStormDamage", 16.0, 1.0, Double.MAX_VALUE);
             BUILDER.pop();
             BUILDER.push("Call Spell");
             CallCost = BUILDER.comment("Call Spell Cost, Default: 16")

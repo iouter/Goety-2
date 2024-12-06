@@ -136,7 +136,7 @@ public class RitualRequirements extends RitualTypes{
         return switch (craftType) {
             case ANIMATION, FORGE, MAGIC, SABBATH -> RitualRequirements.getStructures(craftType, pPos, pLevel);
             case GEOTURGY -> geoturgyRitual(pPos, pLevel);
-            case NECROTURGY, LICH -> RitualRequirements.getStructures(craftType, pPos, pLevel) && pLevel.getSkyDarken() >= 4 && pLevel.dimensionType().hasSkyLight();
+            case NECROTURGY -> RitualRequirements.getStructures(craftType, pPos, pLevel) && pLevel.getSkyDarken() >= 4 && pLevel.dimensionType().hasSkyLight();
             case ADEPT_NETHER, EXPERT_NETHER -> RitualRequirements.getStructures(craftType, pPos, pLevel) && pLevel.dimensionType().ultraWarm();
             case FROST -> frostRitual(pPos, pLevel);
             case SKY -> skyRitual(pTileEntity, pLevel, pPos);
@@ -186,7 +186,7 @@ public class RitualRequirements extends RitualTypes{
                                 ++thirdCount;
                             }
                         }
-                        case NECROTURGY, LICH -> {
+                        case NECROTURGY -> {
                             totalFirst = 16;
                             totalSecond = 16;
                             totalThird = 8;

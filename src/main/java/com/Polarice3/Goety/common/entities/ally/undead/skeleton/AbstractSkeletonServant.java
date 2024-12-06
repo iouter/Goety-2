@@ -6,6 +6,8 @@ import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.ai.CreatureBowAttackGoal;
 import com.Polarice3.Goety.common.entities.ally.Summoned;
 import com.Polarice3.Goety.common.entities.projectiles.GhostArrow;
+import com.Polarice3.Goety.compat.serene_seasons.SSeasonsIntegration;
+import com.Polarice3.Goety.compat.serene_seasons.SSeasonsLoaded;
 import com.Polarice3.Goety.config.AttributesConfig;
 import com.Polarice3.Goety.utils.BlockFinder;
 import com.Polarice3.Goety.utils.ItemHelper;
@@ -185,6 +187,11 @@ public abstract class AbstractSkeletonServant extends Summoned implements Ranged
                 entityType = ModEntityType.MOSSY_SKELETON_SERVANT.get();
             } else if (level.isWaterAt(blockPos)) {
                 entityType = ModEntityType.SUNKEN_SKELETON_SERVANT.get();
+            }
+            if (SSeasonsLoaded.SERENE_SEASONS.isLoaded()){
+                if (SSeasonsIntegration.summonSnowVariant(level, blockPos)){
+                    entityType = ModEntityType.STRAY_SERVANT.get();
+                }
             }
         }
         return entityType;

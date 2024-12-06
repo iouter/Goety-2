@@ -6,7 +6,6 @@ import com.Polarice3.Goety.common.entities.projectiles.SpellLightningBolt;
 import com.Polarice3.Goety.config.AttributesConfig;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.level.Level;
 
 public class LightningTrap extends AbstractTrap {

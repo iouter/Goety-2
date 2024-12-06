@@ -27,6 +27,7 @@ public class ModDamageSource extends DamageSource {
     public static ResourceKey<DamageType> SHOCK = create("shock");
     public static ResourceKey<DamageType> DIRECT_SHOCK = create("direct_shock");
     public static ResourceKey<DamageType> INDIRECT_SHOCK = create("indirect_shock");
+    public static ResourceKey<DamageType> LIGHTNING = create("lightning");
     public static ResourceKey<DamageType> DIRECT_FREEZE = create("direct_freeze");
     public static ResourceKey<DamageType> INDIRECT_FREEZE = create("indirect_freeze");
     public static ResourceKey<DamageType> ICE_SPIKE = create("ice_spike");
@@ -106,6 +107,10 @@ public class ModDamageSource extends DamageSource {
 
     public static DamageSource indirectShock(Entity pSource, @Nullable Entity pIndirectEntity) {
         return ModDamageSource.indirectEntityDamageSource(pSource.level, INDIRECT_SHOCK, pSource, pIndirectEntity);
+    }
+
+    public static DamageSource lightning(Entity pSource, @Nullable Entity pIndirectEntity) {
+        return ModDamageSource.indirectEntityDamageSource(pSource.level, LIGHTNING, pSource, pIndirectEntity);
     }
 
     public static DamageSource directFreeze(LivingEntity pMob) {
@@ -268,6 +273,7 @@ public class ModDamageSource extends DamageSource {
         context.register(SHOCK, new DamageType("goety.shock", 0.0F));
         context.register(DIRECT_SHOCK, new DamageType("goety.directShock", 0.0F));
         context.register(INDIRECT_SHOCK, new DamageType("goety.indirectShock", 0.0F));
+        context.register(LIGHTNING, new DamageType("goety.lightning", 0.0F));
         context.register(DIRECT_FREEZE, new DamageType("goety.directFreeze", 0.0F, DamageEffects.FREEZING));
         context.register(INDIRECT_FREEZE, new DamageType("goety.indirectFreeze", 0.0F, DamageEffects.FREEZING));
         context.register(ICE_SPIKE, new DamageType("goety.indirectFreeze", 0.0F, DamageEffects.FREEZING));

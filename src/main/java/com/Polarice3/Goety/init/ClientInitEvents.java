@@ -3,10 +3,7 @@ package com.Polarice3.Goety.init;
 import com.Polarice3.Goety.Goety;
 import com.Polarice3.Goety.api.items.magic.ITotem;
 import com.Polarice3.Goety.client.events.BossBarEvent;
-import com.Polarice3.Goety.client.gui.overlay.CurrentFocusGui;
-import com.Polarice3.Goety.client.gui.overlay.DreadOverlay;
-import com.Polarice3.Goety.client.gui.overlay.RavagerRoarGui;
-import com.Polarice3.Goety.client.gui.overlay.SoulEnergyGui;
+import com.Polarice3.Goety.client.gui.overlay.*;
 import com.Polarice3.Goety.client.gui.screen.inventory.*;
 import com.Polarice3.Goety.client.inventory.container.ModContainerType;
 import com.Polarice3.Goety.client.particles.*;
@@ -255,6 +252,7 @@ public class ClientInitEvents {
         event.registerLayerDefinition(ModModelLayer.QUICK_GROWING_VINE, QuickGrowingVineModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.POISON_QUILL_VINE, PoisonQuillVineModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.VOLCANO, VolcanoModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayer.TRIDENT_STORM, TridentStormModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.BLOCK, BlockModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.WARLOCK, WarlockModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.HERETIC, HereticModel::createBodyLayer);
@@ -294,6 +292,7 @@ public class ClientInitEvents {
         event.registerLayerDefinition(ModModelLayer.WRAITH, WraithModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.SUNKEN_SKELETON, SunkenSkeletonModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.NECROMANCER, NecromancerModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayer.DROWNED_NECROMANCER, DrownedNecromancerModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.WITHER_NECROMANCER, WitherNecromancerModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.VANGUARD, VanguardModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayer.BLACKGUARD, BlackguardModel::createBodyLayer);
@@ -458,6 +457,7 @@ public class ClientInitEvents {
         event.registerEntityRenderer(ModEntityType.MAGMA_BOMB.get(), MagmaBombRenderer::new);
         event.registerEntityRenderer(ModEntityType.BLOSSOM_BALL.get(), BlossomBallRenderer::new);
         event.registerEntityRenderer(ModEntityType.WEB_SHOT.get(), WebShotRenderer::new);
+        event.registerEntityRenderer(ModEntityType.TRIDENT_STORM.get(), TridentStormRenderer::new);
         event.registerEntityRenderer(ModEntityType.DELAYED_SUMMON.get(), TrapRenderer::new);
         event.registerEntityRenderer(ModEntityType.SUMMON_CIRCLE.get(), SummonCircleRenderer::new);
         event.registerEntityRenderer(ModEntityType.SUMMON_CIRCLE_BOSS.get(), SummonCircleBossRenderer::new);
@@ -518,6 +518,7 @@ public class ClientInitEvents {
         event.registerEntityRenderer(ModEntityType.SUNKEN_SKELETON_SERVANT.get(), SunkenSkeletonServantRenderer::new);
         event.registerEntityRenderer(ModEntityType.NECROMANCER_SERVANT.get(), NecromancerRenderer::new);
         event.registerEntityRenderer(ModEntityType.CAIRN_NECROMANCER_SERVANT.get(), AbstractCairnNecromancerRenderer::new);
+        event.registerEntityRenderer(ModEntityType.DROWNED_NECROMANCER_SERVANT.get(), DrownedNecromancerRenderer::new);
         event.registerEntityRenderer(ModEntityType.WRAITH_SERVANT.get(), WraithServantRenderer::new);
         event.registerEntityRenderer(ModEntityType.BORDER_WRAITH_SERVANT.get(), BorderWraithServantRenderer::new);
         event.registerEntityRenderer(ModEntityType.VANGUARD_SERVANT.get(), VanguardRenderer::new);

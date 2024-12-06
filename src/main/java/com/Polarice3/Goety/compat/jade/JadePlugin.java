@@ -3,6 +3,7 @@ package com.Polarice3.Goety.compat.jade;
 import com.Polarice3.Goety.common.blocks.*;
 import com.Polarice3.Goety.common.blocks.entities.OwnedBlockEntity;
 import com.Polarice3.Goety.common.entities.ally.AnimalSummon;
+import com.Polarice3.Goety.common.entities.ally.Summoned;
 import com.Polarice3.Goety.common.entities.ally.undead.zombie.ZombieVillagerServant;
 import com.Polarice3.Goety.common.entities.neutral.Owned;
 import com.Polarice3.Goety.common.entities.projectiles.SpellEntity;
@@ -24,6 +25,7 @@ public class JadePlugin implements IWailaPlugin {
         registration.registerEntityDataProvider(SummonLifespanProvider.INSTANCE, Owned.class);
         registration.registerEntityDataProvider(SummonBreedProvider.INSTANCE, AnimalSummon.class);
         registration.registerEntityDataProvider(SummonGrowthProvider.INSTANCE, AnimalSummon.class);
+        registration.registerEntityDataProvider(ServantModeProvider.INSTANCE, Summoned.class);
         registration.registerEntityDataProvider(ZVServantProvider.INSTANCE, ZombieVillagerServant.class);
 
         registration.registerBlockDataProvider(BlockOwnerProvider.INSTANCE, OwnedBlockEntity.class);
@@ -36,6 +38,7 @@ public class JadePlugin implements IWailaPlugin {
         registration.registerEntityComponent(SummonLifespanProvider.INSTANCE, Owned.class);
         registration.registerEntityComponent(MobBreedingProvider.INSTANCE, AnimalSummon.class);
         registration.registerEntityComponent(MobGrowthProvider.INSTANCE, AnimalSummon.class);
+        registration.registerEntityComponent(ServantModeProvider.INSTANCE, Summoned.class);
         registration.registerEntityComponent(ModProfessionProvider.INSTANCE, ZombieVillagerServant.class);
         registration.registerEntityComponent(ZVServantProvider.INSTANCE, ZombieVillagerServant.class);
 

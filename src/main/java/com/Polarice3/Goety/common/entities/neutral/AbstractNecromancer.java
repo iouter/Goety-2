@@ -18,10 +18,7 @@ import com.Polarice3.Goety.config.AttributesConfig;
 import com.Polarice3.Goety.config.MobsConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.init.ModTags;
-import com.Polarice3.Goety.utils.BlockFinder;
-import com.Polarice3.Goety.utils.MathHelper;
-import com.Polarice3.Goety.utils.MobUtil;
-import com.Polarice3.Goety.utils.SoundUtil;
+import com.Polarice3.Goety.utils.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -64,7 +61,7 @@ public abstract class AbstractNecromancer extends AbstractSkeletonServant implem
     private static final EntityDataAccessor<Byte> SPELL = SynchedEntityData.defineId(AbstractNecromancer.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> FLAGS = SynchedEntityData.defineId(AbstractNecromancer.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Integer> LEVEL = SynchedEntityData.defineId(AbstractNecromancer.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> ANIM_STATE = SynchedEntityData.defineId(AbstractNecromancer.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> ANIM_STATE = SynchedEntityData.defineId(AbstractNecromancer.class, EntityDataSerializers.INT);
     public static int INITIAL_LEVEL = 0;
     public static int MAX_LEVEL = 2;
     public static String IDLE = "idle";
@@ -685,7 +682,7 @@ public abstract class AbstractNecromancer extends AbstractSkeletonServant implem
                 } else {
                     SoundUtil.playNecromancerSummon(AbstractNecromancer.this);
                 }
-                AbstractNecromancer.this.playSound(ModSounds.NECROMANCER_LAUGH.get(), 2.0F, AbstractNecromancer.this.getVoicePitch());
+                this.playLaughSound();
                 this.castSpell();
                 AbstractNecromancer.this.setNecromancerSpellType(NecromancerSpellType.NONE);
             }
@@ -707,6 +704,10 @@ public abstract class AbstractNecromancer extends AbstractSkeletonServant implem
         @Nullable
         protected SoundEvent getCastSound(){
             return null;
+        }
+
+        protected void playLaughSound(){
+            AbstractNecromancer.this.playSound(ModSounds.NECROMANCER_LAUGH.get(), 2.0F, AbstractNecromancer.this.getVoicePitch());
         }
 
         protected abstract NecromancerSpellType getNecromancerSpellType();
@@ -742,6 +743,8 @@ public abstract class AbstractNecromancer extends AbstractSkeletonServant implem
                         this.populateDefaultEquipmentSlots(summonedentity, serverLevel.random);
                         if (serverLevel.addFreshEntity(summonedentity)) {
                             SoundUtil.playNecromancerSummon(summonedentity);
+                            ColorUtil colorUtil = new ColorUtil(0x2ac9cf);
+                            ServerParticleUtil.windShockwaveParticle(serverLevel, colorUtil, 0.1F, 0.1F, 0.05F, -1, summonedentity.position());
                         }
                     }
                 }

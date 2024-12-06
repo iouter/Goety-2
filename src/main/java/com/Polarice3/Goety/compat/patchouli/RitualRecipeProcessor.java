@@ -48,7 +48,7 @@ public class RitualRecipeProcessor implements IComponentProcessor {
 
         if (key.startsWith("craftType")) {
             if (this.recipe.getCraftType() != null) {
-                return IVariable.wrap(I18n.get("jei.goety.craftType." + I18n.get(recipe.getCraftType())));
+                return IVariable.wrap(I18n.get("jei.goety.craftType") + I18n.get( "jei.goety.craftType." + I18n.get(recipe.getCraftType())));
             }
         }
 

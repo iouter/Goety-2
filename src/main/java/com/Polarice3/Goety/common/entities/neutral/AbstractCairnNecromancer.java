@@ -10,11 +10,10 @@ import com.Polarice3.Goety.common.entities.ally.undead.skeleton.VanguardServant;
 import com.Polarice3.Goety.common.entities.ally.undead.zombie.ZombieServant;
 import com.Polarice3.Goety.common.entities.projectiles.IceSpike;
 import com.Polarice3.Goety.common.items.ModItems;
+import com.Polarice3.Goety.config.MobsConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.init.ModTags;
-import com.Polarice3.Goety.utils.BlockFinder;
-import com.Polarice3.Goety.utils.MobUtil;
-import com.Polarice3.Goety.utils.SoundUtil;
+import com.Polarice3.Goety.utils.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -128,7 +127,9 @@ public class AbstractCairnNecromancer extends AbstractNecromancer{
                     summonedentity.setTrueOwner(AbstractCairnNecromancer.this);
                     summonedentity.moveTo(blockPos, 0.0F, 0.0F);
                     MobUtil.moveDownToGround(summonedentity);
-                    summonedentity.setLimitedLife(MobUtil.getSummonLifespan(serverLevel));
+                    if (MobsConfig.NecromancerSummonsLife.get()) {
+                        summonedentity.setLimitedLife(MobUtil.getSummonLifespan(serverLevel));
+                    }
                     summonedentity.setPersistenceRequired();
                     summonedentity.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(AbstractCairnNecromancer.this.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
                     if (BlockFinder.findStructure(serverLevel, AbstractCairnNecromancer.this, ModTags.Structures.CRYPT)) {
@@ -149,6 +150,8 @@ public class AbstractCairnNecromancer extends AbstractNecromancer{
                     }
                     if (serverLevel.addFreshEntity(summonedentity)){
                         SoundUtil.playNecromancerSummon(summonedentity);
+                        ColorUtil colorUtil = new ColorUtil(0x2ac9cf);
+                        ServerParticleUtil.windShockwaveParticle(serverLevel, colorUtil, 0.1F, 0.1F, 0.05F, -1, summonedentity.position());
                     }
                 }
             }

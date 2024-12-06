@@ -1121,6 +1121,17 @@ public class ModEvents {
                 damageAmount -= totalReduce;
                 event.setAmount(damageAmount);
             }
+            /*if (event.getSource().getEntity() instanceof Player attacker) {
+                if (EnchantmentHelper.getEnchantmentLevel(ModEnchantments.SOUL_EATER.get(), attacker) > 0) {
+                    int level = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.SOUL_EATER.get(), attacker);
+                    int percent = ((level - 1) * 5) + 15;
+                    float rawPercent = (float) SEHelper.getSoulAmountInt(attacker) / MainConfig.MaxArcaSouls.get();
+                    float totalPercent = rawPercent * percent;
+                    if (attacker.level.getRandom().nextFloat() <= totalPercent){
+                        event.setAmount(damageAmount * 2.0F);
+                    }
+                }
+            }*/
         }
     }
 
@@ -1220,6 +1231,9 @@ public class ModEvents {
                                 }
                                 if (killed.getType() == EntityType.WITHER_SKELETON) {
                                     killed.spawnAtLocation(new ItemStack(Items.WITHER_SKELETON_SKULL));
+                                }
+                                if (killed.getType() == EntityType.PIGLIN) {
+                                    killed.spawnAtLocation(new ItemStack(Items.PIGLIN_HEAD));
                                 }
                                 if (MobsConfig.TallSkullDrops.get()) {
                                     if (killed instanceof Villager || killed instanceof AbstractIllager) {
@@ -1452,6 +1466,8 @@ public class ModEvents {
         List<VillagerTrades.ItemListing> genericTrades = event.getGenericTrades();
         List<VillagerTrades.ItemListing> rareTrades = event.getRareTrades();
         genericTrades.add(new ModTradeUtil.ItemsForEmeralds(ModItems.JADE.get(), 1, 64, 16));
+        genericTrades.add(new ModTradeUtil.ItemsForEmeralds(ModBlocks.WINDSWEPT_SAPLING.get(), 5, 1, 8));
+        genericTrades.add(new ModTradeUtil.ItemsForEmeralds(ModBlocks.PINE_SAPLING.get(), 5, 1, 8));
         rareTrades.add(new ModTradeUtil.TreasureMapForEmeralds(8, ModStructureTags.WIND_SHRINE, "filled_map.goety.wind_shrine", MapDecoration.Type.TARGET_X, 12, 10));
         rareTrades.add(new ModTradeUtil.TreasureMapForEmeralds(8, ModStructureTags.BLIGHTED_SHACK, "filled_map.goety.blighted_shack", MapDecoration.Type.MANSION, 12, 10));
     }

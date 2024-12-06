@@ -12,9 +12,6 @@
       "item": "minecraft:ender_chest"
     },
     {
-      "item": "minecraft:chorus_flower"
-    },
-    {
       "item": "goety:waystone"
     },
     {
@@ -28,9 +25,6 @@
     },
     {
       "item": "minecraft:ender_chest"
-    },
-    {
-      "item": "minecraft:chorus_flower"
     }
   ],
   "result": {

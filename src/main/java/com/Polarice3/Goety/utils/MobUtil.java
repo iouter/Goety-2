@@ -526,8 +526,8 @@ public class MobUtil {
                 } else {
                     entity.setPos(entity.getX(), hitResult.getBlockPos().getY() + 1.0625F, entity.getZ());
                 }
-                if (entity.level instanceof ServerLevel) {
-                    ((ServerLevel) entity.level).getChunkSource().broadcastAndSend(entity, new ClientboundTeleportEntityPacket(entity));
+                if (entity.level instanceof ServerLevel serverLevel) {
+                    serverLevel.getChunkSource().broadcastAndSend(entity, new ClientboundTeleportEntityPacket(entity));
                 }
             }
         }

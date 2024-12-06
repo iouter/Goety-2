@@ -4,7 +4,8 @@
   "activation_item": {
     "item": "goety:soul_emerald"
   },
-  "craftType": "lich",
+  "craftType": "necroturgy",
+  "research": "forbidden",
   "soulCost": 1,
   "duration": 10,
   "ingredients": [

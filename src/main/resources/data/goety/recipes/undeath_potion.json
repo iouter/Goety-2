@@ -4,7 +4,8 @@
   "activation_item": {
     "item": "minecraft:glass_bottle"
   },
-  "craftType": "lich",
+  "craftType": "necroturgy",
+  "research": "forbidden",
   "entity_to_sacrifice": {
     "tag": "goety:villagers",
     "display_name": "entity.minecraft.villager"

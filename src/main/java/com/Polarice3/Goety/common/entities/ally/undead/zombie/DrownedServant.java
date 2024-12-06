@@ -1,6 +1,5 @@
 package com.Polarice3.Goety.common.entities.ally.undead.zombie;
 
-import com.Polarice3.Goety.common.entities.ally.Summoned;
 import com.Polarice3.Goety.config.AttributesConfig;
 import com.Polarice3.Goety.utils.ItemHelper;
 import com.Polarice3.Goety.utils.MobUtil;
@@ -8,12 +7,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
@@ -38,7 +36,7 @@ public class DrownedServant extends ZombieServant implements RangedAttackMob {
     protected final WaterBoundPathNavigation waterNavigation;
     protected final GroundPathNavigation groundNavigation;
 
-    public DrownedServant(EntityType<? extends Summoned> type, Level worldIn) {
+    public DrownedServant(EntityType<? extends ZombieServant> type, Level worldIn) {
         super(type, worldIn);
         this.setMaxUpStep(1.0F);
         this.moveControl = new MoveHelperController(this);
@@ -90,6 +88,17 @@ public class DrownedServant extends ZombieServant implements RangedAttackMob {
 
     protected SoundEvent getSwimSound() {
         return SoundEvents.DROWNED_SWIM;
+    }
+
+    protected void populateDefaultEquipmentSlots(RandomSource p_218953_, DifficultyInstance p_218954_) {
+        if (p_218953_.nextFloat() > 0.9F) {
+            int i = p_218953_.nextInt(16);
+            if (i < 10) {
+                this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.TRIDENT));
+            }
+            this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
+        }
+
     }
 
     public boolean isPushedByFluid() {
@@ -218,7 +227,7 @@ public class DrownedServant extends ZombieServant implements RangedAttackMob {
             LivingEntity livingentity = this.drowned.getTarget();
             LivingEntity owner = this.drowned.getTrueOwner();
             if (this.drowned.wantsToSwim() && this.drowned.isInWater()) {
-                if (livingentity != null && livingentity.getY() > this.drowned.getY() || this.drowned.searchingForLand) {
+                if ((livingentity != null && livingentity.getY() > this.drowned.getY()) || this.drowned.searchingForLand) {
                     this.drowned.setDeltaMovement(this.drowned.getDeltaMovement().add(0.0D, 0.002D, 0.0D));
                 } else if (owner != null && owner.getY() > this.drowned.getY()){
                     this.drowned.setDeltaMovement(this.drowned.getDeltaMovement().add(0.0D, 0.002D, 0.0D));

@@ -48,6 +48,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 import javax.annotation.Nonnull;
@@ -256,6 +257,7 @@ public class DarkWand extends Item implements IWand {
         Level level = pContext.getLevel();
         BlockPos blockpos = pContext.getClickedPos();
         Player player = pContext.getPlayer();
+        InteractionHand hand = pContext.getHand();
         ItemStack stack = pContext.getItemInHand();
         if (player != null) {
             if (IWand.getFocus(stack).getItem() instanceof RecallFocus recallFocus){
@@ -316,6 +318,10 @@ public class DarkWand extends Item implements IWand {
                         }
                         return InteractionResult.SUCCESS;
                     }
+                }
+            } else if (!level.getBlockState(blockpos).isAir()){
+                if (!level.isClientSide){
+                    return level.getBlockState(blockpos).use(level, player, hand, new BlockHitResult(pContext.getClickLocation(), pContext.getClickedFace(), pContext.getClickedPos(), pContext.isInside()));
                 }
             }
             if (!level.isClientSide) {
@@ -696,9 +702,13 @@ public class DarkWand extends Item implements IWand {
             ItemHelper.addOnShift(tooltip, () -> addInformationAfterShift(IWand.getFocus(stack).getItem(), tooltip));
         } else {
             tooltip.add(Component.translatable("info.goety.wand.focus", Component.translatable("info.goety.wand.empty")));
-            tooltip.add(Component.translatable("info.goety.wand.open", ModKeybindings.wandSlot().getTranslatedKeyMessage()).withStyle(ChatFormatting.BLUE));
+            if (ModKeybindings.wandSlot() != null) {
+                tooltip.add(Component.translatable("info.goety.wand.open", ModKeybindings.wandSlot().getTranslatedKeyMessage()).withStyle(ChatFormatting.BLUE));
+            }
         }
-        tooltip.add(Component.translatable("info.goety.wand.switch", ModKeybindings.wandCircle().getTranslatedKeyMessage()).withStyle(ChatFormatting.BLUE));
+        if (ModKeybindings.wandCircle() != null) {
+            tooltip.add(Component.translatable("info.goety.wand.switch", ModKeybindings.wandCircle().getTranslatedKeyMessage()).withStyle(ChatFormatting.BLUE));
+        }
     }
 
     public void addInformationAfterShift(Item item, List<Component> tooltip) {

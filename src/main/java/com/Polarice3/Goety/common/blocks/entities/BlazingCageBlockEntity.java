@@ -1,6 +1,5 @@
 package com.Polarice3.Goety.common.blocks.entities;
 
-import com.Polarice3.Goety.common.blocks.BlazingCageBlock;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.neutral.BlazeServant;
 import com.Polarice3.Goety.config.SpellConfig;
@@ -24,29 +23,28 @@ public class BlazingCageBlockEntity extends TrainingBlockEntity {
     @Override
     public void tick(Level level, BlockPos blockPos, BlockState blockState, TrainingBlockEntity blockEntity) {
         super.tick(level, blockPos, blockState, blockEntity);
-        if (this.isTraining()){
-            if (this.trainTime != this.getMaxTrainTime()){
+        if (blockEntity.isTraining()){
+            if (blockEntity.trainTime != blockEntity.getMaxTrainTime()){
                 if (level instanceof ServerLevel serverLevel) {
-                    double d0 = (double)this.worldPosition.getX() + level.random.nextDouble();
-                    double d1 = (double)this.worldPosition.getY() + level.random.nextDouble();
-                    double d2 = (double)this.worldPosition.getZ() + level.random.nextDouble();
+                    double d0 = (double)blockPos.getX() + level.random.nextDouble();
+                    double d1 = (double)blockPos.getY() + level.random.nextDouble();
+                    double d2 = (double)blockPos.getZ() + level.random.nextDouble();
                     serverLevel.sendParticles(ParticleTypes.SMOKE, d0, d1, d2, 1, 0.0D, 0.0D, 0.0D, 0.0D);
                     serverLevel.sendParticles(ParticleTypes.FLAME, d0, d1, d2, 1, 0.0D, 0.0D, 0.0D, 0.0D);
                 }
                 if (this.trainTime == 20){
-                    level.playSound(null, this.getBlockPos(), ModSounds.BLAZING_CAGE_TRAIN.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                    level.playSound(null, blockPos, ModSounds.BLAZING_CAGE_TRAIN.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
                 }
             } else {
                 if (level instanceof ServerLevel serverLevel) {
-                    double d0 = (double)this.worldPosition.getX() + level.random.nextDouble();
-                    double d1 = (double)this.worldPosition.getY() + level.random.nextDouble();
-                    double d2 = (double)this.worldPosition.getZ() + level.random.nextDouble();
+                    double d0 = (double)blockPos.getX() + level.random.nextDouble();
+                    double d1 = (double)blockPos.getY() + level.random.nextDouble();
+                    double d2 = (double)blockPos.getZ() + level.random.nextDouble();
                     serverLevel.sendParticles(ParticleTypes.SMOKE, d0, d1, d2, 1, 0.0D, 0.0D, 0.0D, 0.0D);
                     serverLevel.sendParticles(ParticleTypes.FLAME, d0, d1, d2, 1, 0.0D, 0.0D, 0.0D, 0.0D);
                 }
             }
         }
-        level.setBlock(this.getBlockPos(), this.getBlockState().setValue(BlazingCageBlock.POWERED, this.isTraining()), 3);
     }
 
     @Override

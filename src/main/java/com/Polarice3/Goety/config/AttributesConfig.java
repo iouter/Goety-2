@@ -89,6 +89,10 @@ public class AttributesConfig {
     public static final ForgeConfigSpec.ConfigValue<Double> NecromancerArmor;
     public static final ForgeConfigSpec.ConfigValue<Double> NecromancerFollowRange;
     public static final ForgeConfigSpec.ConfigValue<Double> NecromancerDamage;
+    public static final ForgeConfigSpec.ConfigValue<Double> DrownedNecromancerHealth;
+    public static final ForgeConfigSpec.ConfigValue<Double> DrownedNecromancerArmor;
+    public static final ForgeConfigSpec.ConfigValue<Double> DrownedNecromancerFollowRange;
+    public static final ForgeConfigSpec.ConfigValue<Double> DrownedNecromancerDamage;
     public static final ForgeConfigSpec.ConfigValue<Double> WitherNecromancerHealth;
     public static final ForgeConfigSpec.ConfigValue<Double> WitherNecromancerArmor;
     public static final ForgeConfigSpec.ConfigValue<Double> WitherNecromancerFollowRange;
@@ -405,6 +409,16 @@ public class AttributesConfig {
                         .defineInRange("necromancerFollowRange", 16.0, 1.0, 2048.0);
                 NecromancerDamage = BUILDER.comment("How much damage Necromancers deals, Default: 4.0")
                         .defineInRange("necromancerDamage", 4.0, 1.0, Double.MAX_VALUE);
+                BUILDER.pop();
+                BUILDER.push("Drowned Necromancer");
+                DrownedNecromancerHealth = BUILDER.comment("How much Max Health Drowned Necromancers have, Default: 220.0")
+                        .defineInRange("drownedNecromancerHealth", 220.0, 1.0, Double.MAX_VALUE);
+                DrownedNecromancerArmor = BUILDER.comment("How much natural Armor Drowned Necromancers have, Default: 0.0")
+                        .defineInRange("drownedNecromancerArmor", 0.0, 0.0, Double.MAX_VALUE);
+                DrownedNecromancerFollowRange = BUILDER.comment("How much following/detection range Drowned Necromancers have, Default: 32.0")
+                        .defineInRange("drownedNecromancerFollowRange", 32.0, 1.0, 2048.0);
+                DrownedNecromancerDamage = BUILDER.comment("How much damage Drowned Necromancers deals, Default: 4.0")
+                        .defineInRange("drownedNecromancerDamage", 4.0, 1.0, Double.MAX_VALUE);
                 BUILDER.pop();
                 BUILDER.push("Wither Necromancer");
                 WitherNecromancerHealth = BUILDER.comment("How much Max Health Wither Necromancers have, Default: 220.0")

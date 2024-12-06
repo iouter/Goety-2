@@ -4,7 +4,6 @@ public class RitualTypes {
 
     public final static String ANIMATION = "animation";
     public final static String NECROTURGY = "necroturgy";
-    public final static String LICH = "lich";
     public final static String FORGE = "forge";
     public final static String GEOTURGY = "geoturgy";
     public final static String MAGIC = "magic";

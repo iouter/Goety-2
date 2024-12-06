@@ -30,6 +30,7 @@ public class ModModelLayer {
     public static final ModelLayerLocation FIRE_TORNADO = register("fire_tornado");
     public static final ModelLayerLocation MONOLITH = register("pillar");
     public static final ModelLayerLocation VOLCANO = register("volcano");
+    public static final ModelLayerLocation TRIDENT_STORM = register("trident_storm");
     public static final ModelLayerLocation QUICK_GROWING_VINE = register("quick_growing_vine");
     public static final ModelLayerLocation POISON_QUILL_VINE = register("poison_quill_vine");
     public static final ModelLayerLocation BLOCK = register("block");
@@ -51,7 +52,6 @@ public class ModModelLayer {
     public static final ModelLayerLocation BLACK_WOLF = register("black_wolf");
     public static final ModelLayerLocation BEAR = register("bear");
     public static final ModelLayerLocation BLACK_BEAST = register("black_beast");
-    public static final ModelLayerLocation ANATHEMA = register("anathema");
     public static final ModelLayerLocation WHISPERER = register("whisperer");
     public static final ModelLayerLocation LEAPLEAF = register("leapleaf");
     public static final ModelLayerLocation ICE_GOLEM = register("ice_golem");
@@ -73,6 +73,7 @@ public class ModModelLayer {
     public static final ModelLayerLocation WRAITH = register("wraith");
     public static final ModelLayerLocation SUNKEN_SKELETON = register("sunken_skeleton");
     public static final ModelLayerLocation NECROMANCER = register("necromancer");
+    public static final ModelLayerLocation DROWNED_NECROMANCER = register("drowned_necromancer");
     public static final ModelLayerLocation WITHER_NECROMANCER = register("wither_necromancer");
     public static final ModelLayerLocation VANGUARD = register("vanguard");
     public static final ModelLayerLocation BLACKGUARD = register("blackguard");

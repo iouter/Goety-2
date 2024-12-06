@@ -2208,6 +2208,93 @@
     ],
     "subtitle": "subtitle.goety.necromancer_death"
   },
+  "drowned_necromancer_ambient": {
+    "sounds": [
+      {
+        "name": "goety:drowned_necromancer/idle1"
+      },
+      {
+        "name": "goety:drowned_necromancer/idle2"
+      },
+      {
+        "name": "goety:drowned_necromancer/idle3"
+      }
+    ],
+    "subtitle": "subtitle.goety.drowned_necromancer_ambient"
+  },
+  "drowned_necromancer_hurt": {
+    "sounds": [
+      {
+        "name": "goety:drowned_necromancer/hurt1"
+      },
+      {
+        "name": "goety:drowned_necromancer/hurt2"
+      },
+      {
+        "name": "goety:drowned_necromancer/hurt3"
+      }
+    ],
+    "subtitle": "subtitle.goety.drowned_necromancer_hurt"
+  },
+  "drowned_necromancer_prepare": {
+    "sounds": [
+      {
+        "name": "goety:drowned_necromancer/prepare_summon1"
+      },
+      {
+        "name": "goety:drowned_necromancer/prepare_summon2"
+      },
+      {
+        "name": "goety:drowned_necromancer/prepare_summon3"
+      },
+      {
+        "name": "goety:drowned_necromancer/prepare_summon4"
+      }
+    ],
+    "subtitle": "subtitle.goety.prepare_summon"
+  },
+  "drowned_necromancer_summon": {
+    "sounds": [
+      {
+        "name": "goety:drowned_necromancer/summon1"
+      },
+      {
+        "name": "goety:drowned_necromancer/summon2"
+      },
+      {
+        "name": "goety:drowned_necromancer/summon3"
+      }
+    ],
+    "subtitle": "subtitle.goety.summon_spell"
+  },
+  "drowned_necromancer_swim": {
+    "sounds": [
+      {
+        "name": "goety:drowned_necromancer/swim1"
+      },
+      {
+        "name": "goety:drowned_necromancer/swim2"
+      },
+      {
+        "name": "goety:drowned_necromancer/swim3"
+      }
+    ],
+    "subtitle": "subtitle.goety.drowned_necromancer_swim"
+  },
+  "drowned_necromancer_death": {
+    "sounds": [
+      {
+        "name": "goety:drowned_necromancer/death1"
+      },
+      {
+        "name": "goety:drowned_necromancer/death2"
+      },
+      {
+        "name": "goety:drowned_necromancer/death3"
+      }
+    ],
+    "subtitle": "subtitle.goety.drowned_necromancer_death"
+  },
   "wither_necromancer_ambient": {
     "sounds": [
       {
@@ -5387,6 +5474,40 @@
       }
     ],
     "subtitle": "subtitle.goety.zap"
+  },
+  "trident_storm_pre": {
+    "sounds": [
+      {
+        "name": "goety:spell/trident_storm_pre1"
+      },
+      {
+        "name": "goety:spell/trident_storm_pre2"
+      },
+      {
+        "name": "goety:spell/trident_storm_pre3"
+      },
+      {
+        "name": "goety:spell/trident_storm_pre4"
+      }
+    ],
+    "subtitle": "subtitle.goety.trident_storm_pre"
+  },
+  "trident_storm_explode": {
+    "sounds": [
+      {
+        "name": "goety:spell/trident_storm_explode1"
+      },
+      {
+        "name": "goety:spell/trident_storm_explode2"
+      },
+      {
+        "name": "goety:spell/trident_storm_explode3"
+      },
+      {
+        "name": "goety:spell/trident_storm_explode4"
+      }
+    ],
+    "subtitle": "subtitle.goety.trident_storm_explode"
   },
   "gravity": {
     "sounds": [

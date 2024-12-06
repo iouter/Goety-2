@@ -135,6 +135,9 @@ public class ModSpawnEggs {
     public static final RegistryObject<ModSpawnEggItem> CAIRN_NECROMANCER_SERVANT_SPAWN_EGG = ITEMS.register("cairn_necromancer_servant_spawn_egg",
             () -> new ModSpawnEggItem(ModEntityType.CAIRN_NECROMANCER_SERVANT, 0x0b2830, 0xd2e5ff, egg()));
 
+    public static final RegistryObject<ModSpawnEggItem> DROWNED_NECROMANCER_SERVANT_SPAWN_EGG = ITEMS.register("drowned_necromancer_servant_spawn_egg",
+            () -> new ModSpawnEggItem(ModEntityType.DROWNED_NECROMANCER_SERVANT, 0x0c1e2a, 0xf9be26, egg()));
+
     public static final RegistryObject<ModSpawnEggItem> VANGUARD_SERVANT_SPAWN_EGG = ITEMS.register("vanguard_servant_spawn_egg",
             () -> new ModSpawnEggItem(ModEntityType.VANGUARD_SERVANT, 0xd6d0c9, 0xe8b42f, egg()));
 

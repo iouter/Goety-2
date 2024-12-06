@@ -6,6 +6,8 @@ import com.Polarice3.Goety.common.items.curios.MagicHatItem;
 import com.Polarice3.Goety.common.items.curios.MagicRobeItem;
 import com.Polarice3.Goety.common.items.curios.NecroGarbs;
 import com.Polarice3.Goety.common.magic.SpellStat;
+import com.Polarice3.Goety.compat.serene_seasons.SSeasonsIntegration;
+import com.Polarice3.Goety.compat.serene_seasons.SSeasonsLoaded;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModTags;
 import com.Polarice3.Goety.utils.BlockFinder;
@@ -61,6 +63,10 @@ public interface ISpell {
                     cost /= 1.5F;
                 } else if (biomeHolder.is(ModTags.Biomes.FROST_MARKUP)) {
                     cost *= 1.5F;
+                } else if (SSeasonsLoaded.SERENE_SEASONS.isLoaded()){
+                    if (SSeasonsIntegration.summonSnowVariant(level, blockPos)){
+                        cost /= 1.5F;
+                    }
                 }
             }
         }
@@ -134,6 +140,10 @@ public interface ISpell {
                     cost /= 1.5F;
                 } else if (biomeHolder.is(ModTags.Biomes.WILD_MARKUP)) {
                     cost *= 1.5F;
+                } else if (SSeasonsLoaded.SERENE_SEASONS.isLoaded()){
+                    if (SSeasonsIntegration.summonSnowVariant(level, blockPos)){
+                        cost *= 1.5F;
+                    }
                 }
             }
         }

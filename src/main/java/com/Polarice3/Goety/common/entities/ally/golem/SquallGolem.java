@@ -64,6 +64,7 @@ public class SquallGolem extends AbstractGolemServant implements IWindPowered {
     public boolean isNovelty = false;
     public boolean requiresPower = true;
     public boolean proximity = false;
+    public boolean reachedHome = false;
     public AnimationState activateAnimationState = new AnimationState();
     public AnimationState deactivateAnimationState = new AnimationState();
     public AnimationState offAnimationState = new AnimationState();
@@ -126,6 +127,7 @@ public class SquallGolem extends AbstractGolemServant implements IWindPowered {
         pCompound.putBoolean("Activated", this.isActivated());
         pCompound.putBoolean("RequiresPower", this.requiresPower());
         pCompound.putBoolean("Proximity", this.isProximity());
+        pCompound.putBoolean("ReachedHome", this.reachedHome);
         pCompound.putInt("HomeTick", this.homeTick);
     }
 
@@ -148,6 +150,9 @@ public class SquallGolem extends AbstractGolemServant implements IWindPowered {
         }
         if (pCompound.contains("Proximity")){
             this.setProximity(pCompound.getBoolean("Proximity"));
+        }
+        if (pCompound.contains("ReachedHome")){
+            this.reachedHome = pCompound.getBoolean("ReachedHome");
         }
         if (pCompound.contains("HomeTick")){
             this.homeTick = pCompound.getInt("HomeTick");
@@ -366,19 +371,20 @@ public class SquallGolem extends AbstractGolemServant implements IWindPowered {
                             this.setStartingUp(true);
                             this.level.broadcastEntityEvent(this, (byte) 25);
                         }
-                    } else if (this.boundPos != null){
+                    } else if (this.boundPos != null && !this.reachedHome){
+                        this.setTarget(null);
                         ++this.homeTick;
                         if (this.getNavigation().isStableDestination(this.boundPos)){
                             this.getNavigation().moveTo(this.boundPos.getX() + 0.5D, this.boundPos.getY(), this.boundPos.getZ() + 0.5D, 1.0D);
-                            if (this.getNavigation().isStuck() || this.homeTick >= MathHelper.secondsToTicks(10)){
+                            if (this.homeTick >= MathHelper.secondsToTicks(10)){
                                 this.homeTick = 0;
-                                this.boundPos = null;
+                                this.reachedHome = true;
                             } else if (this.boundPos.closerToCenterThan(this.position(), this.getBbWidth() + 1.0D)){
-                                this.moveTo(this.boundPos, this.getYRot(), this.getXRot());
-                                this.boundPos = null;
+                                this.moveTo(this.boundPos.above(), this.getYRot(), this.getXRot());
+                                this.reachedHome = true;
                             }
                         } else {
-                            this.boundPos = null;
+                            this.reachedHome = true;
                         }
                     } else {
                         if (!this.isShuttingDown() && this.isActivated()) {
@@ -390,6 +396,7 @@ public class SquallGolem extends AbstractGolemServant implements IWindPowered {
                 }
                 if (this.isStartingUp() && !this.isActivated()){
                     this.getNavigation().stop();
+                    this.reachedHome = false;
                     ++this.startingUpTick;
                     if (this.startingUpTick == 1){
                         this.playSound(ModSounds.SQUALL_GOLEM_ACTIVATE.get(), 2.0F, 1.0F);
@@ -415,6 +422,7 @@ public class SquallGolem extends AbstractGolemServant implements IWindPowered {
                         this.setActivated(false);
                         this.level.broadcastEntityEvent(this, (byte) 30);
                         this.shuttingDownTick = 0;
+                        this.reachedHome = false;
                     }
                 }
                 if (!this.isStartingUp() && !this.isShuttingDown()) {

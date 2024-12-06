@@ -10,7 +10,7 @@
     {
       "type": "patchouli:crafting",
       "recipe": "goety:spider_nest",
-      "text": "Right-clicking the nest with a Wand or Staff will make it so that it will only spawn a servant if a valid target is near it."
+      "text": "Right-clicking the nest with a Wand or Staff will make it so that it will only spawn a servant if a valid target is near it. While crouching, however, it will change whether the servant will spawn patrolling the block or following the owner."
     },
     {
       "type": "patchouli:text",

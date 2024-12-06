@@ -108,7 +108,8 @@ public class ModDamageTypeTagsProvider extends TagsProvider<DamageType> {
                 .add(DamageTypes.LIGHTNING_BOLT,
                         ModDamageSource.SHOCK,
                         ModDamageSource.DIRECT_SHOCK,
-                        ModDamageSource.INDIRECT_SHOCK);
+                        ModDamageSource.INDIRECT_SHOCK,
+                        ModDamageSource.LIGHTNING);
         this.tag(ModTags.DamageTypes.MAGIC_FIRE)
                 .add(ModDamageSource.MAGIC_FIRE,
                         ModDamageSource.MAGIC_FIREBALL,

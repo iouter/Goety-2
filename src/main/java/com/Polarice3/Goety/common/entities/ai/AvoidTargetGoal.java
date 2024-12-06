@@ -1,5 +1,6 @@
 package com.Polarice3.Goety.common.entities.ai;
 
+import com.Polarice3.Goety.utils.MobUtil;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -26,8 +27,12 @@ public class AvoidTargetGoal<T extends LivingEntity> extends AvoidEntityGoal<T> 
     }
 
     public static class AvoidRadiusGoal<T extends LivingEntity> extends ModAvoidGoal<T>{
+        public AvoidRadiusGoal(PathfinderMob mob, Class<T> tClass, Predicate<LivingEntity> predicate, float avoidStart, int maxDist, int minDist, double walkSpeed, double runSpeed, Predicate<LivingEntity> target) {
+            super(mob, tClass, predicate, avoidStart, maxDist, minDist, walkSpeed, runSpeed, target);
+        }
+
         public AvoidRadiusGoal(PathfinderMob mob, Class<T> tClass, Predicate<LivingEntity> predicate, float avoidStart, int maxDist, int minDist, double walkSpeed, double runSpeed) {
-            super(mob, tClass, predicate, avoidStart, maxDist, minDist, walkSpeed, runSpeed, livingEntity -> mob.getTarget() == livingEntity);
+            this(mob, tClass, predicate, avoidStart, maxDist, minDist, walkSpeed, runSpeed, livingEntity -> mob.getTarget() == livingEntity);
         }
 
         public AvoidRadiusGoal(PathfinderMob mob, Class<T> tClass, float avoidStart, int maxDist, int minDist, double walkSpeed, double runSpeed) {
@@ -36,6 +41,10 @@ public class AvoidTargetGoal<T extends LivingEntity> extends AvoidEntityGoal<T> 
 
         public static AvoidRadiusGoal<LivingEntity> newGoal(PathfinderMob pathfinderMob, float avoidStart, int maxDist, double minSpeed, double maxSpeed){
             return new AvoidRadiusGoal<>(pathfinderMob, LivingEntity.class, avoidStart, maxDist, maxDist, minSpeed, maxSpeed);
+        }
+
+        public static AvoidRadiusGoal<LivingEntity> newGoalTwo(PathfinderMob pathfinderMob, float avoidStart, int maxDist, double minSpeed, double maxSpeed){
+            return new AvoidRadiusGoal<>(pathfinderMob, LivingEntity.class, livingEntity -> true, avoidStart, maxDist, maxDist, minSpeed, maxSpeed, livingEntity -> pathfinderMob.getTarget() == livingEntity || MobUtil.isOwnedTargetable(pathfinderMob, livingEntity));
         }
 
         public void stop() {

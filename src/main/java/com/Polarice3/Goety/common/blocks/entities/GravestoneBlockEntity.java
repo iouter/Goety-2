@@ -1,7 +1,6 @@
 package com.Polarice3.Goety.common.blocks.entities;
 
 import com.Polarice3.Goety.client.particles.ModParticleTypes;
-import com.Polarice3.Goety.common.blocks.GravestoneBlock;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.ally.undead.zombie.ZombieServant;
 import com.Polarice3.Goety.common.network.ModNetwork;
@@ -46,7 +45,6 @@ public class GravestoneBlockEntity extends TrainingBlockEntity {
                 }
             }
         }
-        level.setBlock(blockPos, blockState.setValue(GravestoneBlock.POWERED, blockEntity.isTraining()), 3);
     }
 
     @Override

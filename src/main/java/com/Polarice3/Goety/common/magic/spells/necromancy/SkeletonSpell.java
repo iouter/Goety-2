@@ -7,7 +7,6 @@ import com.Polarice3.Goety.common.entities.ally.undead.skeleton.*;
 import com.Polarice3.Goety.common.items.ModItems;
 import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.common.magic.SummonSpell;
-import com.Polarice3.Goety.common.research.ResearchList;
 import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.*;
@@ -16,16 +15,13 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
-import net.minecraftforge.common.Tags;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +91,7 @@ public class SkeletonSpell extends SummonSpell {
         return typeStaff(stack, SpellType.FROST)
                 || typeStaff(stack, SpellType.WILD)
                 || typeStaff(stack, SpellType.NETHER)
+                || typeStaff(stack, SpellType.ABYSS)
                 || stack.is(ModItems.OMINOUS_STAFF.get());
     }
 
@@ -116,6 +113,7 @@ public class SkeletonSpell extends SummonSpell {
         }
         if (!isShifting(caster)) {
             for (int i1 = 0; i1 < i; ++i1) {
+                EntityType<?> entityType;
                 AbstractSkeletonServant summonedentity = new SkeletonServant(ModEntityType.SKELETON_SERVANT.get(), worldIn);
                 BlockPos blockPos = BlockFinder.SummonRadius(caster.blockPosition(), summonedentity, worldIn);
                 if (caster.isUnderWater()){
@@ -128,21 +126,19 @@ public class SkeletonSpell extends SummonSpell {
                         summonedentity = new MossySkeletonServant(ModEntityType.MOSSY_SKELETON_SERVANT.get(), worldIn);
                     } else if (typeStaff(staff, SpellType.NETHER)) {
                         summonedentity = new WitherSkeletonServant(ModEntityType.WITHER_SKELETON_SERVANT.get(), worldIn);
+                    } else if (typeStaff(staff, SpellType.ABYSS)) {
+                        summonedentity = new SunkenSkeletonServant(ModEntityType.SUNKEN_SKELETON_SERVANT.get(), worldIn);
                     } else if (staff.is(ModItems.OMINOUS_STAFF.get())) {
                         summonedentity = new SkeletonPillagerServant(ModEntityType.SKELETON_PILLAGER_SERVANT.get(), worldIn);
                     }
-                } else if (worldIn.dimension() == Level.NETHER
-                        && (caster instanceof Player player && SEHelper.hasResearch(player, ResearchList.BYGONE)    )
-                        && BlockFinder.findStructure(worldIn, caster, BuiltinStructures.FORTRESS)){
-                    summonedentity = new WitherSkeletonServant(ModEntityType.WITHER_SKELETON_SERVANT.get(), worldIn);
-                } else if (worldIn.getBiome(blockPos).is(Tags.Biomes.IS_COLD_OVERWORLD) && worldIn.canSeeSky(blockPos)){
-                    summonedentity = new StrayServant(ModEntityType.STRAY_SERVANT.get(), worldIn);
-                } else if (BlockFinder.findStructure(worldIn, caster, BuiltinStructures.PILLAGER_OUTPOST)){
-                    summonedentity = new SkeletonPillagerServant(ModEntityType.SKELETON_PILLAGER_SERVANT.get(), worldIn);
-                } else if (worldIn.getBiome(blockPos).is(BiomeTags.IS_JUNGLE) && worldIn.random.nextBoolean()){
-                    summonedentity = new MossySkeletonServant(ModEntityType.MOSSY_SKELETON_SERVANT.get(), worldIn);
-                } else if (caster.isUnderWater() && worldIn.isWaterAt(blockPos)){
-                    summonedentity = new SunkenSkeletonServant(ModEntityType.SUNKEN_SKELETON_SERVANT.get(), worldIn);
+                } else {
+                    entityType = summonedentity.getVariant(worldIn, blockPos);
+                    if (entityType != null){
+                        Entity entity = entityType.create(worldIn);
+                        if (entity instanceof AbstractSkeletonServant summoned){
+                            summonedentity = summoned;
+                        }
+                    }
                 }
                 summonedentity.setTrueOwner(caster);
                 summonedentity.moveTo(blockPos, 0.0F, 0.0F);

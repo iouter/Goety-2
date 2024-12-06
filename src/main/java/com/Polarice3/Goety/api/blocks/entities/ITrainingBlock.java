@@ -17,6 +17,10 @@ public interface ITrainingBlock extends IOwnedBlock{
         return false;
     }
 
+    default boolean isPatrolling(){
+        return true;
+    }
+
     default boolean isGrounding(){
         return false;
     }

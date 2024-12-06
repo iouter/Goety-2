@@ -183,6 +183,13 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> NECROMANCER_STEP = create("necromancer_step");
     public static final RegistryObject<SoundEvent> NECROMANCER_DEATH = create("necromancer_death");
 
+    public static final RegistryObject<SoundEvent> DROWNED_NECROMANCER_AMBIENT = create("drowned_necromancer_ambient");
+    public static final RegistryObject<SoundEvent> DROWNED_NECROMANCER_HURT = create("drowned_necromancer_hurt");
+    public static final RegistryObject<SoundEvent> DROWNED_NECROMANCER_PREPARE = create("drowned_necromancer_prepare");
+    public static final RegistryObject<SoundEvent> DROWNED_NECROMANCER_SUMMON = create("drowned_necromancer_summon");
+    public static final RegistryObject<SoundEvent> DROWNED_NECROMANCER_SWIM = create("drowned_necromancer_swim");
+    public static final RegistryObject<SoundEvent> DROWNED_NECROMANCER_DEATH = create("drowned_necromancer_death");
+
     public static final RegistryObject<SoundEvent> WITHER_NECROMANCER_AMBIENT = create("wither_necromancer_ambient");
     public static final RegistryObject<SoundEvent> WITHER_NECROMANCER_HURT = create("wither_necromancer_hurt");
     public static final RegistryObject<SoundEvent> WITHER_NECROMANCER_DEATH = create("wither_necromancer_death");
@@ -466,6 +473,8 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> WIND_BLAST = create("wind_blast");
     public static final RegistryObject<SoundEvent> WIND_HORN = create("wind_horn");
     public static final RegistryObject<SoundEvent> ZAP = create("zap");
+    public static final RegistryObject<SoundEvent> TRIDENT_STORM_PRE = create("trident_storm_pre");
+    public static final RegistryObject<SoundEvent> TRIDENT_STORM_EXPLODE = create("trident_storm_explode");
     public static final RegistryObject<SoundEvent> GRAVITY = create("gravity");
     public static final RegistryObject<SoundEvent> PLATE = create("plate");
     public static final RegistryObject<SoundEvent> PLATE_DROP = create("plate_drop");

@@ -114,8 +114,10 @@ public class BrewRadialMenuScreen extends Screen {
                 this.needsRecheckStacks = true;
             }
 
-            if (!ClientEvents.isKeyDown(ModKeybindings.brewCircle())) {
-                processClick();
+            if (ModKeybindings.brewCircle() != null) {
+                if (!ClientEvents.isKeyDown(ModKeybindings.brewCircle())) {
+                    processClick();
+                }
             }
         } else {
             Minecraft.getInstance().setScreen(null);

@@ -29,15 +29,27 @@ public class ModKeybindings {
     }
 
     public static KeyMapping wandSlot(){
-        return keyBindings[0];
+        if (keyBindings[0] != null) {
+            return keyBindings[0];
+        } else {
+            return null;
+        }
     }
 
     public static KeyMapping wandCircle(){
-        return keyBindings[1];
+        if (keyBindings[1] != null) {
+            return keyBindings[1];
+        } else {
+            return null;
+        }
     }
 
     public static KeyMapping brewCircle(){
-        return keyBindings[9];
+        if (keyBindings[9] != null) {
+            return keyBindings[9];
+        } else {
+            return null;
+        }
     }
 
 }

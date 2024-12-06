@@ -17,6 +17,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
@@ -205,7 +206,7 @@ public interface IOwned {
             if (MobsConfig.MobSense.get()) {
                 if (owned.isAlive()) {
                     if (owned.getTarget() != null) {
-                        if (owned.getTarget() instanceof Mob mob) {
+                        if (owned.getTarget() instanceof Mob mob && !(mob instanceof Guardian)) {
                             if (owned.getTarget() instanceof Animal animal) {
                                 animal.setLastHurtByMob(owned);
                             } else if (mob.getTarget() == null || mob.getTarget().isDeadOrDying()) {

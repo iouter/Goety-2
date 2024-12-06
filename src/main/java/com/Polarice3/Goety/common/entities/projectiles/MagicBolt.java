@@ -110,6 +110,9 @@ public class MagicBolt extends AbstractHurtingProjectile {
 
     protected boolean canHitEntity(Entity pEntity) {
         if (this.getOwner() != null){
+            if (pEntity == this.getOwner()){
+                return false;
+            }
             if (this.getOwner() instanceof Mob mob && mob.getTarget() == pEntity){
                 return super.canHitEntity(pEntity);
             } else {

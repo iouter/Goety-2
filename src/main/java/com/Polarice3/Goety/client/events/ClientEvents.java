@@ -410,6 +410,18 @@ public class ClientEvents {
                                     RenderSystem.disableBlend();
                                     poseStack.popPose();
                                 }
+                                poseStack.pushPose();
+                                poseStack.translate((float) (width / 2), (float) (height - 100), 0.0F);
+                                RenderSystem.enableBlend();
+                                RenderSystem.defaultBlendFunc();
+                                String mode = Component.translatable("tooltip.goety.blockPatrol").getString();
+                                if (!trainingBlock.isPatrolling()){
+                                    mode = Component.translatable("tooltip.goety.blockFollow").getString();
+                                }
+                                int length = fontRenderer.width(mode);
+                                event.getGuiGraphics().drawString(fontRenderer, mode, (-length / 2), -4, 0xFFFFFF);
+                                RenderSystem.disableBlend();
+                                poseStack.popPose();
                                 if (trainingBlock.isSensorSensitive()) {
                                     poseStack.pushPose();
                                     poseStack.translate((float) (width / 2), (float) (height - 90), 0.0F);
@@ -763,11 +775,14 @@ public class ClientEvents {
     /**
      * From here, code is modified and based of @gigaherz ClientEvents codes: <a href="https://github.com/gigaherz/ToolBelt/blob/master/src/main/java/dev/gigaherz/toolbelt/client/ClientEvents.java">...</a>
      * */
-    public static void wipeOpen()
-    {
-        while (ModKeybindings.wandCircle().consumeClick()) {
+    public static void wipeOpen() {
+        if (ModKeybindings.wandCircle() != null) {
+            while (ModKeybindings.wandCircle().consumeClick()) {
+            }
         }
-        while (ModKeybindings.brewCircle().consumeClick()) {
+        if (ModKeybindings.brewCircle() != null) {
+            while (ModKeybindings.brewCircle().consumeClick()) {
+            }
         }
     }
 
@@ -781,7 +796,7 @@ public class ClientEvents {
 
         Minecraft minecraft = Minecraft.getInstance();
 
-        if (minecraft.screen == null) {
+        if (minecraft.screen == null && ModKeybindings.wandCircle() != null && ModKeybindings.brewCircle() != null) {
             boolean toolMenuKeyIsDown = ModKeybindings.wandCircle().isDown() || ModKeybindings.brewCircle().isDown();
             boolean wandCircle = ModKeybindings.wandCircle().isDown();
             boolean brewCircle = ModKeybindings.brewCircle().isDown();

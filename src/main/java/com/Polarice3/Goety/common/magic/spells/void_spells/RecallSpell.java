@@ -1,5 +1,6 @@
 package com.Polarice3.Goety.common.magic.spells.void_spells;
 
+import com.Polarice3.Goety.api.magic.SpellType;
 import com.Polarice3.Goety.common.items.magic.RecallFocus;
 import com.Polarice3.Goety.common.magic.Spell;
 import com.Polarice3.Goety.config.SpellConfig;
@@ -31,6 +32,11 @@ public class RecallSpell extends Spell {
     @Override
     public SoundEvent CastingSound() {
         return null;
+    }
+
+    @Override
+    public SpellType getSpellType() {
+        return SpellType.VOID;
     }
 
     @Override

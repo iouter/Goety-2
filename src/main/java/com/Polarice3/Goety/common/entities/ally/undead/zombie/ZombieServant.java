@@ -5,6 +5,8 @@ import com.Polarice3.Goety.client.particles.ModParticleTypes;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.ai.NeutralZombieAttackGoal;
 import com.Polarice3.Goety.common.entities.ally.Summoned;
+import com.Polarice3.Goety.compat.serene_seasons.SSeasonsIntegration;
+import com.Polarice3.Goety.compat.serene_seasons.SSeasonsLoaded;
 import com.Polarice3.Goety.config.AttributesConfig;
 import com.Polarice3.Goety.config.MobsConfig;
 import com.Polarice3.Goety.init.ModTags;
@@ -236,6 +238,11 @@ public class ZombieServant extends Summoned {
                 entityType = ModEntityType.FROZEN_ZOMBIE_SERVANT.get();
             } else if (level.getBiome(blockPos).is(BiomeTags.IS_JUNGLE) && level.random.nextBoolean()) {
                 entityType = ModEntityType.JUNGLE_ZOMBIE_SERVANT.get();
+            }
+            if (SSeasonsLoaded.SERENE_SEASONS.isLoaded()){
+                if (SSeasonsIntegration.summonSnowVariant(level, blockPos)){
+                    entityType = ModEntityType.FROZEN_ZOMBIE_SERVANT.get();
+                }
             }
         }
         return entityType;

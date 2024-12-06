@@ -3,6 +3,7 @@
     "minecraft:lightning_bolt",
     "goety:shock",
     "goety:direct_shock",
-    "goety:indirect_shock"
+    "goety:indirect_shock",
+    "goety:lightning"
   ]
 }

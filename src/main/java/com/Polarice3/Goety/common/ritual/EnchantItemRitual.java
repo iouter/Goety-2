@@ -81,6 +81,8 @@ public class EnchantItemRitual extends Ritual{
         if (result.getItem() instanceof BookItem){
             result = EnchantedBookItem.createForEnchantment(enchantmentInstance);
             activationItem.shrink(1);
+            IItemHandler handler = tileEntity.itemStackHandler.orElseThrow(RuntimeException::new);
+            handler.insertItem(0, result, false);
         } else {
             if (map.containsKey(this.recipe.getEnchantment())) {
                 for (Enchantment enchantment : map.keySet()) {
@@ -102,7 +104,5 @@ public class EnchantItemRitual extends Ritual{
             }
         }
         result.onCraftedBy(world, castingPlayer, 1);
-        IItemHandler handler = tileEntity.itemStackHandler.orElseThrow(RuntimeException::new);
-        handler.insertItem(0, result, false);
     }
 }

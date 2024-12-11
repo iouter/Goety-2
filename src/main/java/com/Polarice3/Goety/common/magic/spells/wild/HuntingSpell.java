@@ -5,7 +5,9 @@ import com.Polarice3.Goety.common.effects.GoetyEffects;
 import com.Polarice3.Goety.common.enchantments.ModEnchantments;
 import com.Polarice3.Goety.common.entities.ModEntityType;
 import com.Polarice3.Goety.common.entities.ally.BlackWolf;
+import com.Polarice3.Goety.common.entities.ally.Hellhound;
 import com.Polarice3.Goety.common.entities.ally.Summoned;
+import com.Polarice3.Goety.common.entities.ally.undead.skeleton.SkeletonWolf;
 import com.Polarice3.Goety.common.magic.SpellStat;
 import com.Polarice3.Goety.common.magic.SummonSpell;
 import com.Polarice3.Goety.config.SpellConfig;
@@ -26,6 +28,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -74,7 +77,7 @@ public class HuntingSpell extends SummonSpell {
 
     @Override
     public Predicate<LivingEntity> summonPredicate() {
-        return livingEntity -> livingEntity instanceof BlackWolf;
+        return livingEntity -> livingEntity instanceof BlackWolf || livingEntity instanceof SkeletonWolf;
     }
 
     @Override
@@ -97,6 +100,10 @@ public class HuntingSpell extends SummonSpell {
         }
     }
 
+    public boolean specialStaffs(ItemStack stack){
+        return typeStaff(stack, SpellType.NECROMANCY) || typeStaff(stack, SpellType.NETHER);
+    }
+
     @Override
     public void SpellResult(ServerLevel worldIn, LivingEntity caster, ItemStack staff, SpellStat spellStat) {
         this.commonResult(worldIn, caster);
@@ -110,9 +117,16 @@ public class HuntingSpell extends SummonSpell {
             int i = 1;
             if (rightStaff(staff)){
                 i = 3;
+            } else if (specialStaffs(staff)){
+                i = 2;
             }
             for (int i1 = 0; i1 < i; ++i1) {
                 Summoned summonedentity = new BlackWolf(ModEntityType.BLACK_WOLF.get(), worldIn);
+                if (this.typeStaff(staff, SpellType.NECROMANCY)){
+                    summonedentity = new SkeletonWolf(ModEntityType.SKELETON_WOLF.get(), worldIn);
+                }/* else if (worldIn.dimension() == Level.NETHER || this.typeStaff(staff, SpellType.NETHER)){
+                    summonedentity = new Hellhound(ModEntityType.HELLHOUND.get(), worldIn);
+                }*/
                 BlockPos blockPos = BlockFinder.SummonRadius(caster.blockPosition(), summonedentity, worldIn);
                 summonedentity.setTrueOwner(caster);
                 summonedentity.moveTo(blockPos, 0.0F, 0.0F);

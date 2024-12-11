@@ -129,14 +129,18 @@ public class Summoned extends Owned implements IServant {
         if (this.isPatrolling()){
             if (p_21544_ != null) {
                 if (p_21544_.distanceToSqr(this.vec3BoundPos()) <= Mth.square(PATROL_RANGE)) {
-                    super.setTarget(p_21544_);
+                    this.normalSetTarget(p_21544_);
                 }
             } else {
-                super.setTarget(null);
+                this.normalSetTarget(null);
             }
         } else {
-            super.setTarget(p_21544_);
+            this.normalSetTarget(p_21544_);
         }
+    }
+
+    public void normalSetTarget(@Nullable LivingEntity p_21544_){
+        super.setTarget(p_21544_);
     }
 
     @Nullable
@@ -292,12 +296,6 @@ public class Summoned extends Owned implements IServant {
         this.setFlags(2, staying);
     }
 
-    public void setFollowing(){
-        this.setBoundPos(null);
-        this.setWandering(false);
-        this.setStaying(false);
-    }
-
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.readServantData(compound);
@@ -376,10 +374,6 @@ public class Summoned extends Owned implements IServant {
 
     public void setBoundPos(BlockPos blockPos){
         this.boundPos = blockPos;
-    }
-
-    public Vec3 vec3BoundPos(){
-        return Vec3.atBottomCenterOf(this.boundPos);
     }
 
     public void dropEquipment(EquipmentSlot equipmentSlot, ItemStack stack){

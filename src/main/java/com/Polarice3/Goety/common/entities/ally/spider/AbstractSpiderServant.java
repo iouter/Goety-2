@@ -277,12 +277,6 @@ public abstract class AbstractSpiderServant extends Spider implements PlayerRide
         this.setFlags(2, staying);
     }
 
-    public void setFollowing(){
-        this.setBoundPos(null);
-        this.setWandering(false);
-        this.setStaying(false);
-    }
-
     public boolean canUpdateMove(){
         return true;
     }

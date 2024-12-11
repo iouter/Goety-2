@@ -226,11 +226,11 @@ public class MobUtil {
         return lootparams$builder;
     }
 
-    public static void knockBack(LivingEntity knocked, Entity knocker, double xPower, double yPower, double zPower) {
+    public static void knockBack(Entity knocked, Entity knocker, double xPower, double yPower, double zPower) {
         Vec3 vec3 = new Vec3(knocker.getX() - knocked.getX(), knocker.getY() - knocked.getY(), knocker.getZ() - knocked.getZ()).normalize();
         double pY0 = Math.max(-vec3.y, yPower);
         Vec3 vec31 = new Vec3(-vec3.x * xPower, pY0, -vec3.z * zPower);
-        double resist = knocked.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
+        double resist = knocked instanceof LivingEntity livingEntity ? livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE) : 0.0D;
         double resist1 = Math.max(0.0D, 1.0D - resist);
         if (knocked instanceof Player player) {
             if (MobUtil.playerValidity(player, false)) {

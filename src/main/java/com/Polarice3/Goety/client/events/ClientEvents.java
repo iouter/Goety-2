@@ -38,6 +38,7 @@ import com.Polarice3.Goety.common.network.client.*;
 import com.Polarice3.Goety.common.network.client.brew.CBrewBagKeyPacket;
 import com.Polarice3.Goety.config.ItemConfig;
 import com.Polarice3.Goety.config.MainConfig;
+import com.Polarice3.Goety.config.SpellConfig;
 import com.Polarice3.Goety.init.ModKeybindings;
 import com.Polarice3.Goety.init.ModSounds;
 import com.Polarice3.Goety.utils.*;
@@ -57,6 +58,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.Input;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -849,34 +851,37 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void updateInputEvent(MovementInputUpdateEvent event) {
-        if (MainConfig.WheelGuiMovement.get()) {
-            if (Minecraft.getInstance().screen instanceof FocusRadialMenuScreen || Minecraft.getInstance().screen instanceof BrewRadialMenuScreen) {
-                Options settings = Minecraft.getInstance().options;
-                Input input = event.getInput();
-                input.up = isKeyDown0(settings.keyUp);
-                input.down = isKeyDown0(settings.keyDown);
-                input.left = isKeyDown0(settings.keyLeft);
-                input.right = isKeyDown0(settings.keyRight);
+        Player player = event.getEntity();
+        Input input = event.getInput();
+        if (player instanceof LocalPlayer localPlayer) {
+            if (MainConfig.WheelGuiMovement.get()) {
+                if (Minecraft.getInstance().screen instanceof FocusRadialMenuScreen || Minecraft.getInstance().screen instanceof BrewRadialMenuScreen) {
+                    Options settings = Minecraft.getInstance().options;
+                    input.up = isKeyDown0(settings.keyUp);
+                    input.down = isKeyDown0(settings.keyDown);
+                    input.left = isKeyDown0(settings.keyLeft);
+                    input.right = isKeyDown0(settings.keyRight);
 
-                input.forwardImpulse = input.up == input.down ? 0.0F : (input.up ? 1.0F : -1.0F);
-                input.leftImpulse = input.left == input.right ? 0.0F : (input.left ? 1.0F : -1.0F);
-                input.jumping = isKeyDown0(settings.keyJump);
-                input.shiftKeyDown = isKeyDown0(settings.keyShift);
-                if (Minecraft.getInstance().player.isMovingSlowly()) {
-                    input.leftImpulse = (float) ((double) input.leftImpulse * 0.3D);
-                    input.forwardImpulse = (float) ((double) input.forwardImpulse * 0.3D);
+                    input.forwardImpulse = input.up == input.down ? 0.0F : (input.up ? 1.0F : -1.0F);
+                    input.leftImpulse = input.left == input.right ? 0.0F : (input.left ? 1.0F : -1.0F);
+                    input.jumping = isKeyDown0(settings.keyJump);
+                    input.shiftKeyDown = isKeyDown0(settings.keyShift);
+                    if (localPlayer.isMovingSlowly()) {
+                        input.leftImpulse = (float) ((double) input.leftImpulse * 0.3D);
+                        input.forwardImpulse = (float) ((double) input.forwardImpulse * 0.3D);
+                    }
+                }
+            }
+            if (SpellConfig.FullStopCast.get()) {
+                if (localPlayer.isUsingItem() && !localPlayer.isPassenger()) {
+                    if (MobUtil.isSpellCasting(localPlayer)) {
+                        input.leftImpulse = 0.0F;
+                        input.forwardImpulse = 0.0F;
+                        input.jumping = false;
+                    }
                 }
             }
         }
-/*        Player player = event.getEntity();
-        if (player.isUsingItem() && !player.isPassenger()){
-            ItemStack itemStack = player.getUseItem();
-            if (itemStack.getItem() instanceof DarkWand){
-                Input input = event.getInput();
-                input.leftImpulse *= 5.0F;
-                input.forwardImpulse *= 5.0F;
-            }
-        }*/
     }
     /**
      * To Here

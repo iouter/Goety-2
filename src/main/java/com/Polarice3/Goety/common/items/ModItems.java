@@ -113,6 +113,7 @@ public class ModItems {
     public static final RegistryObject<Item> REFUSE_BOTTLE = ITEMS.register("refuse_bottle", RefuseBottleItem::new);
     public static final RegistryObject<Item> ILL_BOMB = ITEMS.register("ill_bomb", IllBombItem::new);
     public static final RegistryObject<Item> CRYPTIC_EYE = ITEMS.register("cryptic_eye", CrypticEyeItem::new);
+    public static final RegistryObject<Item> COMMAND_HORN = ITEMS.register("command_horn", CommandHorn::new);
     public static final RegistryObject<Item> SOUL_JAR = ITEMS.register("soul_jar", SoulJar::new);
     public static final RegistryObject<Item> HOWLING_SOUL = ITEMS.register("howling_soul", HowlingSoul::new);
     public static final RegistryObject<Item> TAGLOCK_KIT = ITEMS.register("taglock_kit", TaglockKit::new);
@@ -227,6 +228,7 @@ public class ModItems {
     public static final RegistryObject<Item> BULWARK_FOCUS = ITEMS.register("bulwark_focus", () -> new MagicFocus(new BulwarkSpell()));
     public static final RegistryObject<Item> SOUL_HEAL_FOCUS = ITEMS.register("soul_heal_focus", () -> new MagicFocus(new SoulHealSpell()));
     public static final RegistryObject<Item> SHOCKWAVE_FOCUS = ITEMS.register("shockwave_focus", () -> new MagicFocus(new ShockwaveSpell()));
+    public static final RegistryObject<Item> WEAKENING_FOCUS = ITEMS.register("weakening_focus", () -> new MagicFocus(new WeakeningSpell()));
     public static final RegistryObject<Item> ARROW_RAIN_FOCUS = ITEMS.register("arrow_rain_focus", () -> new MagicFocus(new ArrowRainSpell()));
     public static final RegistryObject<Item> TELEKINESIS_FOCUS = ITEMS.register("telekinesis_focus", () -> new MagicFocus(new TelekinesisSpell()));
     public static final RegistryObject<Item> COMMAND_FOCUS = ITEMS.register("command_focus", CommandFocus::new);
@@ -238,6 +240,7 @@ public class ModItems {
     public static final RegistryObject<Item> OSSEOUS_FOCUS = ITEMS.register("osseous_focus", () -> new MagicFocus(new SkeletonSpell()));
     public static final RegistryObject<Item> GHOST_FIRE_FOCUS = ITEMS.register("ghost_fire_focus", () -> new MagicFocus(new IceBouquetSpell()));
     public static final RegistryObject<Item> SPOOKY_FOCUS = ITEMS.register("spooky_focus", () -> new MagicFocus(new WraithSpell()));
+    public static final RegistryObject<Item> PHANTASM_FOCUS = ITEMS.register("phantasm_focus", () -> new MagicFocus(new PhantomSpell()));
     public static final RegistryObject<Item> VANGUARD_FOCUS = ITEMS.register("vanguard_focus", () -> new MagicFocus(new VanguardSpell()));
     public static final RegistryObject<Item> BLACKGUARD_FOCUS = ITEMS.register("blackguard_focus", () -> new MagicFocus(new BlackguardSpell()));
     public static final RegistryObject<Item> LEECHING_FOCUS = ITEMS.register("leeching_focus", () -> new MagicFocus(new LeechingSpell()));

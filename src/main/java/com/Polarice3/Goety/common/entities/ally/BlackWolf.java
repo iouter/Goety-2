@@ -187,6 +187,14 @@ public class BlackWolf extends AnimalSummon{
     public void setBaby(boolean p_146756_) {
     }
 
+    /*public EntityType<?> getVariant(Level level, BlockPos blockPos){
+        EntityType<?> entityType = ModEntityType.BLACK_WOLF.get();
+        if (level.dimension() == Level.NETHER) {
+            entityType = ModEntityType.HELLHOUND.get();
+        }
+        return entityType;
+    }*/
+
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
         pSpawnData = super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
@@ -200,11 +208,11 @@ public class BlackWolf extends AnimalSummon{
 
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide && this.isWet && !this.isShaking && !this.isPathFinding() && this.onGround()) {
+        if (!this.level.isClientSide && this.isWet() && !this.isShaking && !this.isPathFinding() && this.onGround()) {
             this.isShaking = true;
             this.shakeAnim = 0.0F;
             this.shakeAnimO = 0.0F;
-            this.level().broadcastEntityEvent(this, (byte)8);
+            this.level.broadcastEntityEvent(this, (byte)8);
         }
     }
 
@@ -220,11 +228,11 @@ public class BlackWolf extends AnimalSummon{
 
             if (this.isInWaterRainOrBubble()) {
                 this.isWet = true;
-                if (this.isShaking && !this.level().isClientSide) {
-                    this.level().broadcastEntityEvent(this, (byte)56);
+                if (this.isShaking && !this.level.isClientSide) {
+                    this.level.broadcastEntityEvent(this, (byte)56);
                     this.cancelShake();
                 }
-            } else if ((this.isWet || this.isShaking) && this.isShaking) {
+            } else if ((this.isWet() || this.isShaking) && this.isShaking) {
                 if (this.shakeAnim == 0.0F) {
                     this.playSound(SoundEvents.WOLF_SHAKE, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
                     this.gameEvent(GameEvent.ENTITY_SHAKE);
@@ -247,7 +255,7 @@ public class BlackWolf extends AnimalSummon{
                     for(int j = 0; j < i; ++j) {
                         float f1 = (this.random.nextFloat() * 2.0F - 1.0F) * this.getBbWidth() * 0.5F;
                         float f2 = (this.random.nextFloat() * 2.0F - 1.0F) * this.getBbWidth() * 0.5F;
-                        this.level().addParticle(ParticleTypes.SPLASH, this.getX() + (double)f1, (double)(f + 0.8F), this.getZ() + (double)f2, vec3.x, vec3.y, vec3.z);
+                        this.level.addParticle(ParticleTypes.SPLASH, this.getX() + (double)f1, (double)(f + 0.8F), this.getZ() + (double)f2, vec3.x, vec3.y, vec3.z);
                     }
                 }
             }

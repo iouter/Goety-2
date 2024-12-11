@@ -1,7 +1,7 @@
 {
   "name": "Nameless Staff",
   "icon": "goety:nameless_staff",
-  "category": "goety:crafts/garment",
+  "category": "goety:crafts",
   "advancement": "goety:goety/read_forbidden_scroll",
   "secret": true,
   "pages": [

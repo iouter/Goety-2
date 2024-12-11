@@ -53,6 +53,12 @@ public interface IServant extends IOwned {
     default void setBoundPos(BlockPos blockPos){
     }
 
+    default void setFollowing(){
+        this.setBoundPos(null);
+        this.setWandering(false);
+        this.setStaying(false);
+    }
+
     default boolean isFollowing(){
         return !this.isWandering() && !this.isStaying() && !this.isPatrolling();
     }

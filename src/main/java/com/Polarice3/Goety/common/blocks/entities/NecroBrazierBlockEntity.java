@@ -98,25 +98,28 @@ public class NecroBrazierBlockEntity extends ModBlockEntity implements Clearable
             return false;
         }
 
+        boolean did = false;
+
         for (int i = 0; i < this.getContainer().getContainerSize(); i++) {
             if (this.getContainer().getItem(i).isEmpty()) {
-                ItemStack stack1 = stack.copy();
-                stack1.setCount(1);
-                this.getContainer().setItem(i, stack1);
+                did = true;
+                ItemStack stackToAdd = stack.copyWithCount(1);
+                this.getContainer().setItem(i, stackToAdd);
 
                 if (player == null || !player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
 
-                if (player != null && this.level != null){
-                    this.level.playSound(null, this.getBlockPos(), SoundEvents.ARMOR_EQUIP_GENERIC, SoundSource.BLOCKS, 1.0F, 1.0F);
-                }
-
                 break;
             }
         }
-        this.markUpdated();
-        return true;
+        if (did) {
+            if (player != null && this.level != null){
+                this.level.playSound(null, this.getBlockPos(), SoundEvents.ARMOR_EQUIP_GENERIC, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
+            this.markUpdated();
+        }
+        return did;
     }
 
     public void removeItem(Player player) {

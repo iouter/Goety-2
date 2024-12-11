@@ -32,7 +32,7 @@ public class ModStructureTagsProvider extends TagsProvider<Structure> {
         this.tag(ModTags.Structures.CRONE_SPAWNS).add(ModStructures.BLIGHTED_SHACK_KEY);
         this.tag(ModTags.Structures.SKULL_LORD_SPAWNS).add(ModStructures.CRYPT_KEY);
         this.tag(ModTags.Structures.CRYPT).add(ModStructures.CRYPT_KEY);
-        this.tag(ModTags.Structures.NECROMANCER_POWER).add(ModStructures.GRAVEYARD_KEY);
+        this.tag(ModTags.Structures.NECROMANCER_POWER).addTag(ModTags.Structures.CRYPT).add(ModStructures.GRAVEYARD_KEY);
         this.tag(ModTags.Structures.CAN_SUMMON_BRUTES).add(BuiltinStructures.BASTION_REMNANT);
     }
 }

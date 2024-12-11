@@ -668,6 +668,11 @@ public class ModEntityType {
                     .sized(0.6F, 1.99F)
                     .clientTrackingRange(8));
 
+    public static final RegistryObject<EntityType<PhantomServant>> PHANTOM_SERVANT = register("phantom_servant",
+            EntityType.Builder.of(PhantomServant::new, MobCategory.MONSTER)
+                    .sized(0.9F, 0.5F)
+                    .clientTrackingRange(8));
+
     public static final RegistryObject<EntityType<SkeletonPillagerServant>> SKELETON_PILLAGER_SERVANT = register("skeleton_pillager",
             EntityType.Builder.of(SkeletonPillagerServant::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.99F)
@@ -799,6 +804,18 @@ public class ModEntityType {
     public static final RegistryObject<EntityType<BlackWolf>> BLACK_WOLF = register("black_wolf",
             EntityType.Builder.of(BlackWolf::new, MobCategory.MONSTER)
                     .sized(0.6F, 0.85F)
+                    .clientTrackingRange(8));
+
+    public static final RegistryObject<EntityType<SkeletonWolf>> SKELETON_WOLF = register("skeleton_wolf",
+            EntityType.Builder.of(SkeletonWolf::new, MobCategory.MONSTER)
+                    .sized(0.6F, 0.85F)
+                    .clientTrackingRange(8));
+
+    public static final RegistryObject<EntityType<Hellhound>> HELLHOUND = register("hellhound",
+            EntityType.Builder.of(Hellhound::new, MobCategory.MONSTER)
+                    .sized(0.6F, 0.85F)
+                    .fireImmune()
+                    .noSummon() //Temp
                     .clientTrackingRange(8));
 
     public static final RegistryObject<EntityType<BearServant>> BEAR_SERVANT = register("bear_servant",

@@ -232,6 +232,16 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> ICEOLOGER_ATTACK = create("iceologer_attack");
     public static final RegistryObject<SoundEvent> ICEOLOGER_DEATH = create("iceologer_death");
 
+    public static final RegistryObject<SoundEvent> SKELETON_WOLF_AMBIENT = create("skeleton_wolf_ambient");
+    public static final RegistryObject<SoundEvent> SKELETON_WOLF_HURT = create("skeleton_wolf_hurt");
+    public static final RegistryObject<SoundEvent> SKELETON_WOLF_GROWL = create("skeleton_wolf_growl");
+    public static final RegistryObject<SoundEvent> SKELETON_WOLF_HOWL = create("skeleton_wolf_howl");
+    public static final RegistryObject<SoundEvent> SKELETON_WOLF_PANT = create("skeleton_wolf_pant");
+    public static final RegistryObject<SoundEvent> SKELETON_WOLF_SHAKE = create("skeleton_wolf_shake");
+    public static final RegistryObject<SoundEvent> SKELETON_WOLF_WHINE = create("skeleton_wolf_whine");
+    public static final RegistryObject<SoundEvent> SKELETON_WOLF_STEP = create("skeleton_wolf_step");
+    public static final RegistryObject<SoundEvent> SKELETON_WOLF_DEATH = create("skeleton_wolf_death");
+
     public static final RegistryObject<SoundEvent> BLACK_BEAST_AMBIENT = create("black_beast_ambient");
     public static final RegistryObject<SoundEvent> BLACK_BEAST_HURT = create("black_beast_hurt");
     public static final RegistryObject<SoundEvent> BLACK_BEAST_ROAR = create("black_beast_roar");
@@ -458,6 +468,8 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> PROJECTILE_SPELL = create("projectile_spell");
     public static final RegistryObject<SoundEvent> COMMAND = create("command");
     public static final RegistryObject<SoundEvent> SHIELD_UP = create("shield_up");
+    public static final RegistryObject<SoundEvent> WEAKEN_CAST = create("weaken_cast");
+    public static final RegistryObject<SoundEvent> WEAKEN_CURSE = create("weaken_curse");
     public static final RegistryObject<SoundEvent> BOLT_IMPACT = create("bolt_impact");
     public static final RegistryObject<SoundEvent> CAST_STEAM = create("cast_steam");
     public static final RegistryObject<SoundEvent> STEAM_IMPACT = create("steam_impact");

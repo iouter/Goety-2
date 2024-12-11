@@ -147,6 +147,9 @@ public class ModSpawnEggs {
     public static final RegistryObject<ModSpawnEggItem> BORDER_WRAITH_SERVANT_SPAWN_EGG = ITEMS.register("border_wraith_servant_spawn_egg",
             () -> new ModSpawnEggItem(ModEntityType.BORDER_WRAITH_SERVANT, 0x18090f, 0x869696, egg()));
 
+    public static final RegistryObject<ModSpawnEggItem> PHANTOM_SERVANT_SPAWN_EGG = ITEMS.register("phantom_servant_spawn_egg",
+            () -> new ModSpawnEggItem(ModEntityType.PHANTOM_SERVANT, 0x881214, 0x7ef0fb, egg()));
+
     public static final RegistryObject<ModSpawnEggItem> BOUND_EVOKER_SPAWN_EGG = ITEMS.register("bound_evoker_spawn_egg",
             () -> new ModSpawnEggItem(ModEntityType.BOUND_EVOKER, 0x5a6363, 0x363636, egg()));
 
@@ -194,6 +197,12 @@ public class ModSpawnEggs {
 
     public static final RegistryObject<ModSpawnEggItem> BLACK_WOLF_SPAWN_EGG = ITEMS.register("black_wolf_spawn_egg",
             () -> new ModSpawnEggItem(ModEntityType.BLACK_WOLF, 0x1c161e, 0x495065, egg()));
+
+    public static final RegistryObject<ModSpawnEggItem> SKELETON_WOLF_SPAWN_EGG = ITEMS.register("skeleton_wolf_spawn_egg",
+            () -> new ModSpawnEggItem(ModEntityType.SKELETON_WOLF, 0xe3e3e3, 0x494949, egg()));
+
+    /*public static final RegistryObject<ModSpawnEggItem> HELLHOUND_SPAWN_EGG = ITEMS.register("hellhound_spawn_egg",
+            () -> new ModSpawnEggItem(ModEntityType.HELLHOUND, 0x8d2600, 0x140000, egg()));*/
 
     public static final RegistryObject<ModSpawnEggItem> BEAR_SERVANT_SPAWN_EGG = ITEMS.register("bear_servant_spawn_egg",
             () -> new ModSpawnEggItem(ModEntityType.BEAR_SERVANT, 0x3a281d, 0xfa2e14, egg()));

@@ -697,6 +697,18 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "item.goety.phantasm_focus": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "goety:phantasm_focus"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "item.goety.poison_dart_focus": {
       "conditions": {
         "items": [
@@ -1045,6 +1057,18 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "item.goety.weakening_focus": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "goety:weakening_focus"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "item.goety.whirlwind_focus": {
       "conditions": {
         "items": [
@@ -1165,6 +1189,9 @@
       "item.goety.shockwave_focus"
     ],
     [
+      "item.goety.weakening_focus"
+    ],
+    [
       "item.goety.arrow_rain_focus"
     ],
     [
@@ -1190,6 +1217,9 @@
     ],
     [
       "item.goety.spooky_focus"
+    ],
+    [
+      "item.goety.phantasm_focus"
     ],
     [
       "item.goety.vanguard_focus"

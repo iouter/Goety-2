@@ -67,6 +67,7 @@ public class MobsConfig {
     public static final ForgeConfigSpec.ConfigValue<Boolean> VanguardServantTexture;
 
     public static final ForgeConfigSpec.ConfigValue<Boolean> WraithServantTexture;
+    public static final ForgeConfigSpec.ConfigValue<Boolean> PhantomServantTexture;
 
     public static final ForgeConfigSpec.ConfigValue<Boolean> ZPiglinServantTexture;
 
@@ -225,6 +226,10 @@ public class MobsConfig {
                 BUILDER.push("Wraith Servants");
                 WraithServantTexture = BUILDER.comment("If Wraith Servants have custom textures, Default: true")
                         .define("wraithServantTexture", true);
+                BUILDER.pop();
+                BUILDER.push("Phantom Servants");
+                PhantomServantTexture = BUILDER.comment("If Phantom Servants have custom textures, Default: true")
+                        .define("phantomServantTexture", true);
                 BUILDER.pop();
                 BUILDER.push("Zombified Piglin Servants");
                 ZPiglinServantTexture = BUILDER.comment("If Zombified Piglin Servants have custom textures, Default: true")

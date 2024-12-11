@@ -23,6 +23,23 @@
     {
       "type": "patchouli:text",
       "text": "Right-clicking on a loyal Black Wolf with meat will heal them."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Summoning Black Wolves through certain ways may also yield variants of the beast or even other types of hounds."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "goety:skeleton_wolf",
+      "scale": 0.5
+    },
+    {
+      "type": "patchouli:text",
+      "text": "An undead version of regular wolves, though unlike them, these wolves may emit a howl that boosts the damage of their skeleton allies. They are summoned by casting $(l:focuses/wild/hunting_focus)Hunting spell$() with a $(l:crafts/necro_staff)Necro Staff$(), or through another ritual."
+    },
+    {
+      "type": "goety:ritual",
+      "recipe": "goety:thrall/summon_skeleton_wolf_thrall"
     }
   ]
 }

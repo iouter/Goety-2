@@ -2803,6 +2803,111 @@
     ],
     "subtitle": "subtitle.goety.iceologer_death"
   },
+  "skeleton_wolf_ambient": {
+    "sounds": [
+      {
+        "name": "goety:skeleton_wolf/idle1"
+      },
+      {
+        "name": "goety:skeleton_wolf/idle2"
+      },
+      {
+        "name": "goety:skeleton_wolf/idle3"
+      }
+    ],
+    "subtitle": "subtitle.goety.skeleton_wolf_ambient"
+  },
+  "skeleton_wolf_hurt": {
+    "sounds": [
+      {
+        "name": "goety:skeleton_wolf/hurt1"
+      },
+      {
+        "name": "goety:skeleton_wolf/hurt2"
+      },
+      {
+        "name": "goety:skeleton_wolf/hurt3"
+      }
+    ],
+    "subtitle": "subtitle.goety.skeleton_wolf_hurt"
+  },
+  "skeleton_wolf_growl": {
+    "sounds": [
+      {
+        "name": "goety:skeleton_wolf/growl1"
+      },
+      {
+        "name": "goety:skeleton_wolf/growl2"
+      },
+      {
+        "name": "goety:skeleton_wolf/growl3"
+      }
+    ],
+    "subtitle": "subtitle.goety.skeleton_wolf_growl"
+  },
+  "skeleton_wolf_howl": {
+    "sounds": [
+      {
+        "name": "goety:skeleton_wolf/howl1"
+      },
+      {
+        "name": "goety:skeleton_wolf/howl2"
+      }
+    ],
+    "subtitle": "subtitle.goety.skeleton_wolf_howl"
+  },
+  "skeleton_wolf_pant": {
+    "sounds": [
+      {
+        "name": "goety:skeleton_wolf/pant"
+      }
+    ],
+    "subtitle": "subtitle.goety.skeleton_wolf_ambient"
+  },
+  "skeleton_wolf_shake": {
+    "sounds": [
+      {
+        "name": "goety:skeleton_wolf/shake"
+      }
+    ],
+    "subtitle": "subtitle.goety.skeleton_wolf_shake"
+  },
+  "skeleton_wolf_whine": {
+    "sounds": [
+      {
+        "name": "goety:skeleton_wolf/whine"
+      }
+    ],
+    "subtitle": "subtitle.goety.skeleton_wolf_ambient"
+  },
+  "skeleton_wolf_step": {
+    "sounds": [
+      {
+        "name": "goety:skeleton_wolf/step1"
+      },
+      {
+        "name": "goety:skeleton_wolf/step2"
+      },
+      {
+        "name": "goety:skeleton_wolf/step3"
+      },
+      {
+        "name": "goety:skeleton_wolf/step4"
+      },
+      {
+        "name": "goety:skeleton_wolf/step5"
+      }
+    ],
+    "subtitle": "subtitle.goety.skeleton_wolf_step"
+  },
+  "skeleton_wolf_death": {
+    "sounds": [
+      {
+        "name": "goety:skeleton_wolf/death"
+      }
+    ],
+    "subtitle": "subtitle.goety.skeleton_wolf_death"
+  },
   "black_beast_ambient": {
     "sounds": [
       {
@@ -5233,6 +5338,31 @@
       }
     ],
     "subtitle": "subtitle.goety.shield_up"
+  },
+  "weaken_cast": {
+    "sounds": [
+      {
+        "name": "goety:spell/weaken1"
+      },
+      {
+        "name": "goety:spell/weaken2"
+      },
+      {
+        "name": "goety:spell/weaken3"
+      },
+      {
+        "name": "goety:spell/weaken4"
+      }
+    ],
+    "subtitle": "subtitle.goety.weaken_cast"
+  },
+  "weaken_curse": {
+    "sounds": [
+      {
+        "name": "goety:spell/weaken_curse"
+      }
+    ],
+    "subtitle": "subtitle.goety.weaken_curse"
   },
   "bolt_impact": {
     "sounds": [

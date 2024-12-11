@@ -6,6 +6,7 @@ import com.Polarice3.Goety.common.items.WaystoneItem;
 import com.Polarice3.Goety.common.network.ModNetwork;
 import com.Polarice3.Goety.common.network.server.SPlayWorldSoundPacket;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -25,8 +26,9 @@ public class TeleportRitual extends Ritual {
     public boolean isValid(Level world, BlockPos darkAltarPos, DarkAltarBlockEntity tileEntity,
                            Player castingPlayer, ItemStack activationItem,
                            List<Ingredient> remainingAdditionalIngredients) {
+        GlobalPos globalPos = WaystoneItem.getPosition(activationItem);
         return activationItem.getItem() instanceof WaystoneItem
-                && WaystoneItem.hasBlock(activationItem)
+                && globalPos != null
                 && WaystoneItem.isSameDimension(castingPlayer, activationItem)
                 && this.areAdditionalIngredientsFulfilled(world, darkAltarPos, castingPlayer, remainingAdditionalIngredients);
     }
@@ -36,9 +38,10 @@ public class TeleportRitual extends Ritual {
                        Player castingPlayer, ItemStack activationItem) {
         super.finish(world, blockPos, tileEntity, castingPlayer, activationItem);
 
-        if (WaystoneItem.getPosition(activationItem) != null) {
-            BlockPos blockPos1 = WaystoneItem.getPosition(activationItem).pos();
-            castingPlayer.teleportTo(blockPos1.getX(), blockPos1.getY(), blockPos1.getZ());
+        GlobalPos globalPos = WaystoneItem.getPosition(activationItem);
+        if (globalPos != null) {
+            BlockPos blockPos1 = globalPos.pos();
+            castingPlayer.teleportTo(blockPos1.getX(), blockPos1.getY() + 1.0F, blockPos1.getZ());
 
             if (world instanceof ServerLevel serverLevel) {
                 serverLevel.sendParticles(ParticleTypes.PORTAL, blockPos.getX() + 0.5,

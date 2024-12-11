@@ -3,7 +3,10 @@ package com.Polarice3.Goety.init;
 import com.Polarice3.Goety.Goety;
 import com.Polarice3.Goety.api.items.magic.ITotem;
 import com.Polarice3.Goety.client.events.BossBarEvent;
-import com.Polarice3.Goety.client.gui.overlay.*;
+import com.Polarice3.Goety.client.gui.overlay.CurrentFocusGui;
+import com.Polarice3.Goety.client.gui.overlay.DreadOverlay;
+import com.Polarice3.Goety.client.gui.overlay.RavagerRoarGui;
+import com.Polarice3.Goety.client.gui.overlay.SoulEnergyGui;
 import com.Polarice3.Goety.client.gui.screen.inventory.*;
 import com.Polarice3.Goety.client.inventory.container.ModContainerType;
 import com.Polarice3.Goety.client.particles.*;
@@ -62,7 +65,6 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import org.jetbrains.annotations.UnknownNullability;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -155,17 +157,6 @@ public class ClientInitEvents {
             }
     }
 
-    private static ModPlayerRenderer renderer;
-
-    public static void initRenderer(EntityRendererProvider.Context context) {
-        renderer = new ModPlayerRenderer(context);
-    }
-
-    @UnknownNullability
-    public static ModPlayerRenderer getModPlayerRenderer() {
-        return renderer;
-    }
-
     /**
      * Ripped from @TeamTwilight's AddLayer codes: <a href="https://github.com/TeamTwilight/twilightforest/blob/1.20.x/src/main/java/twilightforest/client/TFClientSetup.java">...</a>
      */
@@ -175,7 +166,6 @@ public class ClientInitEvents {
     @SubscribeEvent
     @SuppressWarnings("unchecked")
     public static void addLayers(EntityRenderersEvent.AddLayers event){
-        initRenderer(event.getContext());
         if (fieldEntityRenderer == null) {
             try {
                 fieldEntityRenderer = EntityRenderersEvent.AddLayers.class.getDeclaredField("renderers");
@@ -521,6 +511,7 @@ public class ClientInitEvents {
         event.registerEntityRenderer(ModEntityType.DROWNED_NECROMANCER_SERVANT.get(), DrownedNecromancerRenderer::new);
         event.registerEntityRenderer(ModEntityType.WRAITH_SERVANT.get(), WraithServantRenderer::new);
         event.registerEntityRenderer(ModEntityType.BORDER_WRAITH_SERVANT.get(), BorderWraithServantRenderer::new);
+        event.registerEntityRenderer(ModEntityType.PHANTOM_SERVANT.get(), PhantomServantRenderer::new);
         event.registerEntityRenderer(ModEntityType.VANGUARD_SERVANT.get(), VanguardRenderer::new);
         event.registerEntityRenderer(ModEntityType.SKELETON_PILLAGER_SERVANT.get(), SkeletonPillagerRenderer::new);
         event.registerEntityRenderer(ModEntityType.ZOMBIE_VINDICATOR_SERVANT.get(), ZombieVindicatorRenderer::new);
@@ -547,6 +538,8 @@ public class ClientInitEvents {
         event.registerEntityRenderer(ModEntityType.ARMORED_RAVAGER.get(), ModRavagerRenderer::new);
         event.registerEntityRenderer(ModEntityType.ZOMBIE_RAVAGER.get(), ZombieRavagerRenderer::new);
         event.registerEntityRenderer(ModEntityType.BLACK_WOLF.get(), BlackWolfRenderer::new);
+        event.registerEntityRenderer(ModEntityType.SKELETON_WOLF.get(), SkeletonWolfRenderer::new);
+        event.registerEntityRenderer(ModEntityType.HELLHOUND.get(), HellhoundRenderer::new);
         event.registerEntityRenderer(ModEntityType.BEAR_SERVANT.get(), BearServantRenderer::new);
         event.registerEntityRenderer(ModEntityType.POLAR_BEAR_SERVANT.get(), BearServantRenderer::new);
         event.registerEntityRenderer(ModEntityType.HOGLIN_SERVANT.get(), HoglinServantRenderer::new);
@@ -735,6 +728,8 @@ public class ClientInitEvents {
         event.registerSpriteSet(ModParticleTypes.SPELL_SQUARE.get(), SpellSquareParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.TRAIL.get(), TrailParticle.MobProvider::new);
         event.registerSpriteSet(ModParticleTypes.SUMMON_TRAIL.get(), SummonTrailParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.GO.get(), SoulExplodeParticle.Provider::new);
+        event.registerSpriteSet(ModParticleTypes.STOP.get(), SoulExplodeParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.SPARKLE.get(), SparkleParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.DUST_CLOUD.get(), DustCloudParticle.Provider::new);
         event.registerSpriteSet(ModParticleTypes.SHOCKWAVE.get(), ShockwaveParticle.Provider::new);

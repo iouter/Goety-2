@@ -496,6 +496,7 @@ public class Goety {
         event.put(ModEntityType.DROWNED_NECROMANCER_SERVANT.get(), DrownedNecromancer.setCustomAttributes().build());
         event.put(ModEntityType.WRAITH_SERVANT.get(), WraithServant.setCustomAttributes().build());
         event.put(ModEntityType.BORDER_WRAITH_SERVANT.get(), BorderWraithServant.setCustomAttributes().build());
+        event.put(ModEntityType.PHANTOM_SERVANT.get(), PhantomServant.setCustomAttributes().build());
         event.put(ModEntityType.VANGUARD_SERVANT.get(), VanguardServant.setCustomAttributes().build());
         event.put(ModEntityType.SKELETON_PILLAGER_SERVANT.get(), SkeletonPillagerServant.setCustomAttributes().build());
         event.put(ModEntityType.ZOMBIE_VINDICATOR_SERVANT.get(), ZombieVindicatorServant.setCustomAttributes().build());
@@ -522,6 +523,8 @@ public class Goety {
         event.put(ModEntityType.ARMORED_RAVAGER.get(), Ravager.createAttributes().build());
         event.put(ModEntityType.ZOMBIE_RAVAGER.get(), ZombieRavager.setCustomAttributes().build());
         event.put(ModEntityType.BLACK_WOLF.get(), BlackWolf.setCustomAttributes().build());
+        event.put(ModEntityType.SKELETON_WOLF.get(), SkeletonWolf.setCustomAttributes().build());
+        event.put(ModEntityType.HELLHOUND.get(), Hellhound.setCustomAttributes().build());
         event.put(ModEntityType.BEAR_SERVANT.get(), BearServant.setCustomAttributes().build());
         event.put(ModEntityType.POLAR_BEAR_SERVANT.get(), BearServant.setCustomAttributes().build());
         event.put(ModEntityType.HOGLIN_SERVANT.get(), HoglinServant.setCustomAttributes().build());

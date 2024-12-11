@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "goety:black_wolf",
+    "goety:skeleton_wolf",
+    "goety:hellhound",
     "goety:black_beast"
   ]
 }

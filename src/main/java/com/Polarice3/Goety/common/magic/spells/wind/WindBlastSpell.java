@@ -107,8 +107,8 @@ public class WindBlastSpell extends Spell {
         List<Entity> entities = caster.level.getEntities(caster, caster.getBoundingBox().inflate(1.0D).expandTowards(rangeVec));
         for (Entity entity : entities){
             if (caster.hasLineOfSight(entity)){
+                MobUtil.knockBack(entity, caster, 2.0D * knock, 0.2D * knock, 2.0D * knock);
                 if (entity instanceof LivingEntity living) {
-                    MobUtil.knockBack(living, caster, 2.0D * knock, 0.2D * knock, 2.0D * knock);
                     if (typeStaff(staff, SpellType.FROST)){
                         living.addEffect(new MobEffectInstance(GoetyEffects.FREEZING.get(), MathHelper.secondsToTicks(5)));
                     }

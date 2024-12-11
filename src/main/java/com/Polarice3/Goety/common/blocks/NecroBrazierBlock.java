@@ -114,11 +114,12 @@ public class NecroBrazierBlock extends BaseEntityBlock implements SimpleWaterlog
             if (tileentity instanceof NecroBrazierBlockEntity blockEntity) {
                 if (pEntity instanceof ItemEntity itemEntity) {
                     if (!pLevel.isClientSide) {
-                        if (!itemEntity.getTags().contains(ConstantPaths.resultItem())) {
+                        if (itemEntity.isAlive() && !itemEntity.getItem().isEmpty() && !itemEntity.getTags().contains(ConstantPaths.resultItem())) {
                             if (blockEntity.currentTime <= 0) {
-                                blockEntity.addItem(null, itemEntity.getItem());
-                                pLevel.playSound(null, pPos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0F, 1.0F);
-                                itemEntity.discard();
+                                if (blockEntity.addItem(null, itemEntity.getItem())) {
+                                    pLevel.playSound(null, pPos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0F, 1.0F);
+                                    syncItem(itemEntity);
+                                }
                             }
                         }
                     }
@@ -127,6 +128,12 @@ public class NecroBrazierBlock extends BaseEntityBlock implements SimpleWaterlog
         }
 
         super.entityInside(pState, pLevel, pPos, pEntity);
+    }
+
+    public static void syncItem(ItemEntity entity) {
+        ItemStack save = entity.getItem();
+        entity.setItem(ItemStack.EMPTY);
+        entity.setItem(save);
     }
 
     @Nullable

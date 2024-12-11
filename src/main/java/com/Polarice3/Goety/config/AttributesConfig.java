@@ -141,6 +141,9 @@ public class AttributesConfig {
     public static final ForgeConfigSpec.ConfigValue<Double> VanguardServantHealth;
     public static final ForgeConfigSpec.ConfigValue<Double> VanguardServantArmor;
     public static final ForgeConfigSpec.ConfigValue<Double> VanguardServantDamage;
+    public static final ForgeConfigSpec.ConfigValue<Double> PhantomServantHealth;
+    public static final ForgeConfigSpec.ConfigValue<Double> PhantomServantArmor;
+    public static final ForgeConfigSpec.ConfigValue<Double> PhantomServantDamage;
     public static final ForgeConfigSpec.ConfigValue<Double> SkeletonPillagerHealth;
     public static final ForgeConfigSpec.ConfigValue<Double> SkeletonPillagerArmor;
     public static final ForgeConfigSpec.ConfigValue<Double> SkeletonPillagerDamage;
@@ -174,6 +177,9 @@ public class AttributesConfig {
     public static final ForgeConfigSpec.ConfigValue<Double> BlackWolfHealth;
     public static final ForgeConfigSpec.ConfigValue<Double> BlackWolfArmor;
     public static final ForgeConfigSpec.ConfigValue<Double> BlackWolfDamage;
+    public static final ForgeConfigSpec.ConfigValue<Double> SkeletonWolfHealth;
+    public static final ForgeConfigSpec.ConfigValue<Double> SkeletonWolfArmor;
+    public static final ForgeConfigSpec.ConfigValue<Double> SkeletonWolfDamage;
     public static final ForgeConfigSpec.ConfigValue<Double> BearServantHealth;
     public static final ForgeConfigSpec.ConfigValue<Double> BearServantArmor;
     public static final ForgeConfigSpec.ConfigValue<Double> BearServantDamage;
@@ -560,6 +566,14 @@ public class AttributesConfig {
                 VanguardServantDamage = BUILDER.comment("How much damage Vanguard Servants deals, Default: 7.0")
                         .defineInRange("vanguardServantDamage", 7.0, 1.0, Double.MAX_VALUE);
                 BUILDER.pop();
+                BUILDER.push("Phantom Servant");
+                PhantomServantHealth = BUILDER.comment("How much Max Health Phantom Servants have, Default: 20.0")
+                        .defineInRange("phantomServantHealth", 20.0, 1.0, Double.MAX_VALUE);
+                PhantomServantArmor = BUILDER.comment("How much Armor Phantom Servants have, Default: 0.0")
+                        .defineInRange("phantomServantArmor", 0.0, 0.0, Double.MAX_VALUE);
+                PhantomServantDamage = BUILDER.comment("How much damage Phantom Servants deals, Default: 2.0")
+                        .defineInRange("phantomServantDamage", 2.0, 1.0, Double.MAX_VALUE);
+                BUILDER.pop();
                 BUILDER.push("Skeleton Pillager");
                 SkeletonPillagerHealth = BUILDER.comment("How much Max Health Skeleton Pillagers have, Default: 24.0")
                         .defineInRange("skeletonPillagerHealth", 24.0, 1.0, Double.MAX_VALUE);
@@ -673,6 +687,14 @@ public class AttributesConfig {
                         .defineInRange("blackWolfArmor", 0.0, 0.0, Double.MAX_VALUE);
                 BlackWolfDamage = BUILDER.comment("How much damage Black Wolves melee attack deals, Default: 4.0")
                         .defineInRange("blackWolfDamage", 4.0, 1.0, Double.MAX_VALUE);
+                BUILDER.pop();
+                BUILDER.push("Skeleton Wolf");
+                SkeletonWolfHealth = BUILDER.comment("How much Max Health Skeleton Wolves have, Default: 10.0")
+                        .defineInRange("skeletonWolfHealth", 10.0, 1.0, Double.MAX_VALUE);
+                SkeletonWolfArmor = BUILDER.comment("How much natural Armor Skeleton Wolves have, Default: 0.0")
+                        .defineInRange("skeletonWolfArmor", 0.0, 0.0, Double.MAX_VALUE);
+                SkeletonWolfDamage = BUILDER.comment("How much damage Skeleton Wolves melee attack deals, Default: 4.0")
+                        .defineInRange("skeletonWolfDamage", 4.0, 1.0, Double.MAX_VALUE);
                 BUILDER.pop();
                 BUILDER.push("Bear Servant");
                 BearServantHealth = BUILDER.comment("How much Max Health Bear Servants have, Default: 30.0")

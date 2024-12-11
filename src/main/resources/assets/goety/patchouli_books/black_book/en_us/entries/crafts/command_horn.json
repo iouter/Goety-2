@@ -1,0 +1,16 @@
+{
+  "name": "Commanding Horn",
+  "icon": "goety:command_horn",
+  "category": "goety:crafts",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Commanding Horn allows you to change movement stances of your servants, that are within 16 blocks from you, between Standing By and Following. You can also right click on a block to have them move towards it."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "goety:command_horn",
+      "text": "Servants that are Patrolling, already commanded or part of a $(l:crafts/grimoire_of_grounding)Grimoire of Grounding$() are unaffected by the horn."
+    }
+  ]
+}

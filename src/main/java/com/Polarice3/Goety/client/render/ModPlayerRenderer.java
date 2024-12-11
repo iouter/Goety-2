@@ -11,10 +11,10 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
  */
 public class ModPlayerRenderer {
 
-    private final LichModeRenderer renderer;
+    private final LichModeTestRenderer renderer;
 
     public ModPlayerRenderer(EntityRendererProvider.Context context) {
-        this.renderer = new LichModeRenderer(context);
+        this.renderer = new LichModeTestRenderer(context);
     }
 
     public boolean renderPlayer(AbstractClientPlayer player, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource buffer, int packedLight) {

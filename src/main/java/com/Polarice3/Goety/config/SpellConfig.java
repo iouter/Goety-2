@@ -52,6 +52,12 @@ public class SpellConfig {
     public static final ForgeConfigSpec.ConfigValue<Integer> WraithSummonDown;
     public static final ForgeConfigSpec.ConfigValue<Integer> WraithLimit;
 
+    public static final ForgeConfigSpec.ConfigValue<Integer> PhantomCost;
+    public static final ForgeConfigSpec.ConfigValue<Integer> PhantomDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> PhantomCoolDown;
+    public static final ForgeConfigSpec.ConfigValue<Integer> PhantomSummonDown;
+    public static final ForgeConfigSpec.ConfigValue<Integer> PhantomLimit;
+
     public static final ForgeConfigSpec.ConfigValue<Integer> VanguardCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> VanguardDuration;
     public static final ForgeConfigSpec.ConfigValue<Integer> VanguardCoolDown;
@@ -449,6 +455,10 @@ public class SpellConfig {
     public static final ForgeConfigSpec.ConfigValue<Integer> SoulHealCoolDown;
     public static final ForgeConfigSpec.ConfigValue<Integer> SoulHealAmount;
 
+    public static final ForgeConfigSpec.ConfigValue<Integer> WeakeningCost;
+    public static final ForgeConfigSpec.ConfigValue<Integer> WeakeningDuration;
+    public static final ForgeConfigSpec.ConfigValue<Integer> WeakeningCoolDown;
+
     public static final ForgeConfigSpec.ConfigValue<Integer> ArrowRainCost;
     public static final ForgeConfigSpec.ConfigValue<Integer> ArrowRainChargeUp;
     public static final ForgeConfigSpec.ConfigValue<Integer> ArrowRainDuration;
@@ -496,6 +506,7 @@ public class SpellConfig {
     public static final ForgeConfigSpec.ConfigValue<Boolean> EnchantMultiCost;
     public static final ForgeConfigSpec.ConfigValue<Boolean> SummonDown;
     public static final ForgeConfigSpec.ConfigValue<Boolean> SpellDamageEnderDragon;
+    public static final ForgeConfigSpec.ConfigValue<Boolean> FullStopCast;
 
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> TelekinesisBlackList;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> BanishBlackList;
@@ -516,6 +527,8 @@ public class SpellConfig {
                 .define("summonDown", true);
         SpellDamageEnderDragon = BUILDER.comment("Certain spells can damage the Ender Dragon, Default: true")
                 .define("spellDamageEnderDragon", true);
+        FullStopCast = BUILDER.comment("Casting Spells will cause the caster to completely stop moving, Default: false")
+                .define("fullStopCast", false);
         BUILDER.pop();
         BUILDER.push("Spells");
             BUILDER.push("Vexing Spell");
@@ -592,6 +605,18 @@ public class SpellConfig {
             WraithLimit = BUILDER.comment("Number of Wraith Servants that a player can have, Default: 6")
                     .defineInRange("wraithLimit", 6, 1, Integer.MAX_VALUE);
             BUILDER.pop();
+            BUILDER.push("Phantasm Spell");
+            PhantomCost = BUILDER.comment("Phantasm Spell Cost, Default: 24")
+                    .defineInRange("phantomCost", 24, 0, Integer.MAX_VALUE);
+            PhantomDuration = BUILDER.comment("Time to cast Phantasm Spell, Default: 60")
+                    .defineInRange("phantomTime", 60, 0, 72000);
+            PhantomCoolDown = BUILDER.comment("Phantasm Spell Cooldown, Default: 100")
+                    .defineInRange("phantomCoolDown", 100, 0, Integer.MAX_VALUE);
+            PhantomSummonDown = BUILDER.comment("Phantasm Spell Summon Down, Default: 300")
+                    .defineInRange("phantomSummonDown", 300, 0, 72000);
+            PhantomLimit = BUILDER.comment("Number of Phantom Servants that a player can have, Default: 16")
+                    .defineInRange("phantomLimit", 16, 1, Integer.MAX_VALUE);
+            BUILDER.pop();
             BUILDER.push("Vanguard Spell");
             VanguardCost = BUILDER.comment("Vanguard Spell Cost, Default: 24")
                     .defineInRange("vanguardCost", 24, 0, Integer.MAX_VALUE);
@@ -639,8 +664,8 @@ public class SpellConfig {
                     .defineInRange("leechingDamage", 1.0, 1.0, Double.MAX_VALUE);
             BUILDER.pop();
             BUILDER.push("Killing Spell");
-            KillingCost = BUILDER.comment("Killing Spell Cost, Default: 4000")
-                    .defineInRange("killingCost", 4000, 0, Integer.MAX_VALUE);
+            KillingCost = BUILDER.comment("Killing Spell Cost, Default: 444")
+                    .defineInRange("killingCost", 444, 0, Integer.MAX_VALUE);
             KillingDuration = BUILDER.comment("Time to cast Killing Spell, Default: 60")
                     .defineInRange("killingTime", 60, 0, 72000);
             KillingCoolDown = BUILDER.comment("Killing Spell Cooldown, Default: 200")
@@ -1390,6 +1415,14 @@ public class SpellConfig {
                     .defineInRange("soulHealCoolDown", 200, 0, Integer.MAX_VALUE);
             SoulHealAmount = BUILDER.comment("Initial amount of health the Soul Heal Spell heals, Default: 8")
                     .defineInRange("soulHealAmount", 8, 2, Integer.MAX_VALUE);
+            BUILDER.pop();
+            BUILDER.push("Weakening Spell");
+            WeakeningCost = BUILDER.comment("Weakening Spell Cost, Default: 100")
+                    .defineInRange("weakeningCost", 100, 0, Integer.MAX_VALUE);
+            WeakeningDuration = BUILDER.comment("Time to cast Weakening Spell, Default: 0")
+                    .defineInRange("weakeningDuration", 0, 0, 72000);
+            WeakeningCoolDown = BUILDER.comment("Weakening Spell Cooldown, Default: 400")
+                    .defineInRange("weakeningCoolDown", 400, 0, Integer.MAX_VALUE);
             BUILDER.pop();
             BUILDER.push("Telekinesis Spell");
             TelekinesisCost = BUILDER.comment("Telekinesis Spell Cost, Default: 4")

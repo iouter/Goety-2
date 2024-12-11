@@ -42,6 +42,10 @@ public class ModRituals {
     public static final RegistryObject<ModRitualFactory> ENCHANT =
             RITUALS.register("enchant",
                     () -> new ModRitualFactory(EnchantItemRitual::new));
+
+    public static final RegistryObject<ModRitualFactory> TELEPORT =
+            RITUALS.register("teleport",
+                    () -> new ModRitualFactory(TeleportRitual::new));
 }
 /*
  * MIT License

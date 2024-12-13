@@ -23,6 +23,8 @@ jobs:
       contents: write # needed to create GitHub releases
 
     steps:
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
       - name: Checkout Repository
         uses: actions/checkout@v4
 
